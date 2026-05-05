@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roadimentary</title>
+  <link rel="icon" type="image/png" href="/assets/fav_logo.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- =========================
+     MOBILE LAYOUT START
+     ========================= -->
+
+<div id="mobile-layout">
+
+  <header id="mobile-header">
+    <img src="/assets/editedlogo1.png" alt="Roadimentary logo" class="mobile-logo">
+  </header>
+
+  <section class="mobile-hero">
+    <img
+      src="/assets/Roadimentary_Title.png"
+      alt="Roadimentary Title"
+      class="mobile-title"
+    >
+
+    <p class="hero-subtitle">
+      Groundbreaking Gameplay, Literally.
+    </p>
+
+    <a class="download-btn" id="mobile-download-btn">
+      Download Now
+    </a>
+  </section>
+
+  <!-- MOBILE TAB BAR -->
+  <div class="mobile-tab-bar">
+    <button class="mobile-tab active" data-tab="features" aria-label="Features">
+      <img src="assets/icon_content.png" alt="Features" class="tab-icon-img">
+    </button>
+
+    <button class="mobile-tab" data-tab="media" aria-label="Media">
+      <img src="assets/icon_gameplay.png" alt="Media" class="tab-icon-img">
+    </button>
+
+    <button class="mobile-tab" data-tab="signin" aria-label="Account">
+      <img src="assets/icon_signin.png" alt="Sign In" class="tab-icon-img">
+    </button>
+
+    <button class="mobile-tab" data-tab="about" aria-label="About">
+      <img src="assets/logo_nobg.png" alt="About" class="tab-icon-img">
+    </button>
+  </div>
+
+  <!-- TAB CONTENT AREA -->
+  <div class="mobile-tab-content">
+
+    <!-- DOWNLOAD PANEL -->
+    <div class="mobile-panel" id="download">
+      <div class="mobile-download-layout">
+
+        <section class="mobile-download-card">
+          <h2>Download Roadimentary</h2>
+          <p class="mobile-download-build-label">Pre-Alpha Internal Build</p>
+
+          <div class="mobile-download-meta">
+            <div><strong>Version:</strong> 1.0.1</div>
+            <div><strong>Platform:</strong> Windows 64-bit</div>
+            <div><strong>File Size:</strong> 2.8 GB</div>
+          </div>
+
+          <button class="mobile-download-main-btn">Download Installer</button>
+          <button class="mobile-download-secondary-btn">View Patch Notes</button>
+
+          <p class="mobile-download-note">
+            Download links are not connected yet. This panel is currently a prototype.
+          </p>
+        </section>
+
+        <section class="mobile-requirements-card">
+          <h2>System Requirements</h2>
+
+          <div class="mobile-requirements-block">
+            <h3>Minimum</h3>
+            <ul>
+              <li><strong>OS:</strong> Windows 10 64-bit</li>
+              <li><strong>CPU:</strong> Intel i5-8400 / Ryzen 5 2600</li>
+              <li><strong>RAM:</strong> 8 GB</li>
+              <li><strong>GPU:</strong> GTX 1060 / RX 580</li>
+              <li><strong>Storage:</strong> 10 GB available</li>
+              <li><strong>Internet:</strong> Broadband required</li>
+            </ul>
+          </div>
+
+          <div class="mobile-requirements-block">
+            <h3>Recommended</h3>
+            <ul>
+              <li><strong>OS:</strong> Windows 11 64-bit</li>
+              <li><strong>CPU:</strong> Intel i7-10700 / Ryzen 7 3700X</li>
+              <li><strong>RAM:</strong> 16 GB</li>
+              <li><strong>GPU:</strong> RTX 2060 / RX 6700 XT</li>
+              <li><strong>Storage:</strong> 15 GB SSD</li>
+              <li><strong>Internet:</strong> Broadband required</li>
+            </ul>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- FEATURES PANEL -->
+    <div class="mobile-panel active" id="features">
+      <div class="mobile-features">
+
+        <div class="mobile-feature-hero">
+          <div class="mobile-feature-hero-image">
+            <img src="assets/UI1.png" alt="Roadimentary shop interface preview">
+          </div>
+
+          <div class="mobile-feature-hero-text">
+            <h2>Build Your Company</h2>
+            <p>
+              Manage your budget, expand your operation, and decide how your construction crew grows from contract to contract.
+            </p>
+          </div>
+        </div>
+
+        <div class="mobile-feature-list">
+
+          <div class="mobile-feature-card preview-card">
+            <div class="mobile-feature-preview">
+              <img src="assets/UI2.png" alt="Construction materials interface">
+            </div>
+            <div class="mobile-feature-copy">
+              <h3>Choose Your Materials</h3>
+              <p>
+                Select the right materials for the job and adapt your strategy to different construction needs.
+              </p>
+            </div>
+          </div>
+
+          <div class="mobile-feature-card preview-card">
+            <div class="mobile-feature-preview">
+              <img src="assets/UI3.png" alt="Contract selection interface">
+            </div>
+            <div class="mobile-feature-copy">
+              <h3>Select Contracts</h3>
+              <p>
+                Take on different jobs, weigh risk against reward, and choose the work that fits your playstyle.
+              </p>
+            </div>
+          </div>
+
+          <div class="mobile-feature-card preview-card">
+            <div class="mobile-feature-preview">
+              <img src="assets/Profile.png" alt="Player profile interface">
+            </div>
+            <div class="mobile-feature-copy">
+              <h3>Track Your Progress</h3>
+              <p>
+                Build your operator profile, review your progress, and make your name known across the workforce.
+              </p>
+            </div>
+          </div>
+
+          <div class="mobile-feature-card preview-card">
+            <div class="mobile-feature-preview">
+              <img src="assets/UI4.png" alt="Player profile interface">
+            </div>
+            <div class="mobile-feature-copy">
+              <h3>Lead a Beaver Crew</h3>
+              <p>
+                Your hardworking beaver team keeps every part of the operation moving from planning to execution.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- MEDIA PANEL -->
+    <div class="mobile-panel" id="media">
+      <div class="mobile-media">
+
+        <div class="mobile-media-video">
+          <iframe
+            src="https://www.youtube.com/embed/VIDEO_ID"
+            title="Roadimentary Gameplay Trailer"
+            frameborder="0"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <div class="mobile-media-gallery">
+          <img src="assets/sample1.png" alt="Roadimentary gameplay screenshot 1">
+          <img src="assets/sample2.png" alt="Roadimentary gameplay screenshot 2">
+          <img src="assets/sample3.png" alt="Roadimentary gameplay screenshot 3">
+          <img src="assets/sample4.png" alt="Roadimentary gameplay screenshot 4">
+          <img src="assets/sample5.png" alt="Roadimentary gameplay screenshot 5">
+          <img src="assets/sample6.png" alt="Roadimentary gameplay screenshot 6">
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SIGN IN PANEL -->
+    <div class="mobile-panel" id="signin">
+      <div class="signin-container">
+
+        <h3>Operator Login</h3>
+
+        <p class="signin-subtitle">
+          Sign in to access your profile, track your progress, and view community features.
+        </p>
+
+        <div class="signin-form">
+          <input type="email" id="mobile-email" placeholder="Email">
+            <div class="password-input-wrap login-password-wrap">
+              <input
+                type="password"
+                id="mobile-password"
+                placeholder="Password"
+                autocomplete="current-password"
+              />
+              <button
+                type="button"
+                class="password-toggle"
+                data-target="mobile-password"
+                aria-label="Show password"
+                title="Show password"
+              >
+                <span class="icon-show">👁</span>
+                <span class="icon-hide">🙈</span>
+              </button>
+            </div>
+          </div>
+          <button class="signin-btn" id="mobile-signin-btn">Sign In</button>
+          <p id="mobile-signin-status"></p>
+        </div>
+
+        <div class="signin-links">
+          <a href="#" id="mobile-create-account-link">Create Account</a>
+          <a href="#" id="mobile-forgot-password-link">Forgot Password</a>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MOBILE REGISTER PANEL -->
+    <div class="mobile-panel" id="mobile-register-panel">
+      <div class="signin-container mobile-account-panel">
+        <h3>Create Account</h3>
+
+        <p class="signin-subtitle">
+          Create an operator account to access profiles, rankings, and account tools.
+        </p>
+
+        <div class="signin-form">
+          <input
+            type="text"
+            id="mobile-register-username"
+            placeholder="Username"
+            autocomplete="username"
+          >
+
+          <input
+            type="email"
+            id="mobile-register-email"
+            placeholder="Email"
+            autocomplete="email"
+          >
+
+          <div class="password-input-wrap">
+            <input
+              type="password"
+              id="mobile-register-password"
+              placeholder="Password"
+              autocomplete="new-password"
+            >
+            <button
+              type="button"
+              class="password-toggle"
+              data-target="mobile-register-password"
+              aria-label="Show password"
+              title="Show password"
+            >
+              <span class="icon-show">👁</span>
+              <span class="icon-hide">🙈</span>
+            </button>
+          </div>
+
+          <div class="password-hint">
+            Password must be at least 8 characters.
+          </div>
+
+          <div class="password-input-wrap">
+            <input
+              type="password"
+              id="mobile-register-confirm-password"
+              placeholder="Confirm Password"
+              autocomplete="new-password"
+            >
+            <button
+              type="button"
+              class="password-toggle"
+              data-target="mobile-register-confirm-password"
+              aria-label="Show password"
+              title="Show password"
+            >
+              <span class="icon-show">👁</span>
+              <span class="icon-hide">🙈</span>
+            </button>
+          </div>
+
+          <label class="terms-check">
+            <input type="checkbox" id="mobile-register-terms">
+            <span>
+              I agree to the
+              <a href="terms.html" target="_blank" rel="noopener noreferrer">Terms and Conditions</a>
+              and
+              <a href="privacy.html" target="_blank" rel="noopener noreferrer">Privacy Notice</a>.
+            </span>
+          </label>
+
+          <button class="signin-btn" id="mobile-register-btn">Create Account</button>
+          <p id="mobile-register-status"></p>
+        </div>
+
+        <div class="signin-links mobile-panel-links">
+          <a href="#" id="mobile-register-back-link">Return to Login</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOBILE FORGOT PASSWORD PANEL -->
+    <div class="mobile-panel" id="mobile-forgot-password-panel">
+      <div class="signin-container mobile-account-panel">
+        <h3>Recover Account</h3>
+
+        <p class="signin-subtitle">
+          Enter your email and we will send you a password reset link.
+        </p>
+
+        <div class="signin-form">
+          <input
+            type="email"
+            id="mobile-recovery-email"
+            placeholder="Email"
+            autocomplete="email"
+          >
+          <button class="signin-btn" id="mobile-recovery-btn">Send Recovery Email</button>
+          <p id="mobile-recovery-status"></p>
+        </div>
+
+        <div class="signin-links mobile-panel-links">
+          <a href="#" id="mobile-recovery-back-link">Return to Login</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- VERIFY EMAIL PANEL -->
+    <div class="mobile-panel" id="verify-email-panel">
+      <div class="signin-container">
+        <h3>Check Your Email</h3>
+
+        <p class="signin-subtitle">
+          Your account was created successfully. Please verify your email before signing in.
+        </p>
+
+        <div class="signin-form">
+          <input type="email" id="mobile-verify-email-input" placeholder="Email used for signup" readonly>
+          <p id="mobile-verify-email-status">
+            We sent a verification email. Please check your inbox before signing in.
+          </p>
+        </div>
+
+        <div class="signin-links">
+          <a href="#" id="mobile-verify-back-link">Return to Login</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABOUT PANEL -->
+    <div class="mobile-panel" id="about">
+      <div class="footer-window-content">
+        <div class="about-container">
+
+          <div class="about-header">
+            <h2>LNJK Studio</h2>
+            <p class="about-tagline">Small Team. Big Roads.</p>
+          </div>
+
+          <div class="about-section">
+            <h3>Who We Are</h3>
+            <p>
+              LNJK Studio is a small student development team building creative simulation experiences with personality, strategy, and a little bit of chaos.
+            </p>
+          </div>
+
+          <div class="about-section">
+            <h3>What Is Roadimentary?</h3>
+            <p>
+              Roadimentary is a construction strategy game where players take on contracts, manage resources, and build infrastructure across unpredictable terrain.
+            </p>
+          </div>
+
+          <div class="about-section">
+            <h3>What To Expect</h3>
+            <p>
+              Expect clever planning, changing priorities, hardworking beavers, and the occasional construction disaster that turns into a new challenge.
+            </p>
+          </div>
+
+          <div class="about-section socials">
+            <h3>Follow Development</h3>
+
+            <div class="about-links">
+              <a href="#">YouTube</a>
+              <a href="#">Discord</a>
+              <a href="#">Email</a>
+            </div>
+          </div>
+
+          <div class="about-footer">
+            © 2026 LNJK Studio
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- =========================
+     MOBILE LAYOUT END
+     ========================= -->
+
+<div class="hero-center">
+  <img
+    src="/assets/Roadimentary_Title.png"
+    alt="Roadimentary Title"
+    class="main-title"
+  >
+
+  <p class="subtitle">
+    Groundbreaking Gameplay, Literally.
+  </p>
+
+  <div class="download-trigger-wrapper" id="download-trigger-wrapper">
+    <a href="#" class="download-btn" id="desktop-download-btn">
+      Download Now
+    </a>
+  </div>
+</div>
+
+<!-- DESKTOP WINDOWS -->
+
+<div class="window-group">
+  <div class="desktop-window" id="win-features">
+    <div class="win-header">
+      <span>Features</span>
+      <button class="win-close">×</button>
+    </div>
+
+    <div class="win-content">
+      <div class="blueprint-features">
+
+        <div class="feature-hero">
+          <div class="feature-hero-image">
+            <img src="assets/UI1.png" alt="Roadimentary company management interface">
+          </div>
+
+          <div class="feature-hero-text">
+            <h2>Build Your Company</h2>
+            <p>
+              Manage your budget, expand your operation, and decide how your construction crew grows from contract to contract.
+            </p>
+          </div>
+        </div>
+
+        <div class="features-grid">
+
+          <div class="feature-card feature-preview">
+            <div class="feature-preview-image">
+              <img src="assets/UI2.png" alt="Construction materials interface">
+            </div>
+            <h3>Choose Your Materials</h3>
+            <p>
+              Select the right materials for the job and adapt your strategy to different construction needs.
+            </p>
+          </div>
+
+          <div class="feature-card feature-preview">
+            <div class="feature-preview-image">
+              <img src="assets/UI3.png" alt="Contract selection interface">
+            </div>
+            <h3>Select Contracts</h3>
+            <p>
+              Take on different jobs, weigh risk against reward, and choose the work that fits your playstyle.
+            </p>
+          </div>
+
+          <div class="feature-card feature-preview">
+            <div class="feature-preview-image">
+              <img src="assets/Profile.png" alt="Player profile interface">
+            </div>
+            <h3>Track Your Progress</h3>
+            <p>
+              Build your operator profile, review your progress, and make your name known across the workforce.
+            </p>
+          </div>
+
+          <div class="feature-card feature-preview">
+            <div class="feature-preview-image">
+              <img src="assets/UI4.png" alt="Player profile interface">
+            </div>
+            <h3>Lead a Beaver Crew</h3>
+            <p>
+              Your hardworking beaver team keeps every part of the operation moving from planning to execution.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="window-group">
+  <div class="desktop-window" id="win-media">
+    <div class="win-header">
+      <span>Media</span>
+      <button class="win-close">×</button>
+    </div>
+
+    <div class="win-content">
+      <div class="media-showcase">
+
+        <div class="media-featured">
+          <iframe
+            src="https://www.youtube.com/embed/VIDEO_ID"
+            title="Roadimentary Gameplay Trailer"
+            frameborder="0"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <div class="media-gallery">
+          <div class="media-card">
+            <img src="assets/sample1.png" alt="Roadimentary gameplay screenshot 1">
+          </div>
+
+          <div class="media-card">
+            <img src="assets/sample2.png" alt="Roadimentary gameplay screenshot 2">
+          </div>
+
+          <div class="media-card">
+            <img src="assets/sample3.png" alt="Roadimentary gameplay screenshot 3">
+          </div>
+
+          <div class="media-card">
+            <img src="assets/sample4.png" alt="Roadimentary gameplay screenshot 4">
+          </div>
+
+          <div class="media-card">
+            <img src="assets/sample5.png" alt="Roadimentary gameplay screenshot 5">
+          </div>
+
+          <div class="media-card">
+            <img src="assets/sample6.png" alt="Roadimentary gameplay screenshot 6">
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="window-group">
+  <div class="desktop-window signin-window" id="win-signin">
+    <div class="win-header">
+      <span>Operator Login</span>
+      <button class="win-close">×</button>
+    </div>
+
+    <div class="win-content">
+      <div class="desktop-signin">
+
+        <div class="desktop-signin-panel">
+          <h2>Operator Access</h2>
+          <p>
+            Sign in to view your profile, track progress, and access account-related community features.
+          </p>
+
+          <div class="desktop-signin-points">
+            <div class="desktop-signin-point">View your operator profile</div>
+            <div class="desktop-signin-point">Check rankings and community features</div>
+            <div class="desktop-signin-point">Review your construction progress</div>
+          </div>
+        </div>
+
+        <div class="signin-container">
+          <h3>Operator Login</h3>
+
+          <p class="signin-subtitle">
+            Enter your email and password to continue.
+          </p>
+
+          <div class="signin-form">
+            <input type="email" id="desktop-email" placeholder="Email">
+              <div class="password-input-wrap login-password-wrap">
+                <input
+                  type="password"
+                  id="desktop-password"
+                  placeholder="Password"
+                  autocomplete="current-password"
+                />
+                <button
+                  type="button"
+                  class="password-toggle"
+                  data-target="desktop-password"
+                  aria-label="Show password"
+                  title="Show password"
+                >
+                  <span class="icon-show">👁</span>
+                  <span class="icon-hide">🙈</span>
+                </button>
+              </div>
+            <button class="signin-btn" id="desktop-signin-btn">Sign In</button>
+            <p id="desktop-signin-status"></p>
+          </div>
+
+          <div class="signin-links">
+            <a href="#" id="desktop-create-account-link">Create Account</a>
+            <a href="#" id="desktop-forgot-password-link">Forgot Password</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DOWNLOAD WINDOW -->
+<div class="window-group">
+  <div class="desktop-window" id="win-download">
+    <div class="win-header">
+      <span>Download Roadimentary</span>
+      <button class="win-close">×</button>
+    </div>
+
+    <div class="win-content">
+      <div class="download-window-layout">
+
+        <section class="download-panel">
+          <h2>Download Roadimentary</h2>
+          <p class="download-build-label">Pre-Alpha Internal Build</p>
+
+          <div class="download-meta">
+            <div><strong>Version:</strong> 1.0.1</div>
+            <div><strong>Platform:</strong> Windows 64-bit</div>
+            <div><strong>File Size:</strong> 2.8 GB</div>
+          </div>
+
+          <button class="download-main-btn">Download Installer</button>
+          <button class="download-secondary-btn">View Patch Notes</button>
+
+          <p class="download-note">
+            Download links are not connected yet. This panel is currently a prototype.
+          </p>
+        </section>
+
+        <section class="requirements-panel">
+          <h2>System Requirements</h2>
+
+          <div class="requirements-grid">
+            <div class="requirements-card">
+              <h3>Minimum</h3>
+              <ul>
+                <li><strong>OS:</strong> Windows 10 64-bit</li>
+                <li><strong>CPU:</strong> Intel i5-8400 / Ryzen 5 2600</li>
+                <li><strong>RAM:</strong> 8 GB</li>
+                <li><strong>GPU:</strong> GTX 1060 / RX 580</li>
+                <li><strong>Storage:</strong> 10 GB available</li>
+                <li><strong>Internet:</strong> Broadband required</li>
+              </ul>
+            </div>
+
+            <div class="requirements-card">
+              <h3>Recommended</h3>
+              <ul>
+                <li><strong>OS:</strong> Windows 11 64-bit</li>
+                <li><strong>CPU:</strong> Intel i7-10700 / Ryzen 7 3700X</li>
+                <li><strong>RAM:</strong> 16 GB</li>
+                <li><strong>GPU:</strong> RTX 2060 / RX 6700 XT</li>
+                <li><strong>Storage:</strong> 15 GB SSD</li>
+                <li><strong>Internet:</strong> Broadband required</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ACCOUNT CREATION -->
+<div class="window-group">
+  <div class="desktop-window" id="win-register">
+    <div class="win-header">
+      <span>Create Account</span>
+      <button class="win-close">×</button>
+    </div>
+
+    <div class="win-content">
+      <div class="account-window-layout">
+        <div class="account-window-card">
+          <h3>Create Your Operator Account</h3>
+
+          <p class="signin-subtitle">
+            Register to access profiles, rankings, and account tools.
+          </p>
+
+          <div class="signin-form">
+            <input
+              type="text"
+              id="register-username"
+              placeholder="Username"
+              autocomplete="username"
+            >
+
+            <input
+              type="email"
+              id="register-email"
+              placeholder="Email"
+              autocomplete="email"
+            >
+
+            <div class="password-input-wrap">
+              <input
+                type="password"
+                id="register-password"
+                placeholder="Password"
+                autocomplete="new-password"
+              >
+              <button
+                type="button"
+                class="password-toggle"
+                data-target="register-password"
+                aria-label="Show password"
+                title="Show password"
+              >
+                <span class="icon-show">👁</span>
+                <span class="icon-hide">🙈</span>
+              </button>
+            </div>
+
+            <div class="password-hint">
+              Password must be at least 8 characters.
+            </div>
+
+            <div class="password-input-wrap">
+              <input
+                type="password"
+                id="register-confirm-password"
+                placeholder="Confirm Password"
+                autocomplete="new-password"
+              >
+              <button
+                type="button"
+                class="password-toggle"
+                data-target="register-confirm-password"
+                aria-label="Show password"
+                title="Show password"
+              >
+                <span class="icon-show">👁</span>
+                <span class="icon-hide">🙈</span>
+              </button>
+            </div>
+
+            <label class="terms-check">
+              <input type="checkbox" id="register-terms">
+              <span>
+                I agree to the
+                <a href="terms.html" target="_blank" rel="noopener noreferrer">Terms and Conditions</a>
+                and
+                <a href="privacy.html" target="_blank" rel="noopener noreferrer">Privacy Notice</a>.
+              </span>
+            </label>
+
+            <button class="signin-btn" id="register-btn">Create Account</button>
+            <p id="register-status"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PASSWORD RECOVERY -->
+<div class="window-group">
+  <div class="desktop-window" id="win-forgot-password">
+    <div class="win-header">
+      <span>Recover Account</span>
+      <button class="win-close">×</button>
+    </div>
+
+    <div class="win-content">
+      <div class="account-window-layout">
+        <div class="account-window-card">
+          <h3>Recover Account</h3>
+          <p class="signin-subtitle">
+            Enter your email and we will send you a password reset link.
+          </p>
+
+          <div class="signin-form">
+            <input type="email" id="recovery-email" placeholder="Email">
+            <button class="signin-btn" id="recovery-btn">Send Recovery Email</button>
+            <p id="recovery-status"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VERIFY EMAIL -->
+<div class="window-group">
+  <div class="desktop-window signin-window" id="win-verify-email">
+    <div class="win-header">
+      <span>Verify Your Email</span>
+      <button class="win-close">×</button>
+    </div>
+
+    <div class="win-content">
+      <div class="desktop-signin">
+
+        <div class="desktop-signin-panel">
+          <h2>One More Step</h2>
+          <p>
+            We sent a verification email to your address. Please verify your email before signing in.
+          </p>
+
+          <div class="desktop-signin-points">
+            <div class="desktop-signin-point">Check spam or junk if you do not see it</div>
+            <div class="desktop-signin-point">Wait a minute or two for delivery</div>
+            <div class="desktop-signin-point">Return to login after verifying</div>
+          </div>
+        </div>
+
+        <div class="signin-container">
+          <h3>Check Your Email</h3>
+
+          <p class="signin-subtitle">
+            Verification is required before you can access your profile.
+          </p>
+
+          <div class="signin-form">
+            <input type="email" id="verify-email-input" placeholder="Email used for signup" readonly>
+            <p id="verify-email-status">
+              We sent a verification email. Please check your inbox before signing in.
+            </p>
+          </div>
+
+          <div class="signin-links">
+            <a href="#" id="verify-back-to-login-link">Return to Login</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TASKBAR -->
+<header id="taskbar">
+  <div id="logo-container">
+    <img src="/assets/editedlogo1.png" alt="Roadimentary logo" id="logo">
+  </div>
+
+  <div class="bookmark-container">
+    <div class="bookmark-wrapper">
+      <button class="bookmark" data-window="win-features">Features</button>
+    </div>
+    <div class="bookmark-wrapper">
+      <button class="bookmark" data-window="win-media">Media</button>
+    </div>
+    <div class="bookmark-wrapper">
+      <button class="bookmark" data-window="win-signin">Account</button>
+    </div>
+  </div>
+</header>
+
+<div id="overlay"></div>
+
+<button id="backToTop">↑</button>
+
+<!-- BOTTOM DOCK TAB -->
+<div id="footer-tab">
+  About Us
+</div>
+
+<!-- FOOTER WINDOW -->
+<div class="desktop-window bottom-window" id="win-footer">
+  <div class="win-header">
+    <span>About LNJK Studio</span>
+    <button class="win-close">×</button>
+  </div>
+
+  <div class="win-content">
+    <div class="footer-window-content">
+      <div class="about-container">
+
+        <div class="about-header">
+          <h2>LNJK Studio</h2>
+          <p class="about-tagline">Small Team. Big Roads.</p>
+        </div>
+
+        <div class="about-section">
+          <h3>Who We Are</h3>
+          <p>
+            LNJK Studio is a small student development team building creative simulation experiences with personality, strategy, and a little bit of chaos.
+          </p>
+        </div>
+
+        <div class="about-section">
+          <h3>What Is Roadimentary?</h3>
+          <p>
+            Roadimentary is a construction strategy game where players take on contracts, manage resources, and build infrastructure across unpredictable terrain.
+          </p>
+        </div>
+
+        <div class="about-section">
+          <h3>What To Expect</h3>
+          <p>
+            Expect clever planning, changing priorities, hardworking beavers, and the occasional construction disaster that turns into a new challenge.
+          </p>
+        </div>
+
+        <div class="about-section socials">
+          <h3>Follow Development</h3>
+
+          <div class="about-links">
+            <a href="#">YouTube</a>
+            <a href="#">Discord</a>
+            <a href="#">Email</a>
+          </div>
+        </div>
+
+        <div class="about-footer">
+          © 2026 LNJK Studio
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://download.playfab.com/PlayFabClientApi.js"></script>
+<script src="script.js"></script>
+
+<div id="screenshot-viewer">
+  <img id="viewer-image" alt="Expanded screenshot preview">
+</div>
+
+</body>
+</html>

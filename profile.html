@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Roadimentary Profile</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://download.playfab.com/PlayFabClientApi.js"></script>
+</head>
+<body>
+
+  <!-- =========================
+       MOBILE PROFILE LAYOUT
+       ========================= -->
+  <div id="mobile-profile-layout">
+
+    <header id="mobile-header">
+      <img src="/assets/editedlogo1.png" alt="Roadimentary logo" class="mobile-logo">
+    </header>
+
+    <div class="mobile-profile-hero">
+      <div class="mobile-profile-card">
+        <h1 class="mobile-profile-name" id="mobile-profile-displayname">-</h1>
+        <p class="mobile-profile-subtitle">Your Operator Profile</p>
+
+        <div class="mobile-profile-summary">
+          <div class="mobile-profile-stat">
+            <span class="mobile-stat-label">Username</span>
+            <span class="mobile-stat-value" id="mobile-profile-username">-</span>
+          </div>
+
+          <div class="mobile-profile-stat">
+            <span class="mobile-stat-label">Email</span>
+            <span class="mobile-stat-value" id="mobile-profile-email">-</span>
+          </div>
+
+          <div class="mobile-profile-stat">
+            <span class="mobile-stat-label">Member Since</span>
+            <span class="mobile-stat-value" id="mobile-profile-created">-</span>
+          </div>
+        </div>
+
+        <div class="mobile-profile-panel-card" style="margin-top: 14px;">
+          <h2>Profile Customization</h2>
+
+          <div class="signin-form">
+            <input
+              type="text"
+              id="mobile-displayname-input"
+              placeholder="New display name"
+              maxlength="25"
+            />
+            <button class="signin-btn btn-primary" id="mobile-save-displayname-btn">Update Display Name</button>
+          </div>
+
+          <div class="signin-form" style="margin-top: 14px;">
+            <textarea
+              id="mobile-profile-bio"
+              placeholder="Write a short bio..."
+              maxlength="180"
+              rows="4"
+              style="padding:10px 12px; border:none; border-radius:4px; font-size:1rem; background:#d1dce5; color:#222; resize:vertical;"
+            ></textarea>
+            <button class="signin-btn" id="mobile-save-bio-btn">Save Bio</button>
+          </div>
+        </div>
+
+        <div class="mobile-profile-panel-card" style="margin-top: 14px;">
+          <h2>Account Actions</h2>
+
+          <div class="signin-form">
+            <button class="signin-btn btn-primary" id="mobile-send-reset-btn">Send Password Reset Email</button>
+            <button class="signin-btn btn-danger" id="mobile-logout-btn">Log Out</button>
+          </div>
+        </div>
+
+        <div class="mobile-profile-panel-card" style="margin-top: 14px;">
+          <h2>Account Details</h2>
+
+          <div class="mobile-profile-panel-grid">
+            <div class="mobile-profile-stat">
+              <span class="mobile-stat-label">PlayFab ID</span>
+              <span class="mobile-stat-value" id="mobile-profile-playfabid">-</span>
+            </div>
+          </div>
+        </div>
+
+        <p id="mobile-profile-status">Loading profile...</p>
+      </div>
+    </div>
+
+    <div class="mobile-profile-tab-bar">
+      <button class="mobile-profile-tab active" data-profile-tab="mobile-profile-progress">
+        Progress
+      </button>
+
+      <button class="mobile-profile-tab" data-profile-tab="mobile-profile-leaderboards">
+        Boards
+      </button>
+
+      <button class="mobile-profile-tab" data-profile-tab="mobile-profile-friends">
+        Friends
+      </button>
+
+      <button class="mobile-profile-tab" data-profile-tab="mobile-profile-history">
+        History
+      </button>
+    </div>
+
+    <div class="mobile-profile-tab-content">
+
+      <div class="mobile-profile-panel active" id="mobile-profile-progress">
+        <div class="mobile-profile-panel-card">
+          <h2>Game Progress</h2>
+
+          <div class="mobile-profile-panel-grid">
+            <div class="mobile-profile-stat">
+              <span class="mobile-stat-label">Contracts Completed</span>
+              <span class="mobile-stat-value" id="mobile-profile-contracts">--</span>
+            </div>
+
+            <div class="mobile-profile-stat">
+              <span class="mobile-stat-label">Total Earnings</span>
+              <span class="mobile-stat-value" id="mobile-profile-earnings">--</span>
+            </div>
+
+            <div class="mobile-profile-stat">
+              <span class="mobile-stat-label">Level</span>
+              <span class="mobile-stat-value" id="mobile-profile-level">--</span>
+            </div>
+
+            <div class="mobile-profile-stat">
+              <span class="mobile-stat-label">Road Score</span>
+              <span class="mobile-stat-value" id="mobile-profile-roadscore">--</span>
+            </div>
+          </div>
+
+          <p style="margin-top: 12px; opacity: 0.8;">
+            These progression fields are placeholders until live game stats are connected.
+          </p>
+        </div>
+      </div>
+
+      <div class="mobile-profile-panel" id="mobile-profile-leaderboards">
+        <div class="mobile-profile-panel-card">
+          <h2>Leaderboards</h2>
+          <p>Leaderboard data will appear here once game-side rankings are connected.</p>
+        </div>
+      </div>
+
+      <div class="mobile-profile-panel" id="mobile-profile-friends">
+        <div class="mobile-profile-panel-card">
+          <h2>Friends</h2>
+          <p>Friend features will appear here once social systems are connected.</p>
+        </div>
+      </div>
+
+      <div class="mobile-profile-panel" id="mobile-profile-history">
+        <div class="mobile-profile-panel-card">
+          <h2>Construction History</h2>
+          <p>Contract history and recent activity will appear here once gameplay records are available.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =========================
+       DESKTOP PROFILE LAYOUT
+       ========================= -->
+  <div id="desktop-profile-layout">
+
+    <header id="taskbar">
+      <div id="logo-container">
+        <img src="/assets/editedlogo1.png" alt="Roadimentary logo" id="logo">
+      </div>
+
+      <div class="bookmark-container">
+        <div class="bookmark-wrapper">
+          <button class="bookmark" data-window="win-leaderboards">Boards</button>
+        </div>
+        <div class="bookmark-wrapper">
+          <button class="bookmark" data-window="win-friends">Friends</button>
+        </div>
+        <div class="bookmark-wrapper">
+          <button class="bookmark" data-window="win-history">History</button>
+        </div>
+      </div>
+    </header>
+
+    <div id="overlay"></div>
+
+    <main class="profile-center">
+      <section class="profile-card">
+        <h1 class="profile-name" id="desktop-profile-displayname">-</h1>
+        <p class="profile-subtitle">Your Operator Profile</p>
+
+        <div class="profile-stats-grid">
+          <div class="profile-stat">
+            <span class="stat-label">Username</span>
+            <span class="stat-value" id="desktop-profile-username">-</span>
+          </div>
+
+          <div class="profile-stat">
+            <span class="stat-label">Email</span>
+            <span class="stat-value" id="desktop-profile-email">-</span>
+          </div>
+
+          <div class="profile-stat">
+            <span class="stat-label">Member Since</span>
+            <span class="stat-value" id="desktop-profile-created">-</span>
+          </div>
+        </div>
+
+        <div class="profile-section-card" style="margin-top: 20px;">
+          <h2>Profile Customization</h2>
+
+          <div class="profile-inline-row" style="margin-top: 12px;">
+            <input
+              type="text"
+              id="desktop-displayname-input"
+              placeholder="New display name"
+              maxlength="25"
+            />
+            <button class="signin-btn btn-primary" id="desktop-save-displayname-btn">
+              Update Display Name
+            </button>
+          </div>
+
+          <div class="signin-form" style="margin-top: 14px;">
+            <textarea
+              id="desktop-profile-bio"
+              placeholder="Write a short bio..."
+              maxlength="180"
+              rows="4"
+              style="padding:10px 12px; border:none; border-radius:4px; font-size:1rem; background:#d1dce5; color:#222; resize:vertical;"
+            ></textarea>
+            <button class="signin-btn" id="desktop-save-bio-btn">Save Bio</button>
+          </div>
+        </div>
+
+        <div class="profile-section-card" style="margin-top: 20px;">
+          <h2>Account Actions</h2>
+
+          <div class="profile-actions-row" style="margin-top: 12px;">
+            <button class="signin-btn btn-primary" id="desktop-send-reset-btn">
+              Send Password Reset Email
+            </button>
+            <button class="signin-btn btn-danger" id="desktop-logout-btn">
+              Log Out
+            </button>
+          </div>
+        </div>
+
+        <div class="profile-section-card" style="margin-top: 20px;">
+          <h2>Account Details</h2>
+
+          <div class="profile-stats-grid" style="margin-top: 12px;">
+            <div class="profile-stat">
+              <span class="stat-label">PlayFab ID</span>
+              <span class="stat-value" id="desktop-profile-playfabid">-</span>
+            </div>
+          </div>
+        </div>
+
+        <p id="desktop-profile-status">Loading profile...</p>
+      </section>
+    </main>
+
+    <div class="window-group">
+      <div class="desktop-window" id="win-leaderboards">
+        <div class="win-header">
+          <span>Leaderboards</span>
+          <button class="win-close">×</button>
+        </div>
+        <div class="win-content">
+          <div class="window-panel-content">
+            <h2>Top Operators</h2>
+            <p>Leaderboard data will appear here once game-side rankings are connected.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="window-group">
+      <div class="desktop-window" id="win-friends">
+        <div class="win-header">
+          <span>Friends</span>
+          <button class="win-close">×</button>
+        </div>
+        <div class="win-content">
+          <div class="window-panel-content">
+            <h2>Friends List</h2>
+            <p>Friend features will appear here once social systems are connected.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="window-group">
+      <div class="desktop-window" id="win-history">
+        <div class="win-header">
+          <span>Construction History</span>
+          <button class="win-close">×</button>
+        </div>
+        <div class="win-content">
+          <div class="window-panel-content">
+            <h2>Contract History</h2>
+            <p>Contract history and recent activity will appear here once gameplay records are available.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="profile.js"></script>
+</body>
+</html>
