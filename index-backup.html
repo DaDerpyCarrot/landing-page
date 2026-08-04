@@ -203,72 +203,26 @@
 
     <!-- MEDIA PANEL -->
     <div class="mobile-panel" id="media">
-      <div class="mobile-media media-command-shell">
-        <div class="media-command-center" data-media-command-center data-media-context="mobile">
-          <div class="media-command-toolbar">
-            <div class="media-command-heading">
-              <span class="media-command-eyebrow">Site Archive</span>
-              <h2>Field Media</h2>
-            </div>
+      <div class="mobile-media">
 
-            <div class="media-filter-group" role="group" aria-label="Filter media">
-              <button class="media-filter is-active" type="button" data-media-filter="all" aria-pressed="true">All</button>
-              <button class="media-filter" type="button" data-media-filter="video" aria-pressed="false">Videos</button>
-              <button class="media-filter" type="button" data-media-filter="image" aria-pressed="false">Images</button>
-            </div>
-          </div>
-
-          <div class="media-command-layout">
-            <aside class="media-playlist" aria-label="Media playlist">
-              <div class="media-playlist-heading">
-                <span>Media Files</span>
-                <span data-media-result-count>7 Items</span>
-              </div>
-              <div class="media-playlist-scroll" data-media-playlist></div>
-            </aside>
-
-            <section class="media-stage" aria-label="Selected media">
-              <div class="media-stage-frame" data-media-stage aria-live="polite">
-                <iframe
-                  src="https://www.youtube.com/embed/VIDEO_ID"
-                  title="Roadimentary Gameplay Trailer"
-                  loading="lazy"
-                  referrerpolicy="strict-origin-when-cross-origin"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowfullscreen>
-                </iframe>
-              </div>
-
-              <div class="media-stage-details">
-                <div class="media-stage-copy">
-                  <span class="media-type-badge" data-media-type>Video 01</span>
-                  <h3 data-media-title>Gameplay Trailer</h3>
-                  <p data-media-caption>Gameplay footage and development highlights from Roadimentary.</p>
-                </div>
-
-                <div class="media-stage-footer">
-                  <span class="media-counter" data-media-counter>1 / 7</span>
-                  <div class="media-stage-controls">
-                    <button type="button" data-media-previous aria-label="Previous media">&#8592;</button>
-                    <button type="button" data-media-fullscreen>Expand</button>
-                    <button type="button" data-media-next aria-label="Next media">&#8594;</button>
-                  </div>
-                </div>
-              </div>
-            </section>
-          </div>
-
-          <noscript>
-            <div class="media-noscript-grid">
-              <img src="assets/sample1.png" alt="Roadimentary gameplay screenshot 1">
-              <img src="assets/sample2.png" alt="Roadimentary gameplay screenshot 2">
-              <img src="assets/sample3.png" alt="Roadimentary gameplay screenshot 3">
-              <img src="assets/sample4.png" alt="Roadimentary gameplay screenshot 4">
-              <img src="assets/sample5.png" alt="Roadimentary gameplay screenshot 5">
-              <img src="assets/sample6.png" alt="Roadimentary gameplay screenshot 6">
-            </div>
-          </noscript>
+        <div class="mobile-media-video">
+          <iframe
+            src="https://www.youtube.com/embed/VIDEO_ID"
+            title="Roadimentary Gameplay Trailer"
+            frameborder="0"
+            allowfullscreen>
+          </iframe>
         </div>
+
+        <div class="mobile-media-gallery">
+          <img src="assets/sample1.png" alt="Roadimentary gameplay screenshot 1">
+          <img src="assets/sample2.png" alt="Roadimentary gameplay screenshot 2">
+          <img src="assets/sample3.png" alt="Roadimentary gameplay screenshot 3">
+          <img src="assets/sample4.png" alt="Roadimentary gameplay screenshot 4">
+          <img src="assets/sample5.png" alt="Roadimentary gameplay screenshot 5">
+          <img src="assets/sample6.png" alt="Roadimentary gameplay screenshot 6">
+        </div>
+
       </div>
     </div>
 
@@ -452,8 +406,7 @@
     <!-- ABOUT PANEL -->
     <div class="mobile-panel" id="about">
       <div class="footer-window-content">
-        <div class="studio-project-board" data-studio-project-board data-board-context="mobile"></div>
-        <div class="about-container legacy-about-copy" aria-hidden="true">
+        <div class="about-container">
 
           <div class="about-header">
             <h2>LNJK Studio</h2>
@@ -619,72 +572,43 @@
     </div>
 
     <div class="win-content">
-      <div class="media-showcase media-command-shell">
-        <div class="media-command-center" data-media-command-center data-media-context="desktop">
-          <div class="media-command-toolbar">
-            <div class="media-command-heading">
-              <span class="media-command-eyebrow">Site Archive</span>
-              <h2>Roadimentary Field Media</h2>
-            </div>
+      <div class="media-showcase">
 
-            <div class="media-filter-group" role="group" aria-label="Filter media">
-              <button class="media-filter is-active" type="button" data-media-filter="all" aria-pressed="true">All</button>
-              <button class="media-filter" type="button" data-media-filter="video" aria-pressed="false">Videos</button>
-              <button class="media-filter" type="button" data-media-filter="image" aria-pressed="false">Images</button>
-            </div>
-          </div>
-
-          <div class="media-command-layout">
-            <aside class="media-playlist" aria-label="Media playlist">
-              <div class="media-playlist-heading">
-                <span>Media Files</span>
-                <span data-media-result-count>7 Items</span>
-              </div>
-              <div class="media-playlist-scroll" data-media-playlist></div>
-            </aside>
-
-            <section class="media-stage" aria-label="Selected media">
-              <div class="media-stage-frame" data-media-stage aria-live="polite">
-                <iframe
-                  src="https://www.youtube.com/embed/VIDEO_ID"
-                  title="Roadimentary Gameplay Trailer"
-                  loading="lazy"
-                  referrerpolicy="strict-origin-when-cross-origin"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowfullscreen>
-                </iframe>
-              </div>
-
-              <div class="media-stage-details">
-                <div class="media-stage-copy">
-                  <span class="media-type-badge" data-media-type>Video 01</span>
-                  <h3 data-media-title>Gameplay Trailer</h3>
-                  <p data-media-caption>Gameplay footage and development highlights from Roadimentary.</p>
-                </div>
-
-                <div class="media-stage-footer">
-                  <span class="media-counter" data-media-counter>1 / 7</span>
-                  <div class="media-stage-controls">
-                    <button type="button" data-media-previous aria-label="Previous media">&#8592;</button>
-                    <button type="button" data-media-fullscreen>Expand</button>
-                    <button type="button" data-media-next aria-label="Next media">&#8594;</button>
-                  </div>
-                </div>
-              </div>
-            </section>
-          </div>
-
-          <noscript>
-            <div class="media-noscript-grid">
-              <img src="assets/sample1.png" alt="Roadimentary gameplay screenshot 1">
-              <img src="assets/sample2.png" alt="Roadimentary gameplay screenshot 2">
-              <img src="assets/sample3.png" alt="Roadimentary gameplay screenshot 3">
-              <img src="assets/sample4.png" alt="Roadimentary gameplay screenshot 4">
-              <img src="assets/sample5.png" alt="Roadimentary gameplay screenshot 5">
-              <img src="assets/sample6.png" alt="Roadimentary gameplay screenshot 6">
-            </div>
-          </noscript>
+        <div class="media-featured">
+          <iframe
+            src="https://www.youtube.com/embed/VIDEO_ID"
+            title="Roadimentary Gameplay Trailer"
+            frameborder="0"
+            allowfullscreen>
+          </iframe>
         </div>
+
+        <div class="media-gallery">
+          <div class="media-card">
+            <img src="assets/sample1.png" alt="Roadimentary gameplay screenshot 1">
+          </div>
+
+          <div class="media-card">
+            <img src="assets/sample2.png" alt="Roadimentary gameplay screenshot 2">
+          </div>
+
+          <div class="media-card">
+            <img src="assets/sample3.png" alt="Roadimentary gameplay screenshot 3">
+          </div>
+
+          <div class="media-card">
+            <img src="assets/sample4.png" alt="Roadimentary gameplay screenshot 4">
+          </div>
+
+          <div class="media-card">
+            <img src="assets/sample5.png" alt="Roadimentary gameplay screenshot 5">
+          </div>
+
+          <div class="media-card">
+            <img src="assets/sample6.png" alt="Roadimentary gameplay screenshot 6">
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -1024,8 +948,7 @@
 
   <div class="win-content">
     <div class="footer-window-content">
-      <div class="studio-project-board" data-studio-project-board data-board-context="desktop"></div>
-      <div class="about-container legacy-about-copy" aria-hidden="true">
+      <div class="about-container">
 
         <div class="about-header">
           <h2>LNJK Studio</h2>
@@ -1079,9 +1002,6 @@
 <div id="screenshot-viewer">
   <img id="viewer-image" alt="Expanded screenshot preview">
 </div>
-
-<script src="media-command-center.js"></script>
-<script src="about-project-board.js"></script>
 
 </body>
 </html>
