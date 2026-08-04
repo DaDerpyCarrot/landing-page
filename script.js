@@ -15,6 +15,8 @@ const footerWindow = document.getElementById('win-footer');
 let currentWindow = null;
 
 const PLAYFAB_TITLE_ID = "1E22BA";
+const ADMIN_API_BASE_URL = "https://roadimentary-admin-dashboard.onrender.com/api";
+const PLAYER_PROFILE_URL = "profile.html";
 
 
 /* ================= BOOMARK DROP LOGIC ================= */
@@ -841,6 +843,45 @@ window.addEventListener("resize", () => {
 /* ================= PLAYFAB LOGIN ================= */
 
 document.addEventListener("DOMContentLoaded", function () {
+  const returnParams = new URLSearchParams(window.location.search);
+  const shouldOpenAdminLogin =
+    returnParams.get("open") === "account" ||
+    returnParams.get("destination") === "admin";
+
+  if (shouldOpenAdminLogin) {
+    const mobileAccountTab = document.querySelector('.mobile-tab[data-tab="signin"]');
+    const desktopAccountBookmark = document.querySelector('.bookmark[data-window="win-signin"]');
+
+    if (window.matchMedia("(max-width: 1023px)").matches) {
+      openMobileSheet("signin", {
+        trigger: mobileAccountTab,
+        addHistory: false
+      });
+
+      const mobileReturnStatus = document.getElementById("mobile-signin-status");
+      if (mobileReturnStatus) {
+        mobileReturnStatus.textContent =
+          "Sign in with your administrator-linked account to continue.";
+      }
+    } else {
+      const accountWindow = document.getElementById("win-signin");
+      const accountWrapper = desktopAccountBookmark?.closest(".bookmark-wrapper") || null;
+      openWindow(accountWindow, accountWrapper);
+
+      const desktopReturnStatus = document.getElementById("desktop-signin-status");
+      if (desktopReturnStatus) {
+        desktopReturnStatus.textContent =
+          "Sign in with your administrator-linked account to continue.";
+      }
+    }
+
+    returnParams.delete("open");
+    returnParams.delete("destination");
+    const cleanQuery = returnParams.toString();
+    const cleanUrl = `${window.location.pathname}${cleanQuery ? `?${cleanQuery}` : ""}${window.location.hash}`;
+    window.history.replaceState(window.history.state, "", cleanUrl);
+  }
+
   if (typeof PlayFab === "undefined" || !PlayFab.settings) {
     console.error("PlayFab SDK failed to load.");
     return;
@@ -857,13 +898,97 @@ document.addEventListener("DOMContentLoaded", function () {
   const desktopPassword = document.getElementById("desktop-password");
   const desktopBtn = document.getElementById("desktop-signin-btn");
   const desktopStatus = document.getElementById("desktop-signin-status");
+  const mobileAdminChoice = document.getElementById("mobile-admin-choice");
+  const desktopAdminChoice = document.getElementById("desktop-admin-choice");
 
-  function loginWithPlayFab(email, password, statusEl) {
+  function hideAdminChoices() {
+    [mobileAdminChoice, desktopAdminChoice].forEach(choice => {
+      if (!choice) return;
+      choice.hidden = true;
+      choice.classList.remove("is-busy");
+
+      const choiceStatus = choice.querySelector(".admin-choice-status");
+      if (choiceStatus) choiceStatus.textContent = "";
+    });
+  }
+
+  async function postToAdminApi(path, sessionTicket) {
+    let response;
+
+    try {
+      response = await fetch(`${ADMIN_API_BASE_URL}${path}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionTicket }),
+        cache: "no-store"
+      });
+    } catch (networkError) {
+      throw new Error("The secure admin service is temporarily unavailable.");
+    }
+
+    const payload = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(payload.message || "The secure admin request could not be completed.");
+    }
+
+    return payload;
+  }
+
+  function showAdminDestinationChoice(choice, sessionTicket, statusEl) {
+    if (!choice) {
+      window.location.assign(PLAYER_PROFILE_URL);
+      return;
+    }
+
+    hideAdminChoices();
+    choice.hidden = false;
+    statusEl.textContent = "Login successful. Choose where you would like to continue.";
+
+    const profileButton = choice.querySelector('[data-admin-destination="profile"]');
+    const dashboardButton = choice.querySelector('[data-admin-destination="dashboard"]');
+    const choiceStatus = choice.querySelector(".admin-choice-status");
+
+    if (profileButton) {
+      profileButton.onclick = () => window.location.assign(PLAYER_PROFILE_URL);
+    }
+
+    if (dashboardButton) {
+      dashboardButton.onclick = async () => {
+        choice.classList.add("is-busy");
+        if (profileButton) profileButton.disabled = true;
+        dashboardButton.disabled = true;
+        if (choiceStatus) choiceStatus.textContent = "Preparing secure dashboard access...";
+
+        try {
+          const handoff = await postToAdminApi("/auth/admin-handoff", sessionTicket);
+
+          if (!handoff.redirectUrl) {
+            throw new Error("The admin service did not provide a dashboard destination.");
+          }
+
+          window.location.assign(handoff.redirectUrl);
+        } catch (handoffError) {
+          choice.classList.remove("is-busy");
+          if (profileButton) profileButton.disabled = false;
+          dashboardButton.disabled = false;
+          if (choiceStatus) {
+            choiceStatus.textContent =
+              handoffError.message || "Dashboard access failed. Please try again.";
+          }
+        }
+      };
+    }
+  }
+
+  function loginWithPlayFab(email, password, statusEl, submitButton, adminChoice) {
     if (!email || !password) {
       statusEl.textContent = "Please enter both email and password.";
       return;
     }
 
+    hideAdminChoices();
+    if (submitButton) submitButton.disabled = true;
     statusEl.textContent = "Signing in...";
 
     const request = {
@@ -879,10 +1004,11 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     };
 
-    PlayFabClientSDK.LoginWithEmailAddress(request, function (result, error) {
+    PlayFabClientSDK.LoginWithEmailAddress(request, async function (result, error) {
       if (error) {
         console.error("PlayFab login error:", error);
         statusEl.textContent = error.errorMessage || "Login failed.";
+        if (submitButton) submitButton.disabled = false;
         return;
       }
 
@@ -893,6 +1019,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (!verification.verified) {
         clearStoredSession();
+        if (submitButton) submitButton.disabled = false;
 
         statusEl.textContent =
           "Your email is not verified yet. Sending a new verification email...";
@@ -973,11 +1100,25 @@ document.addEventListener("DOMContentLoaded", function () {
       sessionStorage.setItem("pfPlayFabId", data.PlayFabId);
       sessionStorage.setItem("pfEmail", email);
 
-      statusEl.textContent = "Login successful!";
+      statusEl.textContent = "Login successful. Checking account access...";
 
-      setTimeout(() => {
-        window.location.href = "profile.html";
-      }, 500);
+      try {
+        const adminStatus = await postToAdminApi("/auth/admin-status", data.SessionTicket);
+
+        if (adminStatus.isAdmin) {
+          if (submitButton) submitButton.disabled = false;
+          showAdminDestinationChoice(adminChoice, data.SessionTicket, statusEl);
+          return;
+        }
+
+        statusEl.textContent = "Login successful! Opening your player profile...";
+        setTimeout(() => window.location.assign(PLAYER_PROFILE_URL), 500);
+      } catch (adminCheckError) {
+        console.warn("Admin status check unavailable:", adminCheckError.message);
+        statusEl.textContent =
+          "Signed in. Admin check is unavailable, so you will continue to your player profile.";
+        setTimeout(() => window.location.assign(PLAYER_PROFILE_URL), 1200);
+      }
     });
   }
 
@@ -986,7 +1127,9 @@ document.addEventListener("DOMContentLoaded", function () {
       loginWithPlayFab(
         mobileEmail ? mobileEmail.value.trim() : "",
         mobilePassword ? mobilePassword.value : "",
-        mobileStatus
+        mobileStatus,
+        mobileBtn,
+        mobileAdminChoice
       );
     });
   }
@@ -996,7 +1139,9 @@ document.addEventListener("DOMContentLoaded", function () {
       loginWithPlayFab(
         desktopEmail ? desktopEmail.value.trim() : "",
         desktopPassword ? desktopPassword.value : "",
-        desktopStatus
+        desktopStatus,
+        desktopBtn,
+        desktopAdminChoice
       );
     });
   }

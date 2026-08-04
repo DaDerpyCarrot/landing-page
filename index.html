@@ -305,6 +305,23 @@
           </div>
           <button class="signin-btn" id="mobile-signin-btn">Sign In</button>
           <p id="mobile-signin-status"></p>
+
+          <section class="admin-destination-choice" id="mobile-admin-choice" hidden aria-labelledby="mobile-admin-choice-title">
+            <p class="admin-access-badge">Administrator access detected</p>
+            <h4 id="mobile-admin-choice-title">Choose your destination</h4>
+            <p class="admin-choice-copy">
+              Continue as a player, or securely open the Roadimentary admin dashboard.
+            </p>
+            <div class="admin-choice-actions">
+              <button type="button" class="admin-choice-btn admin-choice-btn-player" data-admin-destination="profile">
+                View Player Profile
+              </button>
+              <button type="button" class="admin-choice-btn admin-choice-btn-dashboard" data-admin-destination="dashboard">
+                Open Admin Dashboard
+              </button>
+            </div>
+            <p class="admin-choice-status" role="status" aria-live="polite"></p>
+          </section>
         </div>
 
         <div class="signin-links">
@@ -742,6 +759,23 @@
               </div>
             <button class="signin-btn" id="desktop-signin-btn">Sign In</button>
             <p id="desktop-signin-status"></p>
+
+            <section class="admin-destination-choice" id="desktop-admin-choice" hidden aria-labelledby="desktop-admin-choice-title">
+              <p class="admin-access-badge">Administrator access detected</p>
+              <h4 id="desktop-admin-choice-title">Choose your destination</h4>
+              <p class="admin-choice-copy">
+                Continue as a player, or securely open the Roadimentary admin dashboard.
+              </p>
+              <div class="admin-choice-actions">
+                <button type="button" class="admin-choice-btn admin-choice-btn-player" data-admin-destination="profile">
+                  View Player Profile
+                </button>
+                <button type="button" class="admin-choice-btn admin-choice-btn-dashboard" data-admin-destination="dashboard">
+                  Open Admin Dashboard
+                </button>
+              </div>
+              <p class="admin-choice-status" role="status" aria-live="polite"></p>
+            </section>
           </div>
 
           <div class="signin-links">

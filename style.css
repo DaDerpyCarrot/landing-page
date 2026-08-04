@@ -4941,6 +4941,183 @@ body.beaver-office-content-theme #win-features.route-animation-ready .features-g
 }
 
 /* ==========================================================
+   LANDING-TO-DASHBOARD DESTINATION CHOICE
+   Shown only after the server confirms an administrator.
+   ========================================================== */
+
+.admin-destination-choice[hidden] {
+  display: none !important;
+}
+
+body.beaver-office-content-theme .admin-destination-choice {
+  position: relative;
+  width: min(100%, 560px);
+  margin: 18px auto 4px;
+  padding: 22px clamp(16px, 3vw, 28px) 20px;
+  overflow: hidden;
+  color: var(--office-walnut);
+  text-align: left;
+  background:
+    linear-gradient(rgba(54, 119, 120, 0.08) 1px, transparent 1px),
+    var(--office-paper-bg);
+  background-size: 100% 28px, auto;
+  border: 3px solid var(--office-teal);
+  border-top: 7px solid var(--office-yellow);
+  border-radius: 8px;
+  box-shadow:
+    0 0 0 4px rgba(248, 224, 180, 0.72),
+    0 11px 24px var(--office-shadow);
+  animation: admin-choice-arrival 320ms ease-out both;
+}
+
+body.beaver-office-content-theme .admin-destination-choice::after {
+  content: "";
+  position: absolute;
+  right: -18px;
+  bottom: -18px;
+  width: 56px;
+  height: 56px;
+  background: var(--office-yellow);
+  border: 3px solid var(--office-teal-deep);
+  transform: rotate(45deg);
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+body.beaver-office-content-theme .admin-access-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 8px;
+  padding: 5px 9px;
+  color: #fffaf0;
+  font-family: "Lexend", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  background: var(--office-teal-deep);
+  border-radius: 999px;
+}
+
+body.beaver-office-content-theme .admin-access-badge::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  background: var(--office-yellow);
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(228, 167, 42, 0.22);
+}
+
+body.beaver-office-content-theme .admin-destination-choice h4 {
+  margin: 0 0 7px;
+  color: var(--office-walnut);
+  font-family: "Montserrat", sans-serif;
+  font-size: clamp(1.1rem, 2.5vw, 1.45rem);
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+
+body.beaver-office-content-theme .admin-choice-copy {
+  margin: 0 0 16px;
+  color: var(--office-copy);
+  font-family: "Lexend", sans-serif;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+body.beaver-office-content-theme .admin-choice-actions {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px;
+}
+
+body.beaver-office-content-theme .admin-choice-btn {
+  min-height: 46px;
+  padding: 10px 13px;
+  color: #342217;
+  font: 700 0.78rem/1.25 "Lexend", sans-serif;
+  letter-spacing: 0.025em;
+  border: 2px solid var(--office-teal-deep);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 150ms ease, box-shadow 150ms ease, filter 150ms ease;
+}
+
+body.beaver-office-content-theme .admin-choice-btn-player {
+  background: #fff4d6;
+  box-shadow: 0 4px 0 var(--office-teal-deep);
+}
+
+body.beaver-office-content-theme .admin-choice-btn-dashboard {
+  background: var(--office-yellow);
+  box-shadow: 0 4px 0 var(--office-teal-deep);
+}
+
+body.beaver-office-content-theme .admin-choice-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 var(--office-teal-deep);
+  filter: saturate(1.08);
+}
+
+body.beaver-office-content-theme .admin-choice-btn:focus-visible {
+  outline: 3px solid #fff8e8;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px var(--office-teal-deep);
+}
+
+body.beaver-office-content-theme :is(.admin-choice-btn, .signin-btn):disabled {
+  cursor: wait;
+  filter: grayscale(0.35);
+  opacity: 0.66;
+  transform: none;
+}
+
+body.beaver-office-content-theme .admin-choice-status {
+  position: relative;
+  z-index: 1;
+  min-height: 18px;
+  margin: 12px 0 0;
+  color: var(--office-teal-deep);
+  font: 600 0.78rem/1.4 "Lexend", sans-serif;
+  text-align: center;
+}
+
+@keyframes admin-choice-arrival {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 640px) {
+  body.beaver-office-content-theme .admin-destination-choice {
+    padding: 18px 14px 17px;
+  }
+
+  body.beaver-office-content-theme .admin-choice-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.beaver-office-content-theme .admin-destination-choice {
+    animation: none;
+  }
+
+  body.beaver-office-content-theme .admin-choice-btn {
+    transition: none;
+  }
+}
+
+/* ==========================================================
    MEDIA COMMAND CENTER
    Shared desktop/mobile viewer powered by media-command-center.js.
    ========================================================== */
