@@ -3,315 +3,405 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Roadimentary Profile</title>
+  <meta name="description" content="Your Roadimentary operator field office." />
+  <title>Operator Field Office | Roadimentary</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="profile-office.css" />
   <script src="https://download.playfab.com/PlayFabClientApi.js"></script>
 </head>
-<body>
+<body class="beaver-office-content-theme profile-office-page">
 
-  <!-- =========================
-       MOBILE PROFILE LAYOUT
-       ========================= -->
-  <div id="mobile-profile-layout">
-
-    <header id="mobile-header">
-      <img src="/assets/editedlogo1.png" alt="Roadimentary logo" class="mobile-logo">
+  <!-- ================= MOBILE FIELD OFFICE ================= -->
+  <div id="mobile-profile-layout" class="mobile-office-shell">
+    <header class="mobile-office-header">
+      <a href="index.html" class="mobile-office-home" aria-label="Return to Roadimentary landing page">
+        <img src="/assets/editedlogo1.png" alt="Roadimentary" class="mobile-logo" />
+      </a>
+      <div class="mobile-office-heading">
+        <span>Operator file</span>
+        <strong>Field Office</strong>
+      </div>
     </header>
 
-    <div class="mobile-profile-hero">
-      <div class="mobile-profile-card">
-        <h1 class="mobile-profile-name" id="mobile-profile-displayname">-</h1>
-        <p class="mobile-profile-subtitle">Your Operator Profile</p>
+    <section class="mobile-operator-ticket" aria-labelledby="mobile-profile-displayname">
+      <div class="operator-avatar operator-avatar-small" aria-hidden="true">
+        <span id="mobile-profile-initial">R</span>
+      </div>
+      <div class="operator-ticket-copy">
+        <p class="office-eyebrow">Roadimentary operations</p>
+        <h1 id="mobile-profile-displayname">Loading...</h1>
+        <p>Road Crew Operator <span class="operator-online-dot">Active</span></p>
+      </div>
+    </section>
 
-        <div class="mobile-profile-summary">
-          <div class="mobile-profile-stat">
-            <span class="mobile-stat-label">Username</span>
-            <span class="mobile-stat-value" id="mobile-profile-username">-</span>
+    <nav class="mobile-office-tabs" aria-label="Profile sections">
+      <button class="mobile-office-tab active" data-profile-tab="mobile-office-overview" aria-selected="true">Overview</button>
+      <button class="mobile-office-tab" data-profile-tab="mobile-office-operations" aria-selected="false">Operations</button>
+      <button class="mobile-office-tab" data-profile-tab="mobile-office-crew" aria-selected="false">Crew</button>
+      <button class="mobile-office-tab" data-profile-tab="mobile-office-boards" aria-selected="false">Boards</button>
+      <button class="mobile-office-tab" data-profile-tab="mobile-office-account" aria-selected="false">Account</button>
+    </nav>
+
+    <main class="mobile-office-content">
+      <section class="mobile-office-panel active" id="mobile-office-overview" tabindex="-1">
+        <article class="office-paper identity-paper">
+          <div class="paper-heading-row">
+            <div>
+              <p class="office-kicker">Personnel record</p>
+              <h2>Operator Overview</h2>
+            </div>
+            <span class="office-stamp">Verified file</span>
           </div>
 
-          <div class="mobile-profile-stat">
-            <span class="mobile-stat-label">Email</span>
-            <span class="mobile-stat-value" id="mobile-profile-email">-</span>
+          <dl class="identity-list">
+            <div><dt>Username</dt><dd id="mobile-profile-username">—</dd></div>
+            <div><dt>Email</dt><dd id="mobile-profile-email">—</dd></div>
+            <div><dt>Member since</dt><dd id="mobile-profile-created">—</dd></div>
+          </dl>
+        </article>
+
+        <article class="office-paper operator-note-paper">
+          <p class="office-kicker">Pinned operator note</p>
+          <blockquote id="mobile-profile-bio-preview">No operator note filed yet.</blockquote>
+        </article>
+
+        <section class="mobile-stat-snapshot" aria-label="Career snapshot">
+          <article class="office-mini-stat"><span>Contracts</span><strong>—</strong><small>Awaiting game data</small></article>
+          <article class="office-mini-stat"><span>Road score</span><strong>—</strong><small>Awaiting game data</small></article>
+        </section>
+
+        <article class="office-paper field-log-paper">
+          <div class="paper-heading-row">
+            <div>
+              <p class="office-kicker">Latest field report</p>
+              <h2>Activity Log</h2>
+            </div>
+            <span class="construction-tag">Under construction</span>
           </div>
-
-          <div class="mobile-profile-stat">
-            <span class="mobile-stat-label">Member Since</span>
-            <span class="mobile-stat-value" id="mobile-profile-created">-</span>
-          </div>
-        </div>
-
-        <div class="mobile-profile-panel-card" style="margin-top: 14px;">
-          <h2>Profile Customization</h2>
-
-          <div class="signin-form">
-            <input
-              type="text"
-              id="mobile-displayname-input"
-              placeholder="New display name"
-              maxlength="25"
-            />
-            <button class="signin-btn btn-primary" id="mobile-save-displayname-btn">Update Display Name</button>
-          </div>
-
-          <div class="signin-form" style="margin-top: 14px;">
-            <textarea
-              id="mobile-profile-bio"
-              placeholder="Write a short bio..."
-              maxlength="180"
-              rows="4"
-              style="padding:10px 12px; border:none; border-radius:4px; font-size:1rem; background:#d1dce5; color:#222; resize:vertical;"
-            ></textarea>
-            <button class="signin-btn" id="mobile-save-bio-btn">Save Bio</button>
-          </div>
-        </div>
-
-        <div class="mobile-profile-panel-card" style="margin-top: 14px;">
-          <h2>Account Actions</h2>
-
-          <div class="signin-form">
-            <button class="signin-btn btn-primary" id="mobile-send-reset-btn">Send Password Reset Email</button>
-            <button class="signin-btn btn-danger" id="mobile-logout-btn">Log Out</button>
-          </div>
-        </div>
-
-        <div class="mobile-profile-panel-card" style="margin-top: 14px;">
-          <h2>Account Details</h2>
-
-          <div class="mobile-profile-panel-grid">
-            <div class="mobile-profile-stat">
-              <span class="mobile-stat-label">PlayFab ID</span>
-              <span class="mobile-stat-value" id="mobile-profile-playfabid">-</span>
+          <div class="empty-ledger">
+            <span class="empty-ledger-marker" aria-hidden="true"></span>
+            <div>
+              <strong>No contract reports received</strong>
+              <p>Your latest jobs and milestones will be filed here once gameplay records are connected.</p>
             </div>
           </div>
-        </div>
+        </article>
+      </section>
 
-        <p id="mobile-profile-status">Loading profile...</p>
-      </div>
-    </div>
-
-    <div class="mobile-profile-tab-bar">
-      <button class="mobile-profile-tab active" data-profile-tab="mobile-profile-progress">
-        Progress
-      </button>
-
-      <button class="mobile-profile-tab" data-profile-tab="mobile-profile-leaderboards">
-        Boards
-      </button>
-
-      <button class="mobile-profile-tab" data-profile-tab="mobile-profile-friends">
-        Friends
-      </button>
-
-      <button class="mobile-profile-tab" data-profile-tab="mobile-profile-history">
-        History
-      </button>
-    </div>
-
-    <div class="mobile-profile-tab-content">
-
-      <div class="mobile-profile-panel active" id="mobile-profile-progress">
-        <div class="mobile-profile-panel-card">
-          <h2>Game Progress</h2>
-
-          <div class="mobile-profile-panel-grid">
-            <div class="mobile-profile-stat">
-              <span class="mobile-stat-label">Contracts Completed</span>
-              <span class="mobile-stat-value" id="mobile-profile-contracts">--</span>
+      <section class="mobile-office-panel" id="mobile-office-operations" tabindex="-1">
+        <article class="office-blueprint">
+          <div class="paper-heading-row">
+            <div>
+              <p class="office-kicker">Career telemetry</p>
+              <h2>Operations Board</h2>
             </div>
-
-            <div class="mobile-profile-stat">
-              <span class="mobile-stat-label">Total Earnings</span>
-              <span class="mobile-stat-value" id="mobile-profile-earnings">--</span>
-            </div>
-
-            <div class="mobile-profile-stat">
-              <span class="mobile-stat-label">Level</span>
-              <span class="mobile-stat-value" id="mobile-profile-level">--</span>
-            </div>
-
-            <div class="mobile-profile-stat">
-              <span class="mobile-stat-label">Road Score</span>
-              <span class="mobile-stat-value" id="mobile-profile-roadscore">--</span>
-            </div>
+            <span class="construction-tag">Data pending</span>
           </div>
 
-          <p style="margin-top: 12px; opacity: 0.8;">
-            These progression fields are placeholders until live game stats are connected.
-          </p>
-        </div>
-      </div>
+          <div class="operations-stat-grid">
+            <article><span>Contracts completed</span><strong id="mobile-profile-contracts">—</strong></article>
+            <article><span>Total earnings</span><strong id="mobile-profile-earnings">—</strong></article>
+            <article><span>Operator level</span><strong id="mobile-profile-level">—</strong></article>
+            <article><span>Road score</span><strong id="mobile-profile-roadscore">—</strong></article>
+          </div>
 
-      <div class="mobile-profile-panel" id="mobile-profile-leaderboards">
-        <div class="mobile-profile-panel-card">
-          <h2>Leaderboards</h2>
-          <p>Leaderboard data will appear here once game-side rankings are connected.</p>
-        </div>
-      </div>
+          <div class="blueprint-chart-placeholder" aria-label="Future performance chart">
+            <span style="--bar: 36%"></span><span style="--bar: 58%"></span><span style="--bar: 46%"></span><span style="--bar: 72%"></span><span style="--bar: 64%"></span>
+            <p>Performance chart connects when statistics go live</p>
+          </div>
+        </article>
+      </section>
 
-      <div class="mobile-profile-panel" id="mobile-profile-friends">
-        <div class="mobile-profile-panel-card">
-          <h2>Friends</h2>
-          <p>Friend features will appear here once social systems are connected.</p>
-        </div>
-      </div>
+      <section class="mobile-office-panel" id="mobile-office-crew" tabindex="-1">
+        <article class="office-corkboard">
+          <div class="paper-heading-row">
+            <div><p class="office-kicker">Crew network</p><h2>Operator Contacts</h2></div>
+            <span class="construction-tag">Coming soon</span>
+          </div>
+          <div class="office-empty-card">
+            <span class="empty-card-icon" aria-hidden="true">+</span>
+            <h3>Your crew board is ready</h3>
+            <p>Friends, invitations and recently encountered operators will appear here when social features are connected.</p>
+          </div>
+        </article>
+      </section>
 
-      <div class="mobile-profile-panel" id="mobile-profile-history">
-        <div class="mobile-profile-panel-card">
-          <h2>Construction History</h2>
-          <p>Contract history and recent activity will appear here once gameplay records are available.</p>
-        </div>
-      </div>
+      <section class="mobile-office-panel" id="mobile-office-boards" tabindex="-1">
+        <article class="office-paper leaderboard-paper">
+          <div class="paper-heading-row">
+            <div><p class="office-kicker">Regional rankings</p><h2>Operator Boards</h2></div>
+            <span class="construction-tag">Coming soon</span>
+          </div>
+          <div class="ranking-preview" aria-label="Leaderboard preview">
+            <div><span>01</span><strong>Ranking feed offline</strong><small>—</small></div>
+            <div><span>02</span><strong>Awaiting operator scores</strong><small>—</small></div>
+            <div><span>03</span><strong>Your placement will appear here</strong><small>—</small></div>
+          </div>
+        </article>
+      </section>
 
-    </div>
+      <section class="mobile-office-panel" id="mobile-office-account" tabindex="-1">
+        <article class="office-paper account-paper">
+          <div class="paper-heading-row">
+            <div><p class="office-kicker">Personnel desk</p><h2>Edit Operator File</h2></div>
+          </div>
+
+          <div class="office-form-group">
+            <label for="mobile-displayname-input">Display name</label>
+            <input type="text" id="mobile-displayname-input" maxlength="25" autocomplete="nickname" />
+            <button type="button" class="office-button office-button-primary" id="mobile-save-displayname-btn">Update display name</button>
+          </div>
+
+          <div class="office-form-group">
+            <div class="office-label-row">
+              <label for="mobile-profile-bio">Operator bio</label>
+              <span id="mobile-bio-count">0 / 180</span>
+            </div>
+            <textarea id="mobile-profile-bio" maxlength="180" rows="5" placeholder="Write a short operator note..."></textarea>
+            <button type="button" class="office-button" id="mobile-save-bio-btn">Save operator bio</button>
+          </div>
+        </article>
+
+        <article class="office-paper account-details-paper">
+          <p class="office-kicker">Private account details</p>
+          <dl class="identity-list compact-identity-list">
+            <div><dt>PlayFab ID</dt><dd id="mobile-profile-playfabid">—</dd></div>
+          </dl>
+          <div class="account-action-grid">
+            <button type="button" class="office-button office-button-primary" id="mobile-send-reset-btn">Send password reset</button>
+            <button type="button" class="office-button office-button-danger" id="mobile-logout-btn">Log out</button>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <p id="mobile-profile-status" class="profile-status-toast" role="status" aria-live="polite">Loading operator file...</p>
   </div>
 
-  <!-- =========================
-       DESKTOP PROFILE LAYOUT
-       ========================= -->
-  <div id="desktop-profile-layout">
-
+  <!-- ================= DESKTOP FIELD OFFICE ================= -->
+  <div id="desktop-profile-layout" class="desktop-office-shell">
     <header id="taskbar">
-      <div id="logo-container">
-        <img src="/assets/editedlogo1.png" alt="Roadimentary logo" id="logo">
-      </div>
+      <a href="index.html" id="logo-container" aria-label="Return to Roadimentary landing page">
+        <img src="/assets/editedlogo1.png" alt="Roadimentary" id="logo" />
+      </a>
 
-      <div class="bookmark-container">
-        <div class="bookmark-wrapper">
-          <button class="bookmark" data-window="win-leaderboards">Boards</button>
-        </div>
-        <div class="bookmark-wrapper">
-          <button class="bookmark" data-window="win-friends">Friends</button>
-        </div>
-        <div class="bookmark-wrapper">
-          <button class="bookmark" data-window="win-history">History</button>
-        </div>
-      </div>
+      <nav class="bookmark-container profile-bookmark-container" aria-label="Operator office windows">
+        <div class="bookmark-wrapper"><button class="bookmark profile-bookmark" data-window="win-profile-overview" aria-expanded="false">Overview</button></div>
+        <div class="bookmark-wrapper"><button class="bookmark profile-bookmark" data-window="win-profile-operations" aria-expanded="false">Operations</button></div>
+        <div class="bookmark-wrapper"><button class="bookmark profile-bookmark" data-window="win-profile-crew" aria-expanded="false">Crew</button></div>
+        <div class="bookmark-wrapper"><button class="bookmark profile-bookmark" data-window="win-profile-boards" aria-expanded="false">Boards</button></div>
+        <div class="bookmark-wrapper"><button class="bookmark profile-bookmark" data-window="win-profile-account" aria-expanded="false">Account</button></div>
+      </nav>
     </header>
 
     <div id="overlay"></div>
 
-    <main class="profile-center">
-      <section class="profile-card">
-        <h1 class="profile-name" id="desktop-profile-displayname">-</h1>
-        <p class="profile-subtitle">Your Operator Profile</p>
-
-        <div class="profile-stats-grid">
-          <div class="profile-stat">
-            <span class="stat-label">Username</span>
-            <span class="stat-value" id="desktop-profile-username">-</span>
-          </div>
-
-          <div class="profile-stat">
-            <span class="stat-label">Email</span>
-            <span class="stat-value" id="desktop-profile-email">-</span>
-          </div>
-
-          <div class="profile-stat">
-            <span class="stat-label">Member Since</span>
-            <span class="stat-value" id="desktop-profile-created">-</span>
-          </div>
-        </div>
-
-        <div class="profile-section-card" style="margin-top: 20px;">
-          <h2>Profile Customization</h2>
-
-          <div class="profile-inline-row" style="margin-top: 12px;">
-            <input
-              type="text"
-              id="desktop-displayname-input"
-              placeholder="New display name"
-              maxlength="25"
-            />
-            <button class="signin-btn btn-primary" id="desktop-save-displayname-btn">
-              Update Display Name
-            </button>
-          </div>
-
-          <div class="signin-form" style="margin-top: 14px;">
-            <textarea
-              id="desktop-profile-bio"
-              placeholder="Write a short bio..."
-              maxlength="180"
-              rows="4"
-              style="padding:10px 12px; border:none; border-radius:4px; font-size:1rem; background:#d1dce5; color:#222; resize:vertical;"
-            ></textarea>
-            <button class="signin-btn" id="desktop-save-bio-btn">Save Bio</button>
-          </div>
-        </div>
-
-        <div class="profile-section-card" style="margin-top: 20px;">
-          <h2>Account Actions</h2>
-
-          <div class="profile-actions-row" style="margin-top: 12px;">
-            <button class="signin-btn btn-primary" id="desktop-send-reset-btn">
-              Send Password Reset Email
-            </button>
-            <button class="signin-btn btn-danger" id="desktop-logout-btn">
-              Log Out
-            </button>
-          </div>
-        </div>
-
-        <div class="profile-section-card" style="margin-top: 20px;">
-          <h2>Account Details</h2>
-
-          <div class="profile-stats-grid" style="margin-top: 12px;">
-            <div class="profile-stat">
-              <span class="stat-label">PlayFab ID</span>
-              <span class="stat-value" id="desktop-profile-playfabid">-</span>
-            </div>
-          </div>
-        </div>
-
-        <p id="desktop-profile-status">Loading profile...</p>
-      </section>
+    <main class="desktop-office-background" aria-hidden="true">
+      <div class="office-background-sign">
+        <span>Roadimentary operations</span>
+        <strong>Operator Field Office</strong>
+        <small>Select a file from the tabs above</small>
+      </div>
+      <div class="office-desk-shadow"></div>
     </main>
 
     <div class="window-group">
-      <div class="desktop-window" id="win-leaderboards">
-        <div class="win-header">
-          <span>Leaderboards</span>
-          <button class="win-close">×</button>
-        </div>
-        <div class="win-content">
-          <div class="window-panel-content">
-            <h2>Top Operators</h2>
-            <p>Leaderboard data will appear here once game-side rankings are connected.</p>
+      <section class="desktop-window profile-office-window" id="win-profile-overview" aria-labelledby="overview-window-title" aria-hidden="true">
+        <header class="win-header">
+          <span id="overview-window-title">Operator Overview</span>
+          <button class="win-close" type="button" aria-label="Close Operator Overview">×</button>
+        </header>
+        <div class="win-content office-window-content">
+          <div class="office-overview-grid">
+            <aside class="operator-id-folder">
+              <div class="folder-tab">Personnel</div>
+              <div class="operator-avatar" aria-hidden="true"><span id="desktop-profile-initial">R</span></div>
+              <p class="office-eyebrow">Roadimentary operations</p>
+              <h1 id="desktop-profile-displayname">Loading...</h1>
+              <p class="operator-role">Road Crew Operator</p>
+              <span class="operator-status-badge"><i></i> Active operator</span>
+
+              <dl class="identity-list operator-identity-list">
+                <div><dt>Username</dt><dd id="desktop-profile-username">—</dd></div>
+                <div><dt>Email</dt><dd id="desktop-profile-email">—</dd></div>
+                <div><dt>Member since</dt><dd id="desktop-profile-created">—</dd></div>
+              </dl>
+            </aside>
+
+            <div class="overview-workspace">
+              <section class="career-snapshot" aria-labelledby="snapshot-title">
+                <div class="section-heading">
+                  <div><p class="office-kicker">At-a-glance report</p><h2 id="snapshot-title">Career Snapshot</h2></div>
+                  <span class="construction-tag">Telemetry pending</span>
+                </div>
+                <div class="office-stat-grid">
+                  <article><span>Contracts</span><strong>—</strong><small>Awaiting game data</small></article>
+                  <article><span>Road score</span><strong>—</strong><small>Awaiting game data</small></article>
+                  <article><span>Operator level</span><strong>—</strong><small>Awaiting game data</small></article>
+                  <article><span>Total earnings</span><strong>—</strong><small>Awaiting game data</small></article>
+                </div>
+              </section>
+
+              <div class="overview-lower-grid">
+                <article class="office-paper operator-note-paper">
+                  <p class="office-kicker">Pinned operator note</p>
+                  <blockquote id="desktop-profile-bio-preview">No operator note filed yet.</blockquote>
+                  <button type="button" class="paper-link" data-open-window="win-profile-account">Edit operator file →</button>
+                </article>
+
+                <article class="office-paper field-log-paper">
+                  <div class="section-heading compact-heading">
+                    <div><p class="office-kicker">Latest report</p><h2>Field Log</h2></div>
+                    <span class="construction-tag">Under construction</span>
+                  </div>
+                  <div class="empty-ledger">
+                    <span class="empty-ledger-marker" aria-hidden="true"></span>
+                    <div><strong>No contract reports received</strong><p>Completed jobs and milestones will be filed here.</p></div>
+                  </div>
+                </article>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
     </div>
 
     <div class="window-group">
-      <div class="desktop-window" id="win-friends">
-        <div class="win-header">
-          <span>Friends</span>
-          <button class="win-close">×</button>
-        </div>
-        <div class="win-content">
-          <div class="window-panel-content">
-            <h2>Friends List</h2>
-            <p>Friend features will appear here once social systems are connected.</p>
+      <section class="desktop-window profile-office-window" id="win-profile-operations" aria-labelledby="operations-window-title" aria-hidden="true">
+        <header class="win-header">
+          <span id="operations-window-title">Operations Board</span>
+          <button class="win-close" type="button" aria-label="Close Operations Board">×</button>
+        </header>
+        <div class="win-content office-window-content">
+          <div class="operations-layout">
+            <section class="office-blueprint operations-blueprint">
+              <div class="section-heading">
+                <div><p class="office-kicker">Career telemetry</p><h2>Construction Performance</h2></div>
+                <span class="construction-tag">Data connection pending</span>
+              </div>
+              <div class="operations-stat-grid">
+                <article><span>Contracts completed</span><strong id="desktop-profile-contracts">—</strong></article>
+                <article><span>Total earnings</span><strong id="desktop-profile-earnings">—</strong></article>
+                <article><span>Operator level</span><strong id="desktop-profile-level">—</strong></article>
+                <article><span>Road score</span><strong id="desktop-profile-roadscore">—</strong></article>
+              </div>
+              <div class="blueprint-chart-placeholder" aria-label="Future performance chart">
+                <span style="--bar: 36%"></span><span style="--bar: 58%"></span><span style="--bar: 46%"></span><span style="--bar: 72%"></span><span style="--bar: 64%"></span><span style="--bar: 82%"></span>
+                <p>Performance chart connects when statistics go live</p>
+              </div>
+            </section>
+
+            <aside class="office-paper assignment-board">
+              <p class="office-kicker">Current assignment</p>
+              <h2>No active contract</h2>
+              <p>Current jobs, contract conditions and completion progress can be connected here later.</p>
+              <div class="assignment-lines"><span></span><span></span><span></span></div>
+              <span class="office-stamp angled-stamp">Stand by</span>
+            </aside>
           </div>
         </div>
-      </div>
+      </section>
     </div>
 
     <div class="window-group">
-      <div class="desktop-window" id="win-history">
-        <div class="win-header">
-          <span>Construction History</span>
-          <button class="win-close">×</button>
-        </div>
-        <div class="win-content">
-          <div class="window-panel-content">
-            <h2>Contract History</h2>
-            <p>Contract history and recent activity will appear here once gameplay records are available.</p>
+      <section class="desktop-window profile-office-window" id="win-profile-crew" aria-labelledby="crew-window-title" aria-hidden="true">
+        <header class="win-header">
+          <span id="crew-window-title">Crew Network</span>
+          <button class="win-close" type="button" aria-label="Close Crew Network">×</button>
+        </header>
+        <div class="win-content office-window-content">
+          <div class="office-corkboard crew-corkboard">
+            <div class="section-heading">
+              <div><p class="office-kicker">Operator contacts</p><h2>Your Crew Board</h2></div>
+              <span class="construction-tag">Social system coming soon</span>
+            </div>
+            <div class="crew-card-grid">
+              <article class="pinned-note main-empty-note"><span class="note-pin"></span><h3>No crew contacts filed yet</h3><p>Friends, invitations and recently encountered players will be pinned here when social features are connected.</p></article>
+              <article class="pinned-note ghost-note"><span class="note-pin"></span><strong>Pending invite</strong><small>Empty slot</small></article>
+              <article class="pinned-note ghost-note"><span class="note-pin"></span><strong>Crew member</strong><small>Empty slot</small></article>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
     </div>
 
+    <div class="window-group">
+      <section class="desktop-window profile-office-window" id="win-profile-boards" aria-labelledby="boards-window-title" aria-hidden="true">
+        <header class="win-header">
+          <span id="boards-window-title">Operator Boards</span>
+          <button class="win-close" type="button" aria-label="Close Operator Boards">×</button>
+        </header>
+        <div class="win-content office-window-content">
+          <div class="boards-layout">
+            <section class="office-paper leaderboard-paper">
+              <div class="section-heading">
+                <div><p class="office-kicker">Regional rankings</p><h2>Top Operators</h2></div>
+                <span class="construction-tag">Ranking feed offline</span>
+              </div>
+              <div class="ranking-preview">
+                <div><span>01</span><strong>Ranking feed offline</strong><small>—</small></div>
+                <div><span>02</span><strong>Awaiting operator scores</strong><small>—</small></div>
+                <div><span>03</span><strong>Your placement will appear here</strong><small>—</small></div>
+              </div>
+            </section>
+            <aside class="office-paper ranking-file">
+              <p class="office-kicker">Your placement</p>
+              <strong class="ranking-number">—</strong>
+              <p>Complete ranked contracts to establish an operator position once leaderboard data is enabled.</p>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="window-group">
+      <section class="desktop-window profile-office-window" id="win-profile-account" aria-labelledby="account-window-title" aria-hidden="true">
+        <header class="win-header">
+          <span id="account-window-title">Personnel Desk</span>
+          <button class="win-close" type="button" aria-label="Close Personnel Desk">×</button>
+        </header>
+        <div class="win-content office-window-content">
+          <div class="account-office-layout">
+            <section class="office-paper account-paper">
+              <div class="section-heading">
+                <div><p class="office-kicker">Operator customization</p><h2>Edit Operator File</h2></div>
+                <span class="office-stamp">Private file</span>
+              </div>
+
+              <div class="office-form-group">
+                <label for="desktop-displayname-input">Display name</label>
+                <div class="office-inline-form">
+                  <input type="text" id="desktop-displayname-input" maxlength="25" autocomplete="nickname" />
+                  <button type="button" class="office-button office-button-primary" id="desktop-save-displayname-btn">Update name</button>
+                </div>
+              </div>
+
+              <div class="office-form-group">
+                <div class="office-label-row"><label for="desktop-profile-bio">Operator bio</label><span id="desktop-bio-count">0 / 180</span></div>
+                <textarea id="desktop-profile-bio" maxlength="180" rows="5" placeholder="Write a short operator note..."></textarea>
+                <button type="button" class="office-button" id="desktop-save-bio-btn">Save operator bio</button>
+              </div>
+            </section>
+
+            <aside class="account-side-column">
+              <article class="office-paper account-details-paper">
+                <p class="office-kicker">Private account details</p>
+                <dl class="identity-list compact-identity-list"><div><dt>PlayFab ID</dt><dd id="desktop-profile-playfabid">—</dd></div></dl>
+                <p class="privacy-note">This identifier is shown only inside your signed-in profile.</p>
+              </article>
+
+              <article class="office-paper account-actions-paper">
+                <p class="office-kicker">Account actions</p>
+                <button type="button" class="office-button office-button-primary" id="desktop-send-reset-btn">Send password reset</button>
+                <button type="button" class="office-button office-button-danger" id="desktop-logout-btn">Log out</button>
+              </article>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <p id="desktop-profile-status" class="profile-status-toast" role="status" aria-live="polite">Loading operator file...</p>
   </div>
 
   <script src="profile.js"></script>
