@@ -603,6 +603,69 @@ const mobileSheetTitles = {
 let currentMobilePanelId = "";
 let mobileSheetHistoryActive = false;
 let lastMobileSheetTrigger = null;
+let mobileTouchX = 0;
+let mobileTouchY = 0;
+
+function lockMobilePageScroll() {
+  document.body.classList.add("mobile-sheet-open");
+}
+
+function unlockMobilePageScroll() {
+  document.body.classList.remove("mobile-sheet-open");
+}
+
+document.addEventListener("touchstart", event => {
+  if (!document.body.classList.contains("mobile-sheet-open")) return;
+
+  const touch = event.touches[0];
+  if (!touch) return;
+
+  mobileTouchX = touch.clientX;
+  mobileTouchY = touch.clientY;
+}, { passive: true });
+
+document.addEventListener("touchmove", event => {
+  if (!document.body.classList.contains("mobile-sheet-open")) return;
+
+  const target = event.target instanceof Element
+    ? event.target
+    : event.target?.parentElement;
+  const scrollArea =
+    target?.closest(".mobile-panel#about.active") ||
+    target?.closest(".mobile-tab-content");
+
+  if (!scrollArea) {
+    event.preventDefault();
+    return;
+  }
+
+  const touch = event.touches[0];
+  if (!touch) return;
+
+  const deltaX = touch.clientX - mobileTouchX;
+  const deltaY = touch.clientY - mobileTouchY;
+  mobileTouchX = touch.clientX;
+  mobileTouchY = touch.clientY;
+
+  // Leave sideways gestures alone so the crew-card carousel still works.
+  if (Math.abs(deltaX) > Math.abs(deltaY)) return;
+
+  const atTop = scrollArea.scrollTop <= 0;
+  const atBottom =
+    scrollArea.scrollTop + scrollArea.clientHeight >=
+    scrollArea.scrollHeight - 1;
+  const cannotScroll =
+    scrollArea.scrollHeight <= scrollArea.clientHeight + 1;
+
+  // Stop a swipe at the sheet's boundary instead of letting it move the page.
+  if (
+    cannotScroll ||
+    (atTop && deltaY > 0) ||
+    (atBottom && deltaY < 0)
+  ) {
+    event.preventDefault();
+  }
+}, { passive: false });
 
 function getOwningMobileTab(panelId) {
   const accountPanels = [
@@ -648,14 +711,22 @@ function openMobileSheet(panelId, options = {}) {
   }
 
   if (mobileSheetContent) {
+    mobileSheetContent.classList.toggle(
+      "is-about-scroll-owner",
+      panelId === "about"
+    );
     mobileSheetContent.scrollTop = 0;
+  }
+
+  if (panelId === "about") {
+    targetPanel.scrollTop = 0;
   }
 
   mobileSheet.style.removeProperty("transform");
   mobileSheet.classList.remove("is-dragging");
   mobileSheet.classList.add("open");
   mobileSheet.setAttribute("aria-hidden", "false");
-  document.body.classList.add("mobile-sheet-open");
+  lockMobilePageScroll();
 
   if (!wasOpen && options.addHistory !== false) {
     history.pushState({ ...history.state, mobileSheetOpen: true }, "");
@@ -669,7 +740,8 @@ function closeMobileSheet(options = {}) {
   mobileSheet.style.removeProperty("transform");
   mobileSheet.classList.remove("open", "is-dragging");
   mobileSheet.setAttribute("aria-hidden", "true");
-  document.body.classList.remove("mobile-sheet-open");
+  mobileSheetContent?.classList.remove("is-about-scroll-owner");
+  unlockMobilePageScroll();
   panels.forEach(panel => panel.classList.remove("active"));
   setMobileTabState(null);
   currentMobilePanelId = "";

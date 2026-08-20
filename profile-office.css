@@ -1275,6 +1275,225 @@
   }
 }
 
+/* ----------------------------------------------------------
+   MOBILE PROFILE TASKBAR + CONTENT SHEET
+   Matches the landing page's mobile window structure while
+   preserving the field-office content treatment.
+   ---------------------------------------------------------- */
+
+@media (max-width: 1023px) {
+  .profile-office-page {
+    overflow: hidden;
+  }
+
+  .profile-office-page #mobile-profile-layout {
+    position: relative;
+    height: 100vh;
+    height: 100svh;
+    min-height: 0;
+    overflow: hidden;
+    padding-bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom));
+  }
+
+  .profile-office-page .mobile-office-header {
+    position: relative;
+    z-index: 20;
+    flex: 0 0 auto;
+  }
+
+  .profile-office-page .mobile-profile-stage {
+    position: relative;
+    display: grid;
+    min-height: calc(100svh - 64px - var(--mobile-nav-height));
+    place-items: center;
+    padding: 24px 16px clamp(42px, 10vh, 92px);
+    isolation: isolate;
+  }
+
+  .profile-office-page .mobile-profile-stage::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    background:
+      linear-gradient(rgba(31, 74, 75, 0.12), rgba(71, 42, 23, 0.22)),
+      linear-gradient(90deg, transparent 0 49.45%, rgba(238, 187, 58, 0.42) 49.45% 50.55%, transparent 50.55%);
+    pointer-events: none;
+  }
+
+  .profile-office-page .mobile-operator-ticket {
+    width: min(100%, 480px);
+    margin: 0;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 14px 16px;
+    padding: 21px 17px 17px;
+    transform: translateY(-2vh) rotate(-0.45deg);
+  }
+
+  .profile-office-page .mobile-open-file-button {
+    grid-column: 1 / -1;
+    min-height: 44px;
+    padding: 9px 14px;
+    color: #3f2a18;
+    font: 900 0.72rem/1.1 "Montserrat", "Segoe UI", sans-serif;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: var(--office-yellow, #e4a72a);
+    border: 2px solid #85591f;
+    border-radius: 5px;
+    box-shadow: 0 4px 0 rgba(100, 63, 23, 0.56);
+    touch-action: manipulation;
+  }
+
+  .profile-office-page .mobile-open-file-button:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 rgba(100, 63, 23, 0.56);
+  }
+
+  .profile-office-page .profile-mobile-tab-bar {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .profile-office-page .profile-mobile-tab-bar .mobile-office-tab {
+    min-width: 0;
+    min-height: 62px;
+    padding: 5px 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    overflow: hidden;
+    color: #26384a;
+    background: transparent;
+    border: 2px solid transparent;
+    border-radius: 7px;
+    box-shadow: none;
+    touch-action: manipulation;
+  }
+
+  .profile-office-page .profile-mobile-tab-bar .mobile-office-tab:hover {
+    transform: none;
+    filter: brightness(0.97);
+  }
+
+  .profile-office-page .profile-mobile-tab-bar .mobile-office-tab.active {
+    color: #132435;
+    background: rgba(244, 180, 0, 0.24);
+    border-color: rgba(74, 85, 104, 0.7);
+    box-shadow: inset 0 -3px 0 rgba(244, 180, 0, 0.85);
+  }
+
+  .profile-office-page .profile-mobile-tab-bar .tab-icon-img {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 auto;
+    object-fit: contain;
+  }
+
+  .profile-office-page .profile-mobile-tab-bar .mobile-tab-label {
+    font-family: "Montserrat", "Segoe UI", sans-serif;
+    font-size: clamp(0.54rem, 2.35vw, 0.66rem);
+    font-weight: 900;
+    letter-spacing: 0.01em;
+  }
+
+  .profile-office-page .profile-mobile-bottom-sheet {
+    height: 64vh;
+    height: min(64dvh, 720px);
+  }
+
+  .profile-office-page .profile-mobile-bottom-sheet .mobile-sheet-header {
+    font-family: "Montserrat", "Segoe UI", sans-serif;
+  }
+
+  .profile-office-page .profile-mobile-bottom-sheet .mobile-sheet-title-row h2 {
+    color: #26384a;
+    font-family: "Montserrat", "Segoe UI", sans-serif;
+    font-size: 0.98rem;
+    font-weight: 900;
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
+  }
+
+  .profile-office-page .profile-mobile-bottom-sheet .mobile-tab-content {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    margin: 0;
+    padding: 14px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    color: var(--office-walnut, #4b2b1a);
+    background:
+      linear-gradient(rgba(255, 242, 207, 0.035), rgba(65, 39, 23, 0.08)),
+      var(--office-wood-bg, linear-gradient(145deg, #c3915f, #8a5938));
+    touch-action: pan-y;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-color: var(--office-teal, #367778) rgba(80, 48, 27, 0.18);
+    scrollbar-width: thin;
+  }
+
+  .profile-office-page .profile-mobile-bottom-sheet .mobile-tab-content::-webkit-scrollbar {
+    width: 7px;
+  }
+
+  .profile-office-page .profile-mobile-bottom-sheet .mobile-tab-content::-webkit-scrollbar-thumb {
+    background: var(--office-teal, #367778);
+    border-radius: 999px;
+  }
+
+  .profile-office-page .mobile-office-panel {
+    min-height: 0;
+    padding: 0 0 28px;
+    background: transparent;
+  }
+
+  .profile-office-page .mobile-office-panel.active {
+    display: grid;
+    gap: 16px;
+  }
+
+  .profile-office-page .mobile-office-panel .office-paper,
+  .profile-office-page .mobile-office-panel .office-blueprint,
+  .profile-office-page .mobile-office-panel .office-corkboard {
+    width: 100%;
+  }
+
+  .profile-office-page #mobile-profile-status {
+    z-index: 1210;
+    bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom) + 12px);
+    pointer-events: none;
+  }
+
+  .profile-office-page.mobile-sheet-open #mobile-profile-status {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 390px) {
+  .profile-office-page .profile-mobile-tab-bar {
+    gap: 3px;
+    padding-inline: 5px;
+  }
+
+  .profile-office-page .profile-mobile-tab-bar .mobile-office-tab {
+    padding-inline: 1px;
+  }
+
+  .profile-office-page .profile-mobile-tab-bar .tab-icon-img {
+    width: 29px;
+    height: 29px;
+  }
+
+  .profile-office-page .profile-mobile-bottom-sheet .mobile-tab-content {
+    padding: 11px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .profile-office-page *,
   .profile-office-page *::before,

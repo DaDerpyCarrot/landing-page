@@ -119,27 +119,241 @@ window.addEventListener("resize", () => {
 });
 
 /* ==========================================================
-   MOBILE OFFICE FILE TABS
+   MOBILE PROFILE BOTTOM SHEET
+   Mirrors the landing page's fixed navigation and draggable,
+   internally scrolling content window.
    ========================================================== */
 
 const mobileTabs = document.querySelectorAll(".mobile-office-tab");
 const mobilePanels = document.querySelectorAll(".mobile-office-panel");
+const profileMobileSheet = document.getElementById("profile-mobile-bottom-sheet");
+const profileMobileSheetContent = document.getElementById("profile-mobile-sheet-content");
+const profileMobileSheetTitle = document.getElementById("profile-mobile-sheet-title");
+const profileMobileSheetClose = document.querySelector(".profile-mobile-sheet-close");
+const profileMobileSheetBackdrop = document.querySelector(".profile-mobile-sheet-backdrop");
+const profileMobileSheetDragArea = document.getElementById("profile-mobile-sheet-drag-area");
+const profileMobileOpenFile = document.querySelector(".mobile-open-file-button");
+const profileMobileMedia = window.matchMedia("(max-width: 1023px)");
+
+const profileMobileTitles = {
+  "mobile-office-overview": "Operator Overview",
+  "mobile-office-operations": "Operations Board",
+  "mobile-office-crew": "Crew Network",
+  "mobile-office-boards": "Operator Boards",
+  "mobile-office-account": "Personnel Desk"
+};
+
+let currentMobileProfilePanel = "";
+let profileMobileHistoryActive = false;
+let lastMobileProfileTrigger = null;
+let profileTouchX = 0;
+let profileTouchY = 0;
+
+function setMobileProfileTabState(activeTab) {
+  mobileTabs.forEach(tab => {
+    const isActive = tab === activeTab;
+    tab.classList.toggle("active", isActive);
+    tab.setAttribute("aria-selected", isActive ? "true" : "false");
+  });
+}
+
+function openMobileProfileSheet(panelId, options = {}) {
+  if (!profileMobileSheet || !profileMobileMedia.matches) return;
+
+  const targetPanel = document.getElementById(panelId);
+  if (!targetPanel?.classList.contains("mobile-office-panel")) return;
+
+  const wasOpen = profileMobileSheet.classList.contains("open");
+  const activeTab = Array.from(mobileTabs).find(
+    tab => tab.dataset.profileTab === panelId
+  );
+
+  mobilePanels.forEach(panel => panel.classList.toggle("active", panel === targetPanel));
+  setMobileProfileTabState(activeTab || null);
+
+  currentMobileProfilePanel = panelId;
+  lastMobileProfileTrigger = options.trigger instanceof HTMLElement
+    ? options.trigger
+    : activeTab || lastMobileProfileTrigger;
+
+  if (profileMobileSheetTitle) {
+    profileMobileSheetTitle.textContent = profileMobileTitles[panelId] || "Operator File";
+  }
+
+  if (profileMobileSheetContent) profileMobileSheetContent.scrollTop = 0;
+
+  profileMobileSheet.style.removeProperty("transform");
+  profileMobileSheet.classList.remove("is-dragging");
+  profileMobileSheet.classList.add("open");
+  profileMobileSheet.setAttribute("aria-hidden", "false");
+  document.body.classList.add("mobile-sheet-open");
+
+  if (!wasOpen && options.addHistory !== false) {
+    history.pushState({ ...history.state, profileMobileSheetOpen: true }, "");
+    profileMobileHistoryActive = true;
+  }
+}
+
+function closeMobileProfileSheet(options = {}) {
+  if (!profileMobileSheet?.classList.contains("open")) return;
+
+  profileMobileSheet.style.removeProperty("transform");
+  profileMobileSheet.classList.remove("open", "is-dragging");
+  profileMobileSheet.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("mobile-sheet-open");
+  mobilePanels.forEach(panel => panel.classList.remove("active"));
+  setMobileProfileTabState(null);
+  currentMobileProfilePanel = "";
+
+  if (options.restoreFocus !== false && lastMobileProfileTrigger instanceof HTMLElement) {
+    lastMobileProfileTrigger.focus({ preventScroll: true });
+  }
+
+  if (options.updateHistory !== false && profileMobileHistoryActive) {
+    profileMobileHistoryActive = false;
+    history.back();
+  }
+}
 
 mobileTabs.forEach(tab => {
   tab.addEventListener("click", () => {
-    const targetPanel = document.getElementById(tab.dataset.profileTab);
-    if (!targetPanel) return;
+    const panelId = tab.dataset.profileTab;
+    const sameOpenPanel =
+      profileMobileSheet?.classList.contains("open") &&
+      currentMobileProfilePanel === panelId;
 
-    mobileTabs.forEach(item => {
-      const isActive = item === tab;
-      item.classList.toggle("active", isActive);
-      item.setAttribute("aria-selected", isActive ? "true" : "false");
-    });
-
-    mobilePanels.forEach(panel => panel.classList.toggle("active", panel === targetPanel));
-    targetPanel.focus({ preventScroll: true });
+    if (sameOpenPanel) {
+      closeMobileProfileSheet();
+    } else {
+      openMobileProfileSheet(panelId, { trigger: tab });
+    }
   });
 });
+
+profileMobileOpenFile?.addEventListener("click", () => {
+  openMobileProfileSheet(profileMobileOpenFile.dataset.profileTab, {
+    trigger: profileMobileOpenFile
+  });
+});
+
+profileMobileSheetClose?.addEventListener("click", () => closeMobileProfileSheet());
+profileMobileSheetBackdrop?.addEventListener("click", () => closeMobileProfileSheet());
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && profileMobileSheet?.classList.contains("open")) {
+    closeMobileProfileSheet();
+  }
+});
+
+window.addEventListener("popstate", () => {
+  if (!profileMobileSheet?.classList.contains("open")) return;
+  profileMobileHistoryActive = false;
+  closeMobileProfileSheet({ updateHistory: false, restoreFocus: false });
+});
+
+window.addEventListener("resize", () => {
+  if (profileMobileMedia.matches || !profileMobileSheet?.classList.contains("open")) return;
+  profileMobileHistoryActive = false;
+  closeMobileProfileSheet({ updateHistory: false, restoreFocus: false });
+});
+
+document.addEventListener("touchstart", event => {
+  if (!profileMobileSheet?.classList.contains("open")) return;
+  const touch = event.touches[0];
+  if (!touch) return;
+  profileTouchX = touch.clientX;
+  profileTouchY = touch.clientY;
+}, { passive: true });
+
+document.addEventListener("touchmove", event => {
+  if (!profileMobileSheet?.classList.contains("open")) return;
+
+  const target = event.target instanceof Element
+    ? event.target
+    : event.target?.parentElement;
+  const scrollArea = target?.closest("#profile-mobile-sheet-content");
+
+  if (!scrollArea) {
+    event.preventDefault();
+    return;
+  }
+
+  const touch = event.touches[0];
+  if (!touch) return;
+
+  const deltaX = touch.clientX - profileTouchX;
+  const deltaY = touch.clientY - profileTouchY;
+  profileTouchX = touch.clientX;
+  profileTouchY = touch.clientY;
+
+  if (Math.abs(deltaX) > Math.abs(deltaY)) return;
+
+  const atTop = scrollArea.scrollTop <= 0;
+  const atBottom =
+    scrollArea.scrollTop + scrollArea.clientHeight >= scrollArea.scrollHeight - 1;
+  const cannotScroll = scrollArea.scrollHeight <= scrollArea.clientHeight + 1;
+
+  if (
+    cannotScroll ||
+    (atTop && deltaY > 0) ||
+    (atBottom && deltaY < 0)
+  ) {
+    event.preventDefault();
+  }
+}, { passive: false });
+
+if (profileMobileSheet && profileMobileSheetDragArea) {
+  let dragPointerId = null;
+  let dragStartY = 0;
+  let dragOffsetY = 0;
+  let dragStartedAt = 0;
+
+  profileMobileSheetDragArea.addEventListener("pointerdown", event => {
+    if (
+      !profileMobileSheet.classList.contains("open") ||
+      event.button !== 0 ||
+      event.target.closest(".profile-mobile-sheet-close")
+    ) return;
+
+    dragPointerId = event.pointerId;
+    dragStartY = event.clientY;
+    dragOffsetY = 0;
+    dragStartedAt = performance.now();
+    profileMobileSheet.classList.add("is-dragging");
+    profileMobileSheetDragArea.setPointerCapture(dragPointerId);
+  });
+
+  profileMobileSheetDragArea.addEventListener("pointermove", event => {
+    if (event.pointerId !== dragPointerId) return;
+    dragOffsetY = Math.max(0, event.clientY - dragStartY);
+    profileMobileSheet.style.transform = `translate(-50%, ${dragOffsetY}px)`;
+    event.preventDefault();
+  });
+
+  const finishProfileMobileDrag = event => {
+    if (event.pointerId !== dragPointerId) return;
+
+    const dragDuration = Math.max(performance.now() - dragStartedAt, 1);
+    const downwardVelocity = dragOffsetY / dragDuration;
+    const closeThreshold = Math.min(140, profileMobileSheet.offsetHeight * 0.28);
+    const shouldClose =
+      dragOffsetY > closeThreshold ||
+      (dragOffsetY > 45 && downwardVelocity > 0.65);
+
+    if (profileMobileSheetDragArea.hasPointerCapture(dragPointerId)) {
+      profileMobileSheetDragArea.releasePointerCapture(dragPointerId);
+    }
+
+    dragPointerId = null;
+    profileMobileSheet.classList.remove("is-dragging");
+    profileMobileSheet.style.removeProperty("transform");
+
+    if (shouldClose) closeMobileProfileSheet();
+  };
+
+  profileMobileSheetDragArea.addEventListener("pointerup", finishProfileMobileDrag);
+  profileMobileSheetDragArea.addEventListener("pointercancel", finishProfileMobileDrag);
+}
 
 /* ==========================================================
    PROFILE DATA HELPERS

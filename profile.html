@@ -23,27 +23,45 @@
       </div>
     </header>
 
-    <section class="mobile-operator-ticket" aria-labelledby="mobile-profile-displayname">
-      <div class="operator-avatar operator-avatar-small" aria-hidden="true">
-        <span id="mobile-profile-initial">R</span>
-      </div>
-      <div class="operator-ticket-copy">
-        <p class="office-eyebrow">Roadimentary operations</p>
-        <h1 id="mobile-profile-displayname">Loading...</h1>
-        <p>Road Crew Operator <span class="operator-online-dot">Active</span></p>
-      </div>
-    </section>
+    <main class="mobile-profile-stage">
+      <section class="mobile-operator-ticket" aria-labelledby="mobile-profile-displayname">
+        <div class="operator-avatar operator-avatar-small" aria-hidden="true">
+          <span id="mobile-profile-initial">R</span>
+        </div>
+        <div class="operator-ticket-copy">
+          <p class="office-eyebrow">Roadimentary operations</p>
+          <h1 id="mobile-profile-displayname">Loading...</h1>
+          <p>Road Crew Operator <span class="operator-online-dot">Active</span></p>
+        </div>
+        <button class="mobile-open-file-button" type="button" data-profile-tab="mobile-office-overview">
+          Open operator file
+        </button>
+      </section>
+    </main>
 
-    <nav class="mobile-office-tabs" aria-label="Profile sections">
-      <button class="mobile-office-tab active" data-profile-tab="mobile-office-overview" aria-selected="true">Overview</button>
-      <button class="mobile-office-tab" data-profile-tab="mobile-office-operations" aria-selected="false">Operations</button>
-      <button class="mobile-office-tab" data-profile-tab="mobile-office-crew" aria-selected="false">Crew</button>
-      <button class="mobile-office-tab" data-profile-tab="mobile-office-boards" aria-selected="false">Boards</button>
-      <button class="mobile-office-tab" data-profile-tab="mobile-office-account" aria-selected="false">Account</button>
-    </nav>
+    <button
+      class="mobile-sheet-backdrop profile-mobile-sheet-backdrop"
+      type="button"
+      tabindex="-1"
+      aria-label="Close profile section"
+    ></button>
 
-    <main class="mobile-office-content">
-      <section class="mobile-office-panel active" id="mobile-office-overview" tabindex="-1">
+    <section
+      class="mobile-bottom-sheet profile-mobile-bottom-sheet"
+      id="profile-mobile-bottom-sheet"
+      aria-hidden="true"
+      aria-labelledby="profile-mobile-sheet-title"
+    >
+      <div class="mobile-sheet-header" id="profile-mobile-sheet-drag-area">
+        <div class="mobile-sheet-handle" aria-hidden="true"></div>
+        <div class="mobile-sheet-title-row">
+          <h2 id="profile-mobile-sheet-title">Operator Overview</h2>
+          <button class="mobile-sheet-close profile-mobile-sheet-close" type="button" aria-label="Close profile section">&times;</button>
+        </div>
+      </div>
+
+      <main class="mobile-office-content mobile-tab-content" id="profile-mobile-sheet-content">
+      <section class="mobile-office-panel" id="mobile-office-overview" tabindex="-1">
         <article class="office-paper identity-paper">
           <div class="paper-heading-row">
             <div>
@@ -173,7 +191,31 @@
           </div>
         </article>
       </section>
-    </main>
+      </main>
+    </section>
+
+    <nav class="mobile-tab-bar profile-mobile-tab-bar" aria-label="Profile sections">
+      <button class="mobile-tab mobile-office-tab" data-profile-tab="mobile-office-overview" aria-label="Open Overview" aria-controls="mobile-office-overview" aria-selected="false">
+        <img src="assets/icon_content.png" alt="" class="tab-icon-img">
+        <span class="mobile-tab-label">Overview</span>
+      </button>
+      <button class="mobile-tab mobile-office-tab" data-profile-tab="mobile-office-operations" aria-label="Open Operations" aria-controls="mobile-office-operations" aria-selected="false">
+        <img src="assets/icon_bulldozer.png" alt="" class="tab-icon-img">
+        <span class="mobile-tab-label">Ops</span>
+      </button>
+      <button class="mobile-tab mobile-office-tab" data-profile-tab="mobile-office-crew" aria-label="Open Crew" aria-controls="mobile-office-crew" aria-selected="false">
+        <img src="assets/icon_three_beaver.png" alt="" class="tab-icon-img">
+        <span class="mobile-tab-label">Crew</span>
+      </button>
+      <button class="mobile-tab mobile-office-tab" data-profile-tab="mobile-office-boards" aria-label="Open Boards" aria-controls="mobile-office-boards" aria-selected="false">
+        <img src="assets/icon_gameplay.png" alt="" class="tab-icon-img">
+        <span class="mobile-tab-label">Boards</span>
+      </button>
+      <button class="mobile-tab mobile-office-tab" data-profile-tab="mobile-office-account" aria-label="Open Account" aria-controls="mobile-office-account" aria-selected="false">
+        <img src="assets/icon_signin.png" alt="" class="tab-icon-img">
+        <span class="mobile-tab-label">Account</span>
+      </button>
+    </nav>
 
     <p id="mobile-profile-status" class="profile-status-toast" role="status" aria-live="polite">Loading operator file...</p>
   </div>

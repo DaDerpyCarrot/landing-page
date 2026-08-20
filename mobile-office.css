@@ -1,0 +1,607 @@
+/* ==========================================================
+   ROADIMENTARY MOBILE WINDOW INTERIOR REFRESH
+   Keeps the current mobile navigation and draggable sheet.
+   Only the content inside each mobile panel is restyled.
+   ========================================================== */
+
+@media (max-width: 1023px) {
+  body.mobile-sheet-open {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  body.beaver-office-content-theme .mobile-bottom-sheet.open {
+    overscroll-behavior: contain;
+  }
+
+  body.beaver-office-content-theme .mobile-tab-content {
+    position: relative;
+    touch-action: auto;
+    overscroll-behavior-x: none;
+    overscroll-behavior-y: contain;
+  }
+
+  body.beaver-office-content-theme .mobile-panel#about {
+    touch-action: auto;
+  }
+
+  /* About injects a much deeper project-board layout than the other panels.
+     Give it ownership of vertical scrolling instead of relying on the shared
+     sheet scroller; this avoids a nested-overflow deadlock on mobile browsers. */
+  body.beaver-office-content-theme .mobile-tab-content.is-about-scroll-owner {
+    overflow-y: hidden;
+  }
+
+  body.beaver-office-content-theme .mobile-panel#about.active {
+    box-sizing: border-box;
+    height: 100%;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    touch-action: pan-y;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-color: var(--office-teal) rgba(82, 49, 27, 0.12);
+    scrollbar-width: thin;
+  }
+
+  body.beaver-office-content-theme .mobile-panel#about.active::-webkit-scrollbar {
+    width: 7px;
+  }
+
+  body.beaver-office-content-theme .mobile-panel#about.active::-webkit-scrollbar-thumb {
+    background: var(--office-teal);
+    border-radius: 999px;
+  }
+
+  /* ---------- Shared mobile window interior ---------- */
+
+  body.beaver-office-content-theme .mobile-tab-content {
+    color: var(--office-walnut);
+    background:
+      linear-gradient(rgba(255, 242, 207, 0.035), rgba(65, 39, 23, 0.08)),
+      var(--office-wood-bg);
+    scrollbar-color: var(--office-teal) rgba(80, 48, 27, 0.18);
+  }
+
+  body.beaver-office-content-theme .mobile-panel {
+    padding: 16px 14px 34px;
+    color: var(--office-walnut);
+    background:
+      linear-gradient(rgba(255, 241, 203, 0.04), rgba(71, 43, 25, 0.055)),
+      var(--office-wood-bg);
+  }
+
+  body.beaver-office-content-theme .mobile-panel :is(h1, h2, h3, h4, button) {
+    font-family: "Montserrat", "Segoe UI", sans-serif;
+  }
+
+  body.beaver-office-content-theme .mobile-panel :is(p, li, label, input, textarea, small) {
+    font-family: "Lexend", "Segoe UI", sans-serif;
+  }
+
+  body.beaver-office-content-theme .mobile-panel :is(
+    .mobile-download-card,
+    .mobile-requirements-card,
+    .mobile-feature-hero,
+    .mobile-feature-card,
+    .signin-container
+  ) {
+    position: relative;
+    color: var(--office-walnut);
+    background:
+      linear-gradient(rgba(54, 119, 120, 0.075) 1px, transparent 1px),
+      var(--office-paper-bg);
+    background-size: 100% 28px, auto;
+    border: 3px solid var(--office-teal);
+    border-top: 7px solid var(--office-yellow);
+    border-radius: 8px;
+    box-shadow:
+      0 0 0 3px rgba(248, 224, 180, 0.62),
+      0 10px 24px var(--office-shadow);
+  }
+
+  body.beaver-office-content-theme .mobile-panel :is(
+    .mobile-download-card,
+    .mobile-requirements-card,
+    .signin-container
+  )::after {
+    content: "";
+    position: absolute;
+    right: 14px;
+    top: -13px;
+    width: 46px;
+    height: 18px;
+    background: rgba(245, 217, 146, 0.74);
+    border-inline: 1px solid rgba(103, 72, 40, 0.12);
+    box-shadow: 0 2px 4px rgba(74, 45, 26, 0.08);
+    transform: rotate(2deg);
+    pointer-events: none;
+  }
+
+  /* ---------- Download window ---------- */
+
+  body.beaver-office-content-theme .mobile-download-layout {
+    gap: 18px;
+  }
+
+  body.beaver-office-content-theme :is(.mobile-download-card, .mobile-requirements-card) {
+    padding: 22px 18px;
+    text-align: left;
+  }
+
+  body.beaver-office-content-theme :is(.mobile-download-card, .mobile-requirements-card) h2 {
+    margin-bottom: 8px;
+    color: var(--office-walnut);
+    font-size: clamp(1.25rem, 6vw, 1.6rem);
+    font-weight: 900;
+    line-height: 1.08;
+  }
+
+  body.beaver-office-content-theme .mobile-download-build-label {
+    display: inline-flex;
+    margin: 0 0 17px;
+    padding: 5px 9px;
+    color: #fff8e8;
+    background: var(--office-teal-deep);
+    border-left: 4px solid var(--office-yellow);
+    border-radius: 3px;
+    font-size: 0.68rem;
+    font-weight: 750;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  body.beaver-office-content-theme .mobile-download-meta {
+    gap: 9px;
+  }
+
+  body.beaver-office-content-theme .mobile-download-meta div {
+    padding: 11px 12px;
+    color: var(--office-copy);
+    background: rgba(255, 249, 231, 0.66);
+    border: 1px solid rgba(54, 119, 120, 0.22);
+    border-left: 5px solid var(--office-yellow);
+    border-radius: 4px;
+  }
+
+  body.beaver-office-content-theme .mobile-download-meta strong {
+    color: var(--office-teal-deep);
+  }
+
+  body.beaver-office-content-theme :is(.mobile-download-main-btn, .mobile-download-secondary-btn) {
+    min-height: 46px;
+    margin-bottom: 11px;
+    padding: 11px 14px;
+    border-radius: 5px;
+    font-size: 0.78rem;
+    letter-spacing: 0.045em;
+  }
+
+  body.beaver-office-content-theme .mobile-download-main-btn {
+    color: #3d2919;
+    background: var(--office-yellow);
+    border: 2px solid var(--office-teal-deep);
+    box-shadow: 0 5px 0 var(--office-teal-deep);
+  }
+
+  body.beaver-office-content-theme .mobile-download-secondary-btn {
+    color: var(--office-teal-deep);
+    background: rgba(255, 249, 231, 0.78);
+    border: 2px solid var(--office-teal);
+    box-shadow: 0 4px 0 rgba(40, 93, 96, 0.46);
+  }
+
+  body.beaver-office-content-theme .mobile-download-note {
+    padding: 12px;
+    color: var(--office-copy);
+    background: rgba(228, 167, 42, 0.11);
+    border: 1px dashed rgba(126, 82, 27, 0.48);
+    border-left: 5px solid var(--office-yellow);
+    border-radius: 4px;
+    font-size: 0.78rem;
+  }
+
+  body.beaver-office-content-theme .mobile-requirements-block {
+    padding: 14px;
+    color: var(--office-copy);
+    background: rgba(255, 249, 231, 0.6);
+    border: 1px solid rgba(54, 119, 120, 0.28);
+    border-left: 5px solid var(--office-teal);
+    border-radius: 4px;
+  }
+
+  body.beaver-office-content-theme .mobile-requirements-block h3 {
+    color: var(--office-teal-deep);
+    font-size: 0.96rem;
+  }
+
+  body.beaver-office-content-theme .mobile-requirements-block li::marker {
+    color: var(--office-yellow);
+  }
+
+  /* ---------- Features construction route ---------- */
+
+  body.beaver-office-content-theme .mobile-features {
+    gap: 22px;
+  }
+
+  body.beaver-office-content-theme .mobile-feature-hero {
+    overflow: hidden;
+  }
+
+  body.beaver-office-content-theme .mobile-feature-hero-image {
+    aspect-ratio: 16 / 9;
+    padding: 9px;
+    background:
+      linear-gradient(rgba(54, 119, 120, 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(54, 119, 120, 0.07) 1px, transparent 1px),
+      #ead7ae;
+    background-size: 20px 20px;
+    border: 0;
+    border-bottom: 3px solid var(--office-teal);
+  }
+
+  body.beaver-office-content-theme .mobile-feature-hero-image img,
+  body.beaver-office-content-theme .mobile-feature-preview img {
+    object-fit: contain;
+    background: #183f40;
+  }
+
+  body.beaver-office-content-theme .mobile-feature-hero-text {
+    padding: 20px 18px 22px;
+  }
+
+  body.beaver-office-content-theme .mobile-feature-hero-text h2 {
+    margin-bottom: 9px;
+    color: var(--office-walnut);
+    font-size: clamp(1.32rem, 7vw, 1.7rem);
+    font-weight: 900;
+  }
+
+  body.beaver-office-content-theme .mobile-feature-hero-text h2::after {
+    content: "";
+    display: block;
+    width: 72px;
+    height: 4px;
+    margin-top: 10px;
+    background: linear-gradient(90deg, var(--office-yellow), var(--office-teal));
+    border-radius: 999px;
+  }
+
+  body.beaver-office-content-theme .mobile-feature-hero-text p {
+    color: var(--office-copy);
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+
+  body.beaver-office-content-theme .mobile-feature-list {
+    gap: 18px;
+    padding-left: 26px;
+  }
+
+  body.beaver-office-content-theme .mobile-feature-card {
+    overflow: visible;
+    padding: 12px;
+    border-bottom-width: 6px;
+  }
+
+  body.beaver-office-content-theme .mobile-feature-card::after {
+    content: "Project milestone " attr(data-step);
+    position: absolute;
+    right: 11px;
+    top: 10px;
+    z-index: 2;
+    padding: 4px 7px;
+    color: #fff8e8;
+    background: var(--office-teal-deep);
+    border-left: 3px solid var(--office-yellow);
+    border-radius: 3px;
+    font: 800 0.57rem/1.15 "Montserrat", "Segoe UI", sans-serif;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  body.beaver-office-content-theme .mobile-feature-preview {
+    margin: 0 0 14px;
+    padding: 7px;
+    background: #e7d4aa;
+    border: 2px solid var(--office-teal-deep);
+    border-radius: 5px;
+  }
+
+  body.beaver-office-content-theme .mobile-feature-copy {
+    padding: 0 4px 4px;
+  }
+
+  body.beaver-office-content-theme .mobile-feature-copy h3 {
+    margin-bottom: 7px;
+    color: var(--office-walnut);
+    font-size: 1rem;
+    font-weight: 900;
+  }
+
+  body.beaver-office-content-theme .mobile-feature-copy p {
+    color: var(--office-copy);
+    font-size: 0.82rem;
+    line-height: 1.55;
+  }
+
+  /* ---------- Media command center ---------- */
+
+  body.beaver-office-content-theme .mobile-panel#media .media-command-shell {
+    padding: 4px 0 18px;
+  }
+
+  body.beaver-office-content-theme .mobile-panel#media .media-command-toolbar {
+    color: var(--office-walnut);
+    background:
+      linear-gradient(rgba(54, 119, 120, 0.07) 1px, transparent 1px),
+      var(--office-paper-bg);
+    background-size: 100% 27px, auto;
+    border: 3px solid var(--office-teal);
+    border-top: 7px solid var(--office-yellow);
+    border-radius: 7px;
+    box-shadow: 0 9px 22px var(--office-shadow);
+  }
+
+  body.beaver-office-content-theme .mobile-panel#media .media-command-heading h2 {
+    color: var(--office-walnut);
+    font-weight: 900;
+  }
+
+  body.beaver-office-content-theme .mobile-panel#media .media-filter-group {
+    padding: 4px;
+    background: rgba(54, 119, 120, 0.1);
+    border: 1px solid rgba(54, 119, 120, 0.3);
+    border-radius: 5px;
+  }
+
+  body.beaver-office-content-theme .mobile-panel#media .media-filter {
+    color: var(--office-teal-deep);
+    background: rgba(255, 249, 231, 0.68);
+    border-color: rgba(54, 119, 120, 0.42);
+    box-shadow: none;
+  }
+
+  body.beaver-office-content-theme .mobile-panel#media .media-filter.is-active {
+    color: var(--office-walnut);
+    background: var(--office-yellow);
+    border-color: var(--office-teal-deep);
+  }
+
+  body.beaver-office-content-theme .mobile-panel#media .media-stage {
+    background: var(--office-paper-bg);
+    border: 3px solid var(--office-teal);
+    border-top: 7px solid var(--office-yellow);
+    border-radius: 7px;
+    box-shadow: 0 10px 24px var(--office-shadow);
+  }
+
+  body.beaver-office-content-theme .mobile-panel#media .media-stage-frame {
+    background: #173f41;
+    border: 3px solid var(--office-teal-deep);
+    border-radius: 4px;
+    box-shadow: inset 0 0 0 3px rgba(255, 241, 200, 0.14);
+  }
+
+  body.beaver-office-content-theme .mobile-panel#media .media-playlist {
+    background:
+      linear-gradient(rgba(54, 119, 120, 0.065) 1px, transparent 1px),
+      var(--office-paper-bg);
+    background-size: 100% 26px, auto;
+    border: 3px solid var(--office-teal);
+    border-radius: 7px;
+    box-shadow: 0 8px 20px var(--office-shadow);
+  }
+
+  body.beaver-office-content-theme .mobile-panel#media .media-playlist-heading {
+    color: var(--office-teal-deep);
+    border-bottom-color: rgba(54, 119, 120, 0.34);
+  }
+
+  body.beaver-office-content-theme .mobile-panel#media .media-playlist-item {
+    background: rgba(255, 249, 231, 0.7);
+    border-color: rgba(54, 119, 120, 0.38);
+  }
+
+  body.beaver-office-content-theme .mobile-panel#media .media-playlist-item.is-active {
+    background: rgba(228, 167, 42, 0.24);
+    border-color: var(--office-teal-deep);
+    box-shadow: inset 4px 0 0 var(--office-yellow);
+  }
+
+  body.beaver-office-content-theme .mobile-panel#media .media-stage-details {
+    padding: 15px 6px 5px;
+  }
+
+  /* ---------- Account windows ---------- */
+
+  body.beaver-office-content-theme .mobile-panel:is(
+    #signin,
+    #mobile-register-panel,
+    #mobile-forgot-password-panel,
+    #verify-email-panel
+  ) .signin-container {
+    gap: 16px;
+    margin: 2px;
+    padding: 24px 18px;
+    text-align: left;
+  }
+
+  body.beaver-office-content-theme .mobile-panel .signin-container h3 {
+    color: var(--office-walnut);
+    font-size: clamp(1.28rem, 6vw, 1.62rem);
+    font-weight: 900;
+  }
+
+  body.beaver-office-content-theme .mobile-panel .signin-subtitle {
+    margin: 0;
+    color: var(--office-copy);
+    font-size: 0.83rem;
+    line-height: 1.55;
+  }
+
+  body.beaver-office-content-theme .mobile-panel .signin-form {
+    gap: 11px;
+  }
+
+  body.beaver-office-content-theme .mobile-panel .signin-form input,
+  body.beaver-office-content-theme .mobile-panel .signin-form textarea {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    color: var(--office-walnut);
+    background: #fff9e8;
+    border: 2px solid rgba(54, 119, 120, 0.58);
+    border-radius: 4px;
+    box-shadow: inset 0 2px 0 rgba(89, 56, 31, 0.07);
+  }
+
+  body.beaver-office-content-theme .mobile-panel .signin-form input::placeholder,
+  body.beaver-office-content-theme .mobile-panel .signin-form textarea::placeholder {
+    color: rgba(102, 71, 50, 0.62);
+  }
+
+  body.beaver-office-content-theme .mobile-panel .password-toggle {
+    color: var(--office-teal-deep);
+  }
+
+  body.beaver-office-content-theme .mobile-panel .signin-btn {
+    min-height: 45px;
+    margin-top: 4px;
+    padding: 10px 13px;
+    color: #3d2919;
+    background: var(--office-yellow);
+    border: 2px solid var(--office-teal-deep);
+    border-radius: 4px;
+    box-shadow: 0 5px 0 var(--office-teal-deep);
+    font-size: 0.76rem;
+    font-weight: 900;
+    letter-spacing: 0.045em;
+  }
+
+  body.beaver-office-content-theme .mobile-panel .signin-links {
+    gap: 14px;
+    justify-content: center;
+    margin: 17px 2px 0;
+    padding: 10px;
+    background: rgba(255, 244, 213, 0.68);
+    border: 2px solid rgba(54, 119, 120, 0.46);
+    border-radius: 5px;
+  }
+
+  body.beaver-office-content-theme .mobile-panel .signin-links a {
+    color: var(--office-teal-deep);
+    font-size: 0.76rem;
+    font-weight: 750;
+  }
+
+  body.beaver-office-content-theme .mobile-panel :is(.password-hint, .terms-check) {
+    color: var(--office-copy);
+    font-size: 0.78rem;
+  }
+
+  body.beaver-office-content-theme .mobile-panel :is(
+    #mobile-signin-status,
+    #mobile-register-status,
+    #mobile-recovery-status,
+    #mobile-verify-email-status
+  ) {
+    color: var(--office-teal-deep);
+    font-size: 0.78rem;
+    font-weight: 650;
+  }
+
+  body.beaver-office-content-theme .mobile-panel .admin-destination-choice {
+    margin-top: 16px;
+    padding: 18px 14px;
+  }
+
+  /* ---------- About project board ---------- */
+
+  body.beaver-office-content-theme .mobile-panel#about .footer-window-content {
+    padding: 4px 0 20px;
+    background: transparent;
+  }
+
+  body.beaver-office-content-theme .mobile-panel#about .studio-project-board {
+    gap: 18px;
+  }
+
+  body.beaver-office-content-theme .mobile-panel#about :is(
+    .studio-briefing-card,
+    .studio-project-sheet,
+    .studio-crew-section,
+    .studio-progress-section
+  ) {
+    border-width: 3px;
+    border-top-width: 7px;
+    box-shadow:
+      0 0 0 3px rgba(248, 224, 180, 0.58),
+      0 10px 24px var(--office-shadow);
+  }
+
+  body.beaver-office-content-theme .mobile-panel#about .studio-briefing-card {
+    padding: 25px 19px;
+  }
+
+  body.beaver-office-content-theme .mobile-panel#about .studio-briefing-card h2 {
+    margin-top: 10px;
+    font-size: clamp(2.1rem, 13vw, 3.6rem);
+  }
+
+  body.beaver-office-content-theme .mobile-panel#about .studio-project-sheet {
+    padding: 23px 18px 54px;
+  }
+
+  body.beaver-office-content-theme .mobile-panel#about .studio-crew-section,
+  body.beaver-office-content-theme .mobile-panel#about .studio-progress-section {
+    padding: 22px 17px;
+  }
+
+  body.beaver-office-content-theme .mobile-panel#about .studio-member-card {
+    flex-basis: min(232px, 78vw);
+    border-top: 6px solid var(--office-yellow);
+  }
+
+  body.beaver-office-content-theme .mobile-panel#about .studio-contact-strip {
+    padding: 17px;
+    border-left-width: 7px;
+  }
+}
+
+@media (max-width: 430px) {
+  body.beaver-office-content-theme .mobile-panel {
+    padding-inline: 11px;
+  }
+
+  body.beaver-office-content-theme .mobile-feature-list {
+    padding-left: 22px;
+  }
+
+  body.beaver-office-content-theme .mobile-feature-card::after {
+    right: 9px;
+    top: 9px;
+    font-size: 0.52rem;
+  }
+
+  body.beaver-office-content-theme .mobile-feature-copy h3 {
+    font-size: 0.94rem;
+  }
+
+  body.beaver-office-content-theme .mobile-panel .signin-links {
+    align-items: center;
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 1023px) and (prefers-reduced-motion: reduce) {
+  body.beaver-office-content-theme .mobile-panel *,
+  body.beaver-office-content-theme .mobile-panel *::before,
+  body.beaver-office-content-theme .mobile-panel *::after {
+    animation: none !important;
+    transition-duration: 1ms !important;
+  }
+}
