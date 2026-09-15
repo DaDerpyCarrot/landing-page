@@ -269,7 +269,11 @@ function resetPasswordToggles() {
   });
 }
 
-function handleRegister({
+// This policy applies only to signup. Existing-account login stays separate.
+const STUDENT_REGISTRATION_DOMAIN = "dlsud.edu.ph";
+let registrationInProgress = false;
+
+async function handleRegister({
   usernameInput,
   emailInput,
   passwordInput,
@@ -279,8 +283,9 @@ function handleRegister({
   buttonEl,
   isMobile = false
 }) {
+  if (registrationInProgress) return;
   const username = usernameInput ? usernameInput.value.trim() : "";
-  const email = emailInput ? emailInput.value.trim() : "";
+  const email = emailInput ? emailInput.value.trim().toLowerCase() : "";
   const password = passwordInput ? passwordInput.value : "";
   const confirmPassword = confirmPasswordInput ? confirmPasswordInput.value : "";
   const agreedToTerms = termsInput ? termsInput.checked : false;
@@ -295,13 +300,28 @@ function handleRegister({
     return;
   }
 
+  if (email.length > 254 || !/^[^\s@]+@[^\s@]+$/.test(email)) {
+    statusEl.textContent = "Please enter a valid email address.";
+    return;
+  }
+
+  if (email.split("@")[1] !== STUDENT_REGISTRATION_DOMAIN) {
+    statusEl.textContent = "New accounts require an @dlsud.edu.ph email address. Existing players can still sign in with their original email.";
+    return;
+  }
+
+  if (username.length < 3 || username.length > 20) {
+    statusEl.textContent = "Username must be between 3 and 20 characters.";
+    return;
+  }
+
   if (!password) {
     statusEl.textContent = "Please enter a password.";
     return;
   }
 
-  if (password.length < 8) {
-    statusEl.textContent = "Password must be at least 8 characters.";
+  if (password.length < 8 || password.length > 100) {
+    statusEl.textContent = "Password must be between 8 and 100 characters.";
     return;
   }
 
@@ -320,83 +340,66 @@ function handleRegister({
     return;
   }
 
-  buttonEl.disabled = true;
+  registrationInProgress = true;
+  const registrationButtons = [...new Set([registerBtn, mobileRegisterBtn, buttonEl].filter(Boolean))];
+  const previousDisabledStates = registrationButtons.map(button => button.disabled);
+  registrationButtons.forEach(button => { button.disabled = true; });
   statusEl.textContent = "Creating account...";
 
-  const request = {
-    TitleId: PLAYFAB_TITLE_ID,
-    Username: username,
-    Email: email,
-    Password: password,
-    DisplayName: username,
-    RequireBothUsernameAndEmail: false
-  };
-
-  PlayFabClientSDK.RegisterPlayFabUser(request, function (result, error) {
-    if (error) {
-      console.error("Register error:", error);
-      statusEl.textContent = error.errorMessage || "Account creation failed.";
-      buttonEl.disabled = false;
-      return;
+  try {
+    let response;
+    try {
+      response = await fetch(`${ADMIN_API_BASE_URL.replace(/\/+$/, "")}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, email, password }),
+        cache: "no-store"
+      });
+    } catch {
+      throw new Error("We could not confirm the registration result. Check your connection and inbox; if an account was created, use Sign In to continue.");
     }
 
-    PlayFabClientSDK.AddOrUpdateContactEmail(
-      { EmailAddress: email },
-      function () {
-        clearStoredSession();
+    const payload = await response.json().catch(() => null);
+    if (!response.ok || payload?.ok !== true) {
+      throw new Error(
+        (typeof payload?.message === "string" && payload.message) ||
+        "The registration service could not confirm account creation. Check your inbox or try signing in before submitting again."
+      );
+    }
 
-        statusEl.textContent =
-          "Account created. Verification email sent. Please check your inbox before signing in.";
+    // Contact email setup is handled by the backend. It returns no player token.
+    clearStoredSession();
+    const message = payload.verificationEmailQueued === true
+      ? "Account created. Check your DLSU-D inbox (including spam) for the verification email before signing in."
+      : "Account created, but verification email setup could not be confirmed. Return to Sign In and enter your account details to request another verification email.";
 
-        if (verifyEmailInput) {
-          verifyEmailInput.value = email;
-        }
+    statusEl.textContent = message;
+    if (verifyEmailInput) verifyEmailInput.value = email;
+    if (mobileVerifyEmailInput) mobileVerifyEmailInput.value = email;
+    if (verifyEmailStatus) verifyEmailStatus.textContent = message;
+    if (mobileVerifyEmailStatus) mobileVerifyEmailStatus.textContent = message;
 
-        if (verifyEmailStatus) {
-          verifyEmailStatus.textContent =
-            "We sent a verification email. Please check your inbox before signing in.";
-        }
+    if (usernameInput) usernameInput.value = "";
+    if (emailInput) emailInput.value = "";
+    if (passwordInput) passwordInput.value = "";
+    if (confirmPasswordInput) confirmPasswordInput.value = "";
+    if (termsInput) termsInput.checked = false;
+    resetPasswordToggles();
 
-        if (mobileVerifyEmailInput) {
-          mobileVerifyEmailInput.value = email;
-        }
-
-        if (mobileVerifyEmailStatus) {
-          mobileVerifyEmailStatus.textContent =
-            "We sent a verification email. Please check your inbox before signing in.";
-        }
-
-        if (usernameInput) usernameInput.value = "";
-        if (emailInput) emailInput.value = "";
-        if (passwordInput) passwordInput.value = "";
-        if (confirmPasswordInput) confirmPasswordInput.value = "";
-        if (termsInput) termsInput.checked = false;
-
-        resetPasswordToggles();
-        buttonEl.disabled = false;
-
-        if (!isMobile && winRegister) {
-          closeWindow(winRegister);
-        }
-
-        if (!isMobile && winVerifyEmail) {
-          openWindow(winVerifyEmail);
-        }
-
-        goToMobileVerificationPanel(
-          email,
-          "We sent a verification email. Please check your inbox before signing in."
-        );
-      },
-      function (contactError) {
-        console.error("Contact email error:", contactError);
-        statusEl.textContent =
-          contactError.errorMessage ||
-          "Account created, but verification email could not be sent.";
-        buttonEl.disabled = false;
-      }
-    );
-  });
+    if (isMobile) {
+      goToMobileVerificationPanel(email, message);
+    } else {
+      if (winRegister) closeWindow(winRegister);
+      if (winVerifyEmail) openWindow(winVerifyEmail);
+    }
+  } catch (error) {
+    statusEl.textContent = error.message || "Account creation could not be confirmed.";
+  } finally {
+    registrationInProgress = false;
+    registrationButtons.forEach((button, index) => {
+      button.disabled = previousDisabledStates[index];
+    });
+  }
 }
 
 if (registerBtn) {
