@@ -1,10 +1,23 @@
 /* ==========================================================
    ROADIMENTARY MOBILE WINDOW INTERIOR REFRESH
    Keeps the current mobile navigation and draggable sheet.
-   Only the content inside each mobile panel is restyled.
+   Includes the expanded mobile sheet and its interior styles.
    ========================================================== */
 
 @media (max-width: 1023px) {
+  /* Fill the visible screen above the navigation, leaving a small top gap.
+     The vh fallback supports browsers without dynamic viewport units. */
+  #mobile-layout #mobile-bottom-sheet {
+    --mobile-sheet-top-gap: calc(8px + env(safe-area-inset-top, 0px));
+    --mobile-sheet-bottom-space: calc(var(--mobile-nav-height, 82px) + env(safe-area-inset-bottom, 0px));
+    box-sizing: border-box;
+    bottom: var(--mobile-sheet-bottom-space);
+    height: calc(100vh - var(--mobile-sheet-bottom-space) - var(--mobile-sheet-top-gap));
+    height: calc(100dvh - var(--mobile-sheet-bottom-space) - var(--mobile-sheet-top-gap));
+    min-height: 0;
+    max-height: none;
+  }
+
   body.mobile-sheet-open {
     overflow: hidden;
     overscroll-behavior: none;
