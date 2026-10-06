@@ -7,6 +7,7 @@
   <title>Operator Field Office | Roadimentary</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="profile-office.css" />
+  <link rel="stylesheet" href="profile-crew.css?v=crew-friends-1" />
   <script src="https://download.playfab.com/PlayFabClientApi.js"></script>
 </head>
 <body class="beaver-office-content-theme profile-office-page">
@@ -131,16 +132,12 @@
       </section>
 
       <section class="mobile-office-panel" id="mobile-office-crew" tabindex="-1">
-        <article class="office-corkboard">
+        <article class="office-corkboard crew-network-board" data-crew-board="mobile">
           <div class="paper-heading-row">
             <div><p class="office-kicker">Crew network</p><h2>Operator Contacts</h2></div>
-            <span class="construction-tag">Coming soon</span>
           </div>
-          <div class="office-empty-card">
-            <span class="empty-card-icon" aria-hidden="true">+</span>
-            <h3>Your crew board is ready</h3>
-            <p>Friends, invitations and recently encountered operators will appear here when social features are connected.</p>
-          </div>
+          <p role="status">Loading the Crew tools… If this message stays here, refresh the page.</p>
+          <noscript>Enable JavaScript to load your friends and requests.</noscript>
         </article>
       </section>
 
@@ -352,16 +349,12 @@
           <button class="win-close" type="button" aria-label="Close Crew Network">×</button>
         </header>
         <div class="win-content office-window-content">
-          <div class="office-corkboard crew-corkboard">
+          <div class="office-corkboard crew-corkboard crew-network-board" data-crew-board="desktop">
             <div class="section-heading">
               <div><p class="office-kicker">Operator contacts</p><h2>Your Crew Board</h2></div>
-              <span class="construction-tag">Social system coming soon</span>
             </div>
-            <div class="crew-card-grid">
-              <article class="pinned-note main-empty-note"><span class="note-pin"></span><h3>No crew contacts filed yet</h3><p>Friends, invitations and recently encountered players will be pinned here when social features are connected.</p></article>
-              <article class="pinned-note ghost-note"><span class="note-pin"></span><strong>Pending invite</strong><small>Empty slot</small></article>
-              <article class="pinned-note ghost-note"><span class="note-pin"></span><strong>Crew member</strong><small>Empty slot</small></article>
-            </div>
+            <p role="status">Loading the Crew tools… If this message stays here, refresh the page.</p>
+            <noscript>Enable JavaScript to load your friends and requests.</noscript>
           </div>
         </div>
       </section>
@@ -446,6 +439,7 @@
     <p id="desktop-profile-status" class="profile-status-toast" role="status" aria-live="polite">Loading operator file...</p>
   </div>
 
-  <script src="profile.js"></script>
+  <script src="profile-crew.js?v=crew-friends-1"></script>
+  <script src="profile.js?v=crew-friends-1"></script>
 </body>
 </html>

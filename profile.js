@@ -63,6 +63,7 @@ function openOfficeWindow(win, wrapper = null) {
   }
 
   currentWindow = win;
+  if (win.id === "win-profile-crew") window.RoadimentaryCrew?.open();
 }
 
 function closeOfficeWindow(win = currentWindow) {
@@ -187,6 +188,7 @@ function openMobileProfileSheet(panelId, options = {}) {
   profileMobileSheet.classList.add("open");
   profileMobileSheet.setAttribute("aria-hidden", "false");
   document.body.classList.add("mobile-sheet-open");
+  if (panelId === "mobile-office-crew") window.RoadimentaryCrew?.open();
 
   if (!wasOpen && options.addHistory !== false) {
     history.pushState({ ...history.state, profileMobileSheetOpen: true }, "");
@@ -484,6 +486,7 @@ function loadProfile() {
     if (error) {
       console.error("GetAccountInfo error:", error);
       setStatus(error.errorMessage || "The operator file could not be loaded.");
+      window.RoadimentaryCrew?.unavailable("Your session could not be verified. Sign in again from the landing page.");
       return;
     }
 
@@ -509,6 +512,15 @@ function loadProfile() {
     setProfileName(displayName);
     setDisplayNameFields(displayName);
 
+    if (accountInfo.PlayFabId) {
+      window.RoadimentaryCrew?.init({
+        sdk: PlayFabClientSDK,
+        currentId: accountInfo.PlayFabId,
+        sessionTicket
+      });
+    } else {
+      window.RoadimentaryCrew?.unavailable("Your player ID could not be verified. Sign in again from the landing page.");
+    }
     loadBio();
   });
 }
@@ -521,6 +533,7 @@ function startProfileSession() {
 
   if (typeof PlayFab === "undefined" || typeof PlayFabClientSDK === "undefined") {
     setStatus("The profile service did not load. Please refresh the page.");
+    window.RoadimentaryCrew?.unavailable("PlayFab did not load. Check your connection and refresh the page.");
     return;
   }
 
@@ -649,6 +662,7 @@ function handleSendReset(button) {
 });
 
 function handleLogout() {
+  window.RoadimentaryCrew?.stop();
   sessionStorage.removeItem("pfSessionTicket");
   sessionStorage.removeItem("pfPlayFabId");
   sessionStorage.removeItem("pfEmail");

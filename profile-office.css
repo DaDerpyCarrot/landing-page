@@ -1401,8 +1401,14 @@
   }
 
   .profile-office-page .profile-mobile-bottom-sheet {
-    height: 64vh;
-    height: min(64dvh, 720px);
+    /* Same available-screen sizing as the landing page's mobile windows. */
+    --profile-sheet-top-gap: calc(8px + env(safe-area-inset-top, 0px));
+    --profile-sheet-bottom-space: calc(var(--mobile-nav-height, 82px) + env(safe-area-inset-bottom, 0px));
+    bottom: var(--profile-sheet-bottom-space);
+    height: calc(100vh - var(--profile-sheet-bottom-space) - var(--profile-sheet-top-gap));
+    height: calc(100dvh - var(--profile-sheet-bottom-space) - var(--profile-sheet-top-gap));
+    min-height: 0;
+    max-height: none;
   }
 
   .profile-office-page .profile-mobile-bottom-sheet .mobile-sheet-header {
