@@ -53,6 +53,7 @@
         <div class="crew-sync-tools"><span class="crew-sync-badge" data-crew-sync>Checking session</span><button class="office-button" type="button" data-crew-action="refresh" disabled>Refresh board</button></div>
       </header>
       <p class="crew-notice" data-crew-notice role="status" aria-live="polite"></p>
+      <section class="crew-chat office-paper" data-crew-chat hidden aria-labelledby="${prefix}-chat-title"></section>
       <div class="crew-workspace">
         <section class="crew-directory" aria-labelledby="${prefix}-directory-title">
           <div class="crew-list-switch" role="group" aria-label="Crew lists">
@@ -112,6 +113,7 @@
       const id = button.dataset.crewId;
       if (action === "refresh") { if (!busy) refreshHub({ manual: true }); }
       else if (action === "view") showPublicFile(id, root);
+      else if (action === "message" && canWrite() && relation(id) === "friends") window.RoadimentaryMessages?.open(id, root);
       else if (action === "close-file") { selectedId = ""; renderDetails(); q(root, "[data-crew-list-title]")?.focus({ preventScroll: true }); }
       else if (action === "remove") { confirmRemoveId = id; render(); }
       else if (action === "keep") { confirmRemoveId = ""; render(); }
@@ -156,6 +158,18 @@
     }, version);
     if (response.Error) {
       const missing = response.Error.Error === "CloudScriptNotFound" || /not found|not defined|not a function/i.test(response.Error.Message || "");
+      if (["GetWorkerMessages", "SendWorkerMessage"].includes(functionName)) {
+        const message = response.Error.Message || "";
+        const rules = [
+          ["NOT_FRIENDS", /MESSAGING_NOT_FRIENDS|Messaging requires confirmed friendship/i, "This friendship is no longer confirmed. Messaging is unavailable."],
+          ["RATE_LIMIT", /MESSAGING_RATE_LIMIT/i, "Please wait a little before sending again (at least 2 seconds between sends, up to 12 per minute)."],
+          ["REQUEST_CONFLICT", /MESSAGING_REQUEST_CONFLICT/i, "This send reference conflicts with an existing message. Do not resend it as a new message."],
+          ["INVALID_MESSAGE", /MESSAGING_INVALID_MESSAGE|Invalid message request|Messages must contain/i, "Messages must contain 1–300 characters and a valid send reference."]
+        ];
+        const rule = rules.find(item => item[1].test(message));
+        throw Object.assign(new Error(missing ? "Messaging is not available in Live CloudScript. Publish the messaging handlers, then retry."
+          : rule ? rule[2] : "The game could not confirm this messaging request. Refresh or retry the same send."), { code: missing ? "NOT_PUBLISHED" : rule ? rule[0] : "MESSAGING_ERROR" });
+      }
       throw new Error(missing
         ? "The game's friends functions are not available in the live PlayFab CloudScript. Publish the existing WorkerProfile handlers, then refresh."
         : "The friends service could not confirm this request. Refresh the board before trying again.");
@@ -205,6 +219,7 @@
         const response = await cloud("GetWorkerFriendHub", {}, version);
         if (!sameSession(version)) return false;
         hub = normalizeHub(response);
+        window.RoadimentaryMessages?.syncFriendships(hub.friends);
         hasHub = true;
         syncError = "";
         lastSync = Date.now();
@@ -422,7 +437,7 @@
       if (confirmRemoveId === player.id) {
         row.append(element("p", "crew-remove-prompt", "Remove this friend in both the website and game?"));
         row.append(actionButton("Yes, remove", "confirm-remove", player.id, "office-button-danger"), actionButton("Keep friend", "keep", player.id));
-      } else row.append(actionButton("Remove friend", "remove", player.id, "office-button-danger"));
+      } else row.append(actionButton("Message", "message", player.id, "office-button-primary"), actionButton("Remove friend", "remove", player.id, "office-button-danger"));
     } else if (status === "incoming") {
       row.append(actionButton("Accept", "accept", player.id, "office-button-primary"), actionButton("Decline", "decline", player.id));
     } else if (status === "outgoing") row.append(actionButton("Cancel request", "cancel", player.id));
@@ -591,6 +606,7 @@
   }
 
   function reset() {
+    window.RoadimentaryMessages?.stop();
     epoch++;
     auth = null;
     hub = emptyHub();
@@ -619,6 +635,19 @@
         return;
       }
       auth = { sdk: options.sdk, currentId: options.currentId, sessionTicket: options.sessionTicket };
+      const version = epoch;
+      window.RoadimentaryMessages?.init({
+        currentId: auth.currentId,
+        isCurrent: () => Boolean(sameSession(version)),
+        call: (name, parameters) => cloud(name, parameters, version),
+        avatarFor: id => getProfile(id).avatar,
+        onExpired: message => unavailable(message),
+        onAccessLost: message => {
+          if (!sameSession(version)) return;
+          showNotice(message, "error");
+          refreshHub({ preserveNotice: true });
+        }
+      });
       showNotice("Opening the game's shared crew records…");
       refreshHub();
     },
