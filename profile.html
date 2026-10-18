@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="profile-office.css" />
   <link rel="stylesheet" href="profile-crew.css?v=crew-friends-1" />
   <link rel="stylesheet" href="profile-messages.css?v=messages-1" />
+  <link rel="stylesheet" href="profile-ledger.css?v=ledger-1" />
   <script src="https://download.playfab.com/PlayFabClientApi.js"></script>
 </head>
 <body class="beaver-office-content-theme profile-office-page">
@@ -109,6 +110,9 @@
       </section>
 
       <section class="mobile-office-panel" id="mobile-office-operations" tabindex="-1">
+        <article class="office-paper ledger-board" data-ledger-board="mobile">
+          <p role="status">Loading purchase history tools…</p>
+        </article>
         <article class="office-blueprint">
           <div class="paper-heading-row">
             <div>
@@ -314,6 +318,9 @@
         </header>
         <div class="win-content office-window-content">
           <div class="operations-layout">
+            <article class="office-paper ledger-board" data-ledger-board="desktop">
+              <p role="status">Loading purchase history tools…</p>
+            </article>
             <section class="office-blueprint operations-blueprint">
               <div class="section-heading">
                 <div><p class="office-kicker">Career telemetry</p><h2>Construction Performance</h2></div>
@@ -442,6 +449,7 @@
 
   <script src="profile-messages.js?v=messages-1"></script>
   <script src="profile-crew.js?v=messages-1"></script>
-  <script src="profile.js?v=crew-friends-1"></script>
+  <script src="profile-ledger.js?v=ledger-1"></script>
+  <script src="profile.js?v=ledger-1"></script>
 </body>
 </html>

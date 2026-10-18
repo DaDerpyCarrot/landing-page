@@ -64,6 +64,7 @@ function openOfficeWindow(win, wrapper = null) {
 
   currentWindow = win;
   if (win.id === "win-profile-crew") window.RoadimentaryCrew?.open();
+  if (win.id === "win-profile-operations") window.RoadimentaryLedger?.open();
 }
 
 function closeOfficeWindow(win = currentWindow) {
@@ -189,6 +190,7 @@ function openMobileProfileSheet(panelId, options = {}) {
   profileMobileSheet.setAttribute("aria-hidden", "false");
   document.body.classList.add("mobile-sheet-open");
   if (panelId === "mobile-office-crew") window.RoadimentaryCrew?.open();
+  if (panelId === "mobile-office-operations") window.RoadimentaryLedger?.open();
 
   if (!wasOpen && options.addHistory !== false) {
     history.pushState({ ...history.state, profileMobileSheetOpen: true }, "");
@@ -487,6 +489,7 @@ function loadProfile() {
       console.error("GetAccountInfo error:", error);
       setStatus(error.errorMessage || "The operator file could not be loaded.");
       window.RoadimentaryCrew?.unavailable("Your session could not be verified. Sign in again from the landing page.");
+      window.RoadimentaryLedger?.unavailable("Your player session could not be verified. Sign in again.");
       return;
     }
 
@@ -513,6 +516,13 @@ function loadProfile() {
     setDisplayNameFields(displayName);
 
     if (accountInfo.PlayFabId) {
+      window.RoadimentaryLedger?.init({
+        sdk: PlayFabClientSDK, currentId: accountInfo.PlayFabId, sessionTicket,
+        onExpired: message => {
+          setStatus(message);
+          window.RoadimentaryCrew?.unavailable(message);
+        }
+      });
       window.RoadimentaryCrew?.init({
         sdk: PlayFabClientSDK,
         currentId: accountInfo.PlayFabId,
@@ -520,6 +530,7 @@ function loadProfile() {
       });
     } else {
       window.RoadimentaryCrew?.unavailable("Your player ID could not be verified. Sign in again from the landing page.");
+      window.RoadimentaryLedger?.unavailable("Your player ID could not be verified. Sign in again.");
     }
     loadBio();
   });
@@ -534,6 +545,7 @@ function startProfileSession() {
   if (typeof PlayFab === "undefined" || typeof PlayFabClientSDK === "undefined") {
     setStatus("The profile service did not load. Please refresh the page.");
     window.RoadimentaryCrew?.unavailable("PlayFab did not load. Check your connection and refresh the page.");
+    window.RoadimentaryLedger?.unavailable("PlayFab did not load. Refresh the page.");
     return;
   }
 
@@ -662,6 +674,7 @@ function handleSendReset(button) {
 });
 
 function handleLogout() {
+  window.RoadimentaryLedger?.stop();
   window.RoadimentaryCrew?.stop();
   sessionStorage.removeItem("pfSessionTicket");
   sessionStorage.removeItem("pfPlayFabId");
