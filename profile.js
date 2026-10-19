@@ -64,7 +64,10 @@ function openOfficeWindow(win, wrapper = null) {
 
   currentWindow = win;
   if (win.id === "win-profile-crew") window.RoadimentaryCrew?.open();
-  if (win.id === "win-profile-operations") window.RoadimentaryLedger?.open();
+  if (win.id === "win-profile-operations") {
+    window.RoadimentaryStats?.open();
+    window.RoadimentaryLedger?.open();
+  }
 }
 
 function closeOfficeWindow(win = currentWindow) {
@@ -190,7 +193,10 @@ function openMobileProfileSheet(panelId, options = {}) {
   profileMobileSheet.setAttribute("aria-hidden", "false");
   document.body.classList.add("mobile-sheet-open");
   if (panelId === "mobile-office-crew") window.RoadimentaryCrew?.open();
-  if (panelId === "mobile-office-operations") window.RoadimentaryLedger?.open();
+  if (panelId === "mobile-office-operations") {
+    window.RoadimentaryStats?.open();
+    window.RoadimentaryLedger?.open();
+  }
 
   if (!wasOpen && options.addHistory !== false) {
     history.pushState({ ...history.state, profileMobileSheetOpen: true }, "");
@@ -435,19 +441,6 @@ function setDisplayNameFields(value) {
   setInputValue("desktop-displayname-input", value || "");
 }
 
-function setPlaceholderStatistics() {
-  [
-    "mobile-profile-contracts",
-    "desktop-profile-contracts",
-    "mobile-profile-earnings",
-    "desktop-profile-earnings",
-    "mobile-profile-level",
-    "desktop-profile-level",
-    "mobile-profile-roadscore",
-    "desktop-profile-roadscore"
-  ].forEach(id => setText(id, "—"));
-}
-
 [
   ["mobile-profile-bio", "mobile-bio-count"],
   ["desktop-profile-bio", "desktop-bio-count"]
@@ -479,7 +472,7 @@ function loadBio() {
 
 function loadProfile() {
   setStatus("Loading operator file...");
-  setPlaceholderStatistics();
+  window.RoadimentaryStats?.stop();
 
   setText("mobile-profile-email", savedEmail || "—");
   setText("desktop-profile-email", savedEmail || "—");
@@ -490,6 +483,7 @@ function loadProfile() {
       setStatus(error.errorMessage || "The operator file could not be loaded.");
       window.RoadimentaryCrew?.unavailable("Your session could not be verified. Sign in again from the landing page.");
       window.RoadimentaryLedger?.unavailable("Your player session could not be verified. Sign in again.");
+      window.RoadimentaryStats?.unavailable("Your player session could not be verified. Sign in again.");
       return;
     }
 
@@ -516,11 +510,20 @@ function loadProfile() {
     setDisplayNameFields(displayName);
 
     if (accountInfo.PlayFabId) {
+      window.RoadimentaryStats?.init({
+        sdk: PlayFabClientSDK, currentId: accountInfo.PlayFabId, sessionTicket,
+        onExpired: message => {
+          setStatus(message);
+          window.RoadimentaryLedger?.unavailable(message);
+          window.RoadimentaryCrew?.unavailable(message);
+        }
+      });
       window.RoadimentaryLedger?.init({
         sdk: PlayFabClientSDK, currentId: accountInfo.PlayFabId, sessionTicket,
         onExpired: message => {
           setStatus(message);
           window.RoadimentaryCrew?.unavailable(message);
+          window.RoadimentaryStats?.unavailable(message);
         }
       });
       window.RoadimentaryCrew?.init({
@@ -531,6 +534,7 @@ function loadProfile() {
     } else {
       window.RoadimentaryCrew?.unavailable("Your player ID could not be verified. Sign in again from the landing page.");
       window.RoadimentaryLedger?.unavailable("Your player ID could not be verified. Sign in again.");
+      window.RoadimentaryStats?.unavailable("Your player ID could not be verified. Sign in again.");
     }
     loadBio();
   });
@@ -538,6 +542,7 @@ function loadProfile() {
 
 function startProfileSession() {
   if (!sessionTicket) {
+    window.RoadimentaryStats?.stop();
     window.location.replace("index.html");
     return;
   }
@@ -546,6 +551,7 @@ function startProfileSession() {
     setStatus("The profile service did not load. Please refresh the page.");
     window.RoadimentaryCrew?.unavailable("PlayFab did not load. Check your connection and refresh the page.");
     window.RoadimentaryLedger?.unavailable("PlayFab did not load. Refresh the page.");
+    window.RoadimentaryStats?.unavailable("PlayFab did not load. Refresh the page.");
     return;
   }
 
@@ -674,6 +680,7 @@ function handleSendReset(button) {
 });
 
 function handleLogout() {
+  window.RoadimentaryStats?.stop();
   window.RoadimentaryLedger?.stop();
   window.RoadimentaryCrew?.stop();
   sessionStorage.removeItem("pfSessionTicket");

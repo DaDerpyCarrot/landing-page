@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="profile-crew.css?v=crew-friends-1" />
   <link rel="stylesheet" href="profile-messages.css?v=messages-1" />
   <link rel="stylesheet" href="profile-ledger.css?v=ledger-1" />
+  <link rel="stylesheet" href="profile-stats.css?v=stats-1" />
   <script src="https://download.playfab.com/PlayFabClientApi.js"></script>
 </head>
 <body class="beaver-office-content-theme profile-office-page">
@@ -110,29 +111,13 @@
       </section>
 
       <section class="mobile-office-panel" id="mobile-office-operations" tabindex="-1">
+        <article class="office-paper performance-board" data-stats-board="mobile">
+          <h2>Construction Performance</h2>
+          <p role="status">Loading performance tools…</p>
+          <noscript>Enable JavaScript to read your saved player statistics.</noscript>
+        </article>
         <article class="office-paper ledger-board" data-ledger-board="mobile">
           <p role="status">Loading purchase history tools…</p>
-        </article>
-        <article class="office-blueprint">
-          <div class="paper-heading-row">
-            <div>
-              <p class="office-kicker">Career telemetry</p>
-              <h2>Operations Board</h2>
-            </div>
-            <span class="construction-tag">Data pending</span>
-          </div>
-
-          <div class="operations-stat-grid">
-            <article><span>Contracts completed</span><strong id="mobile-profile-contracts">—</strong></article>
-            <article><span>Total earnings</span><strong id="mobile-profile-earnings">—</strong></article>
-            <article><span>Operator level</span><strong id="mobile-profile-level">—</strong></article>
-            <article><span>Road score</span><strong id="mobile-profile-roadscore">—</strong></article>
-          </div>
-
-          <div class="blueprint-chart-placeholder" aria-label="Future performance chart">
-            <span style="--bar: 36%"></span><span style="--bar: 58%"></span><span style="--bar: 46%"></span><span style="--bar: 72%"></span><span style="--bar: 64%"></span>
-            <p>Performance chart connects when statistics go live</p>
-          </div>
         </article>
       </section>
 
@@ -318,25 +303,14 @@
         </header>
         <div class="win-content office-window-content">
           <div class="operations-layout">
+            <section class="office-paper performance-board" data-stats-board="desktop">
+              <h2>Construction Performance</h2>
+              <p role="status">Loading performance tools…</p>
+              <noscript>Enable JavaScript to read your saved player statistics.</noscript>
+            </section>
             <article class="office-paper ledger-board" data-ledger-board="desktop">
               <p role="status">Loading purchase history tools…</p>
             </article>
-            <section class="office-blueprint operations-blueprint">
-              <div class="section-heading">
-                <div><p class="office-kicker">Career telemetry</p><h2>Construction Performance</h2></div>
-                <span class="construction-tag">Data connection pending</span>
-              </div>
-              <div class="operations-stat-grid">
-                <article><span>Contracts completed</span><strong id="desktop-profile-contracts">—</strong></article>
-                <article><span>Total earnings</span><strong id="desktop-profile-earnings">—</strong></article>
-                <article><span>Operator level</span><strong id="desktop-profile-level">—</strong></article>
-                <article><span>Road score</span><strong id="desktop-profile-roadscore">—</strong></article>
-              </div>
-              <div class="blueprint-chart-placeholder" aria-label="Future performance chart">
-                <span style="--bar: 36%"></span><span style="--bar: 58%"></span><span style="--bar: 46%"></span><span style="--bar: 72%"></span><span style="--bar: 64%"></span><span style="--bar: 82%"></span>
-                <p>Performance chart connects when statistics go live</p>
-              </div>
-            </section>
 
             <aside class="office-paper assignment-board">
               <p class="office-kicker">Current assignment</p>
@@ -447,9 +421,10 @@
     <p id="desktop-profile-status" class="profile-status-toast" role="status" aria-live="polite">Loading operator file...</p>
   </div>
 
+  <script src="profile-stats.js?v=stats-1"></script>
   <script src="profile-messages.js?v=messages-1"></script>
-  <script src="profile-crew.js?v=messages-1"></script>
+  <script src="profile-crew.js?v=stats-1"></script>
   <script src="profile-ledger.js?v=ledger-1"></script>
-  <script src="profile.js?v=ledger-1"></script>
+  <script src="profile.js?v=stats-1"></script>
 </body>
 </html>

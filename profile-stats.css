@@ -1,0 +1,49 @@
+/* Construction Performance. Scoped to this panel; existing window/sheet sizing is unchanged. */
+.profile-office-page .operations-layout > .performance-board { grid-column: 1 / -1; }
+.profile-office-page .performance-board { min-width: 0; padding: clamp(16px, 2vw, 26px); color: #47311f; }
+.performance-board .performance-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; flex-wrap: wrap; }
+.performance-board .office-kicker { margin: 0 0 6px; color: #235e62; }
+.performance-board h2 { margin: 0; color: #47311f; font-size: clamp(1.05rem, 2vw, 1.45rem); }
+.performance-board .performance-stamp { flex: 0 0 auto; padding: 7px 9px; border: 1px solid #82a48d; border-radius: 4px; background: #edf2d9; color: #23594e; font: 800 .66rem/1.3 "Lexend", sans-serif; }
+.performance-board .performance-intro { margin: 12px 0 16px; color: #5d452e; font-size: .8rem; line-height: 1.6; }
+.performance-board .performance-tools { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.performance-board .performance-tools p { margin: 0; color: #5d452e; font-size: .72rem; }
+.performance-board .office-button { min-height: 44px; color: #235e62; background: #fff7df; border-color: #39777a; }
+.performance-board .office-button:disabled { opacity: .6; cursor: not-allowed; }
+.performance-board button:focus-visible, .performance-board summary:focus-visible { outline: 3px solid #24676a; outline-offset: 3px; }
+.performance-board .performance-status { margin: 14px 0 18px; padding: 11px 13px; color: #245854; background: #eef3df; border-left: 4px solid #4b7b68; font-size: .76rem; line-height: 1.6; }
+.performance-board .performance-status[data-kind="warning"] { color: #65440c; background: #fff1cf; border-color: #a37220; }
+.performance-board .performance-status[data-kind="error"] { color: #812d27; background: #fbe9df; border-color: #ad4e40; }
+.performance-board .performance-progression { display: grid; grid-template-columns: minmax(150px, .7fr) minmax(0, 1.6fr); gap: 16px; margin-bottom: 16px; }
+.performance-board .performance-level { display: flex; flex-direction: column; justify-content: center; gap: 7px; padding: 18px; background: #e9eedb; border: 1px solid #90ac95; border-left: 4px solid #39777a; border-radius: 5px; }
+.performance-board .performance-label, .performance-board .performance-xp label { color: #235e62; font: 800 .73rem/1.4 "Lexend", sans-serif; }
+.performance-board .performance-level > strong { color: #47311f; font: 900 2.4rem/1 "Montserrat", sans-serif; }
+.performance-board .performance-level > span:not(.performance-label) { color: #47311f; font-size: .85rem; }
+.performance-board .performance-level small { color: #526048; font-size: .66rem; line-height: 1.5; }
+.performance-board .performance-xp { display: flex; flex-direction: column; justify-content: center; padding: 20px; border: 1px solid #b6b896; border-radius: 5px; background: #fff9e7; }
+.performance-board .performance-xp p { margin: 8px 0 0; color: #5d452e; font-size: .75rem; line-height: 1.5; }
+.performance-board .performance-xp [data-stats-progress-text] { color: #47311f; font: 800 clamp(1rem, 2vw, 1.3rem)/1.5 "Montserrat", sans-serif; }
+.performance-board progress { display: block; width: 100%; height: 17px; margin-top: 12px; appearance: none; border: 1px solid #678d7e; border-radius: 4px; overflow: hidden; background: #dce4cb; accent-color: #327779; }
+.performance-board progress::-webkit-progress-bar { background: #dce4cb; }
+.performance-board progress::-webkit-progress-value { background: #327779; }
+.performance-board progress::-moz-progress-bar { background: #327779; }
+.performance-board .performance-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.performance-board .performance-card { min-width: 0; padding: 16px; border: 1px solid #b9b994; border-left: 4px solid #c09331; border-radius: 5px; background: #fff9e7; }
+.performance-board .performance-card h3 { margin: 0 0 10px; color: #235e62; font: 800 .73rem/1.5 "Lexend", sans-serif; }
+.performance-board .performance-card strong { display: block; color: #47311f; font: 900 clamp(1rem, 1.8vw, 1.4rem)/1.35 "Montserrat", sans-serif; overflow-wrap: anywhere; }
+.performance-board .performance-card small { display: block; margin-top: 8px; color: #65503a; font-size: .65rem; line-height: 1.6; }
+.performance-board .performance-coverage { padding: 11px 13px; margin: 16px 0; color: #63451d; background: #fff4d8; border-left: 3px solid #b17f27; font-size: .74rem; line-height: 1.7; }
+.performance-board .performance-source-details { color: #5d452e; border-top: 1px dashed #a4ad8b; padding-top: 13px; font-size: .72rem; line-height: 1.7; }
+.performance-board .performance-source-details summary { cursor: pointer; color: #235e62; font-weight: 800; min-height: 32px; }
+.performance-board .performance-source-details p { margin: 8px 0; color: #5d452e; }
+@media (max-width: 1250px) { .performance-board .performance-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) {
+  .performance-board .performance-progression { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .performance-board .performance-level { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 6px 12px; padding: 15px; }
+  .performance-board .performance-level > strong { grid-column: 2; grid-row: 1 / 4; }
+  .performance-board .performance-level > span, .performance-board .performance-level > small { grid-column: 1; }
+  .performance-board .performance-xp { padding: 15px; }
+  .performance-board .performance-card { padding: 13px; }
+  .performance-board .performance-tools .office-button { width: 100%; }
+}
+@media (max-width: 380px) { .performance-board .performance-grid { grid-template-columns: minmax(0, 1fr); } }

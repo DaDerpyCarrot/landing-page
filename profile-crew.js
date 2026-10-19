@@ -265,12 +265,7 @@
     return Number.isSafeInteger(number) && number <= 2147483647 ? number : null;
   }
   function levelFor(total) {
-    if (total === null) return null;
-    let level = 1;
-    let needed = 500;
-    let current = total;
-    while (current >= needed) { current -= needed; level++; needed += 100; }
-    return { level, current, needed };
+    return window.RoadimentaryStats?.levelFor(total) ?? null;
   }
 
   async function loadPublic(id) {
