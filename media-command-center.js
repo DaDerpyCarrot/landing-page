@@ -21,7 +21,7 @@ const MEDIA_ITEMS = [
     label: "Image 01",
     title: "Planning the Next Job",
     caption: "A look at the planning tools used before the crew heads into the field.",
-    src: "assets/sample1.png",
+    src: "assets/contractplan_img.png",
     alt: "Roadimentary gameplay screenshot showing the planning interface"
   },
   {
@@ -30,7 +30,7 @@ const MEDIA_ITEMS = [
     label: "Image 02",
     title: "Crew at Work",
     caption: "The construction crew gets to work on a new section of road.",
-    src: "assets/sample2.png",
+    src: "assets/crewatwork_img.png",
     alt: "Roadimentary gameplay screenshot showing a construction crew"
   },
   {
@@ -39,7 +39,7 @@ const MEDIA_ITEMS = [
     label: "Image 03",
     title: "Material Management",
     caption: "Choosing the right materials is part of every successful contract.",
-    src: "assets/sample3.png",
+    src: "assets/IngameShop_img.png",
     alt: "Roadimentary gameplay screenshot showing construction materials"
   },
   {
@@ -48,7 +48,7 @@ const MEDIA_ITEMS = [
     label: "Image 04",
     title: "On the Road",
     caption: "A field view from one of Roadimentary's active construction sites.",
-    src: "assets/sample4.png",
+    src: "assets/activesite_img.png",
     alt: "Roadimentary gameplay screenshot showing an active road site"
   },
   {
@@ -57,7 +57,7 @@ const MEDIA_ITEMS = [
     label: "Image 05",
     title: "Contract Progress",
     caption: "Track the job, adapt the plan, and keep the project moving forward.",
-    src: "assets/sample5.png",
+    src: "assets/contractProgress_img.png",
     alt: "Roadimentary gameplay screenshot showing contract progress"
   },
   {
@@ -66,7 +66,7 @@ const MEDIA_ITEMS = [
     label: "Image 06",
     title: "Meet the Crew",
     caption: "Every beaver brings a different strength to the construction team.",
-    src: "assets/sample6.png",
+    src: "assets/ingameCrew_img.png",
     alt: "Roadimentary gameplay screenshot showing the beaver crew"
   }
 ];
