@@ -22,6 +22,7 @@
   let noticeKind = "info";
   let lastSync = 0;
   let view = "friends";
+  let pane = "friends";
   let filter = "";
   let query = "";
   let searchedQuery = "";
@@ -52,6 +53,11 @@
         <div><p class="office-kicker">Roadimentary / operator contacts</p><h2>Your Crew Board</h2><p class="crew-board-intro">Same builders. Same crew. In game and on the web.</p></div>
         <div class="crew-sync-tools"><span class="crew-sync-badge" data-crew-sync>Checking session</span><button class="office-button" type="button" data-crew-action="refresh" disabled>Refresh board</button></div>
       </header>
+      <div class="crew-pane-switch" role="group" aria-label="Crew board sections">
+        <button class="office-button" type="button" data-crew-pane="friends" aria-pressed="true">Friends &amp; messages</button>
+        <button class="office-button" type="button" data-crew-pane="companies" aria-pressed="false">Companies</button>
+      </div>
+      <div data-crew-friends>
       <p class="crew-notice" data-crew-notice role="status" aria-live="polite"></p>
       <section class="crew-chat office-paper" data-crew-chat hidden aria-labelledby="${prefix}-chat-title"></section>
       <div class="crew-workspace">
@@ -80,7 +86,11 @@
           <p class="crew-presence-help">“In game” means the game recently sent a presence update. This page does not change your in-game presence.</p>
         </aside>
       </div>
-      <section class="crew-public-file office-paper" data-crew-detail hidden aria-labelledby="${prefix}-file-title"></section>`;
+      <section class="crew-public-file office-paper" data-crew-detail hidden aria-labelledby="${prefix}-file-title"></section>
+      </div>
+      <section data-company-board hidden aria-label="Companies"></section>`;
+
+    q(root, "[data-crew-pane='companies']").disabled = !window.RoadimentaryCompanies;
 
     root.addEventListener("submit", event => {
       if (!event.target.matches("[data-crew-search-form]")) return;
@@ -102,6 +112,12 @@
     root.addEventListener("click", event => {
       const button = event.target.closest("button");
       if (!button || !root.contains(button) || button.disabled) return;
+      if (button.dataset.crewPane) {
+        pane = button.dataset.crewPane === "companies" ? "companies" : "friends";
+        paintPane();
+        if (pane === "companies") window.RoadimentaryCompanies?.open();
+        return;
+      }
       if (button.dataset.crewView && groups[button.dataset.crewView]) {
         view = button.dataset.crewView;
         confirmRemoveId = "";
@@ -120,6 +136,20 @@
       else if (["send", "accept", "decline", "cancel", "confirm-remove"].includes(action)) performAction(action, id, root);
     });
   });
+  window.RoadimentaryCompanies?.mount();
+
+  function paintPane() {
+    roots.forEach(root => {
+      const companies = pane === "companies";
+      const friends = q(root, "[data-crew-friends]");
+      friends.hidden = companies;
+      friends.setAttribute("aria-hidden", String(companies));
+      q(root, "[data-company-board]").hidden = !companies;
+      q(root, ".crew-sync-tools").hidden = companies;
+      root.querySelectorAll("[data-crew-pane]").forEach(button =>
+        button.setAttribute("aria-pressed", String(button.dataset.crewPane === pane)));
+    });
+  }
 
   function api(method, parameters, version = epoch) {
     return new Promise((resolve, reject) => {
@@ -326,6 +356,18 @@
     }
   }
 
+  async function findBuilderByName(name, version) {
+    let result;
+    try { result = await api("GetAccountInfo", { TitleDisplayName: name }, version); }
+    catch (error) {
+      if (error.code !== "AccountNotFound") throw error;
+      result = await api("GetAccountInfo", { Username: name }, version);
+    }
+    const info = result.AccountInfo;
+    if (!validId(info?.PlayFabId)) throw new Error("The player lookup returned an unreadable account.");
+    return { id: info.PlayFabId, displayName: String(info.TitleInfo?.DisplayName || info.Username || name).slice(0, 100) };
+  }
+
   async function searchPlayer() {
     if (!sameSession(epoch) || searchBusy || busy) return;
     const name = query.trim();
@@ -339,17 +381,10 @@
     searchMessage = "Looking up this builder…";
     renderSearch();
     try {
-      let result;
-      try { result = await api("GetAccountInfo", { TitleDisplayName: name }, version); }
-      catch (error) {
-        if (error.code !== "AccountNotFound") throw error;
-        result = await api("GetAccountInfo", { Username: name }, version);
-      }
+      const builder = await findBuilderByName(name, version);
       if (!sameSession(version) || request !== searchVersion) return;
-      const info = result.AccountInfo;
-      if (!validId(info?.PlayFabId)) throw new Error("The player lookup returned an unreadable account.");
-      if (info.PlayFabId === auth.currentId) { searchMessage = "That is your own operator file. Try another builder."; return; }
-      searchResult = { id: info.PlayFabId, displayName: String(info.TitleInfo?.DisplayName || info.Username || name).slice(0, 100) };
+      if (builder.id === auth.currentId) { searchMessage = "That is your own operator file. Try another builder."; return; }
+      searchResult = builder;
       searchMessage = `Builder found for “${searchedQuery}”.`;
     } catch (error) {
       if (!sameSession(version) || request !== searchVersion) return;
@@ -602,6 +637,9 @@
 
   function reset() {
     window.RoadimentaryMessages?.stop();
+    window.RoadimentaryCompanies?.stop();
+    pane = "friends";
+    paintPane();
     epoch++;
     auth = null;
     hub = emptyHub();
@@ -631,6 +669,12 @@
       }
       auth = { sdk: options.sdk, currentId: options.currentId, sessionTicket: options.sessionTicket };
       const version = epoch;
+      window.RoadimentaryCompanies?.init({
+        currentId: auth.currentId,
+        sessionTicket: auth.sessionTicket,
+        isCurrent: () => Boolean(sameSession(version)),
+        findBuilder: name => findBuilderByName(name, version)
+      });
       window.RoadimentaryMessages?.init({
         currentId: auth.currentId,
         isCurrent: () => Boolean(sameSession(version)),
@@ -646,7 +690,10 @@
       showNotice("Opening the game's shared crew records…");
       refreshHub();
     },
-    open() { if (sameSession(epoch) && !busy && Date.now() - lastSync > CACHE_MS) refreshHub(); },
+    open() {
+      if (pane === "companies") { window.RoadimentaryCompanies?.open(); return; }
+      if (sameSession(epoch) && !busy && Date.now() - lastSync > CACHE_MS) refreshHub();
+    },
     unavailable,
     stop() { reset(); showNotice("Sign in to open your crew board."); render(); }
   });

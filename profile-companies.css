@@ -1,0 +1,134 @@
+/* Scoped to the Crew board. Existing window/sheet containers still own scrolling. */
+/* The new Friends wrapper moves these nodes one level below the original chat selectors. */
+.crew-network-board[data-chat-open="true"] > [data-crew-friends] > :is(.crew-workspace, .crew-public-file, .crew-notice) {
+  display: none !important;
+}
+.crew-network-board .crew-pane-switch {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 14px 0;
+  padding: 7px;
+  background: #e0bd8b;
+  border: 1px solid #96714a;
+  border-radius: 5px;
+}
+.crew-network-board .crew-pane-switch .office-button {
+  color: #254d4e;
+  background: #fff3d4;
+  border-color: #84613e;
+  box-shadow: none;
+}
+.crew-network-board .crew-pane-switch .office-button[aria-pressed="true"] {
+  color: #fff8e1;
+  background: #255b5c;
+  border-color: #1d4748;
+}
+.crew-network-board :is(.crew-pane-switch, [data-company-board]) :is(button, input):focus-visible,
+.crew-network-board .company-page-title:focus,
+.crew-network-board .company-file-title:focus {
+  outline: 3px solid #255b5c;
+  outline-offset: 3px;
+}
+[data-company-board] { min-width: 0; overflow-wrap: anywhere; }
+[data-company-board] .company-desk {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: clamp(12px, 2vw, 20px);
+  color: #47311f;
+  background: #fff0cb;
+  border: 2px solid #367778;
+  border-top: 5px solid #e4a72a;
+  border-radius: 5px;
+}
+[data-company-board] .company-desk h2 { color: #47311f; }
+[data-company-board] .company-desk p { margin: 0; }
+[data-company-board] .company-notice:empty { display: none; }
+[data-company-board] .company-content { margin-top: 16px; }
+[data-company-board] .company-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: clamp(12px, 2vw, 24px);
+  align-items: start;
+  margin-top: 13px;
+}
+[data-company-board] .company-stack { display: grid; gap: 14px; min-width: 0; }
+[data-company-board] .company-paper { min-width: 0; padding: clamp(12px, 2vw, 20px); }
+[data-company-board] .company-title-bar {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+  margin: 14px 0;
+}
+[data-company-board] .company-page-title {
+  width: fit-content;
+  padding: 5px 8px;
+  background: #fff0cb;
+  border-radius: 4px;
+}
+[data-company-board] .company-hint { margin: 6px 0 10px; color: #604c38; font-size: 0.77rem; }
+[data-company-board] .company-empty {
+  margin: 12px 0 0;
+  padding: 11px 12px;
+  color: #604c38;
+  background: #fff8e4;
+  border: 1px dashed #9a7f59;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+[data-company-board] .company-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  min-width: 0;
+  margin: 10px 0;
+  padding: 11px 12px;
+  background: #fff8e6;
+  border: 1px solid #bba37b;
+  border-left: 4px solid #e4a72a;
+  border-radius: 4px;
+}
+[data-company-board] .company-row-copy { flex: 1 1 130px; min-width: 0; }
+[data-company-board] .company-row-copy .company-hint { margin-bottom: 4px; }
+[data-company-board] .company-role {
+  display: inline-block;
+  margin-top: 5px;
+  padding: 3px 9px;
+  color: #234c4d;
+  background: #dcead7;
+  border: 1px solid #72998a;
+  border-radius: 20px;
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+[data-company-board] .company-role.is-moderator { color: #fff8e4; background: #255b5c; border-color: #255b5c; }
+[data-company-board] .company-form { display: grid; gap: 8px; margin-top: 12px; }
+[data-company-board] .company-actions { display: flex; flex-wrap: wrap; align-items: start; gap: 8px; min-width: 0; }
+[data-company-board] .company-actions .office-button { flex: 1 1 auto; }
+[data-company-board] .company-found:not(:empty), [data-company-board] .company-confirm {
+  width: 100%;
+  margin-top: 10px;
+  padding: 9px;
+  background: #fff3d5;
+  border: 1px dashed #947049;
+  border-radius: 4px;
+}
+[data-company-board] .company-found p { margin: 0 0 8px; font-weight: 800; }
+[data-company-board] .company-confirm { flex-basis: 100%; }
+[data-company-board] .company-confirm p { margin: 0 0 8px; }
+[data-company-board] .company-file .crew-public-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+[data-company-board] .company-file .crew-file-body { grid-template-columns: 84px minmax(0, 1fr); gap: 14px; }
+[data-company-board] .company-file .crew-file-avatar { width: 84px; height: 105px; }
+@media (max-width: 1023px) {
+  [data-company-board] .company-columns { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 520px) {
+  [data-company-board] .company-row-copy, [data-company-board] .company-row > .company-actions { flex-basis: 100%; }
+  [data-company-board] .company-desk h2 { font-size: 1.15rem; }
+}
