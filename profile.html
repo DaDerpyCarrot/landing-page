@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="profile-messages.css?v=messages-1" />
   <link rel="stylesheet" href="profile-ledger.css?v=ledger-1" />
   <link rel="stylesheet" href="profile-stats.css?v=stats-1" />
+  <link rel="stylesheet" href="profile-boards.css?v=xp-board-1" />
   <script src="https://download.playfab.com/PlayFabClientApi.js"></script>
 </head>
 <body class="beaver-office-content-theme profile-office-page">
@@ -133,17 +134,9 @@
       </section>
 
       <section class="mobile-office-panel" id="mobile-office-boards" tabindex="-1">
-        <article class="office-paper leaderboard-paper">
-          <div class="paper-heading-row">
-            <div><p class="office-kicker">Regional rankings</p><h2>Operator Boards</h2></div>
-            <span class="construction-tag">Coming soon</span>
-          </div>
-          <div class="ranking-preview" aria-label="Leaderboard preview">
-            <div><span>01</span><strong>Ranking feed offline</strong><small>—</small></div>
-            <div><span>02</span><strong>Awaiting operator scores</strong><small>—</small></div>
-            <div><span>03</span><strong>Your placement will appear here</strong><small>—</small></div>
-          </div>
-        </article>
+        <div class="boards-layout xp-board-layout" data-xp-board="mobile">
+          <noscript>Enable JavaScript to load the Operator Boards.</noscript>
+        </div>
       </section>
 
       <section class="mobile-office-panel" id="mobile-office-account" tabindex="-1">
@@ -350,23 +343,8 @@
           <button class="win-close" type="button" aria-label="Close Operator Boards">×</button>
         </header>
         <div class="win-content office-window-content">
-          <div class="boards-layout">
-            <section class="office-paper leaderboard-paper">
-              <div class="section-heading">
-                <div><p class="office-kicker">Regional rankings</p><h2>Top Operators</h2></div>
-                <span class="construction-tag">Ranking feed offline</span>
-              </div>
-              <div class="ranking-preview">
-                <div><span>01</span><strong>Ranking feed offline</strong><small>—</small></div>
-                <div><span>02</span><strong>Awaiting operator scores</strong><small>—</small></div>
-                <div><span>03</span><strong>Your placement will appear here</strong><small>—</small></div>
-              </div>
-            </section>
-            <aside class="office-paper ranking-file">
-              <p class="office-kicker">Your placement</p>
-              <strong class="ranking-number">—</strong>
-              <p>Complete ranked contracts to establish an operator position once leaderboard data is enabled.</p>
-            </aside>
+          <div class="boards-layout xp-board-layout" data-xp-board="desktop">
+            <noscript>Enable JavaScript to load the Operator Boards.</noscript>
           </div>
         </div>
       </section>
@@ -427,6 +405,7 @@
   <script src="profile-companies.js?v=companies-1"></script>
   <script src="profile-crew.js?v=companies-1"></script>
   <script src="profile-ledger.js?v=ledger-1"></script>
-  <script src="profile.js?v=stats-1"></script>
+  <script src="profile-boards.js?v=xp-board-1"></script>
+  <script src="profile.js?v=xp-board-1"></script>
 </body>
 </html>

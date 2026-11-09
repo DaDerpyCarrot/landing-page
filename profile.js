@@ -64,6 +64,7 @@ function openOfficeWindow(win, wrapper = null) {
 
   currentWindow = win;
   if (win.id === "win-profile-crew") window.RoadimentaryCrew?.open();
+  if (win.id === "win-profile-boards") window.RoadimentaryBoards?.open();
   if (win.id === "win-profile-operations") {
     window.RoadimentaryStats?.open();
     window.RoadimentaryLedger?.open();
@@ -193,6 +194,7 @@ function openMobileProfileSheet(panelId, options = {}) {
   profileMobileSheet.setAttribute("aria-hidden", "false");
   document.body.classList.add("mobile-sheet-open");
   if (panelId === "mobile-office-crew") window.RoadimentaryCrew?.open();
+  if (panelId === "mobile-office-boards") window.RoadimentaryBoards?.open();
   if (panelId === "mobile-office-operations") {
     window.RoadimentaryStats?.open();
     window.RoadimentaryLedger?.open();
@@ -473,6 +475,7 @@ function loadBio() {
 function loadProfile() {
   setStatus("Loading operator file...");
   window.RoadimentaryStats?.stop();
+  window.RoadimentaryBoards?.stop();
 
   setText("mobile-profile-email", savedEmail || "—");
   setText("desktop-profile-email", savedEmail || "—");
@@ -484,6 +487,7 @@ function loadProfile() {
       window.RoadimentaryCrew?.unavailable("Your session could not be verified. Sign in again from the landing page.");
       window.RoadimentaryLedger?.unavailable("Your player session could not be verified. Sign in again.");
       window.RoadimentaryStats?.unavailable("Your player session could not be verified. Sign in again.");
+      window.RoadimentaryBoards?.stop("Your player session could not be verified. Sign in again.");
       return;
     }
 
@@ -516,6 +520,7 @@ function loadProfile() {
           setStatus(message);
           window.RoadimentaryLedger?.unavailable(message);
           window.RoadimentaryCrew?.unavailable(message);
+          window.RoadimentaryBoards?.stop(message);
         }
       });
       window.RoadimentaryLedger?.init({
@@ -524,6 +529,7 @@ function loadProfile() {
           setStatus(message);
           window.RoadimentaryCrew?.unavailable(message);
           window.RoadimentaryStats?.unavailable(message);
+          window.RoadimentaryBoards?.stop(message);
         }
       });
       window.RoadimentaryCrew?.init({
@@ -531,10 +537,14 @@ function loadProfile() {
         currentId: accountInfo.PlayFabId,
         sessionTicket
       });
+      window.RoadimentaryBoards?.init({
+        sdk: PlayFabClientSDK, currentId: accountInfo.PlayFabId, sessionTicket
+      });
     } else {
       window.RoadimentaryCrew?.unavailable("Your player ID could not be verified. Sign in again from the landing page.");
       window.RoadimentaryLedger?.unavailable("Your player ID could not be verified. Sign in again.");
       window.RoadimentaryStats?.unavailable("Your player ID could not be verified. Sign in again.");
+      window.RoadimentaryBoards?.stop("Your player ID could not be verified. Sign in again.");
     }
     loadBio();
   });
@@ -552,6 +562,7 @@ function startProfileSession() {
     window.RoadimentaryCrew?.unavailable("PlayFab did not load. Check your connection and refresh the page.");
     window.RoadimentaryLedger?.unavailable("PlayFab did not load. Refresh the page.");
     window.RoadimentaryStats?.unavailable("PlayFab did not load. Refresh the page.");
+    window.RoadimentaryBoards?.stop("PlayFab did not load. Refresh the page.");
     return;
   }
 
@@ -680,6 +691,7 @@ function handleSendReset(button) {
 });
 
 function handleLogout() {
+  window.RoadimentaryBoards?.stop();
   window.RoadimentaryStats?.stop();
   window.RoadimentaryLedger?.stop();
   window.RoadimentaryCrew?.stop();

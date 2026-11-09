@@ -1,0 +1,66 @@
+/* All Operators: preserve the existing office panels and sheet scroll owner. */
+.profile-office-page .xp-board-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(220px, .38fr);
+  gap: clamp(14px, 2vw, 25px);
+}
+.xp-board-layout > * { min-width: 0; }
+.xp-board-layout [hidden] { display: none !important; }
+.xp-board-header, .xp-board-tools {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+}
+.xp-board-header .construction-tag { color: #4e350d; background: #f5d283; border-color: #986d2d; }
+.xp-board-header h2 { margin-bottom: 0; }
+.xp-board-caption, .xp-board-tools span, .xp-placement-note {
+  color: #624630; font-size: .8rem; line-height: 1.55;
+}
+.xp-board-caption { margin: 11px 0; }
+.xp-board-tools { margin: 12px 0; justify-content: flex-start; }
+.xp-board-tools .office-button { min-height: 44px; }
+.xp-board-tools .office-button:focus-visible { outline: 3px solid #255b5c; outline-offset: 3px; }
+.xp-board-status {
+  margin: 12px 0; padding: 9px 11px; color: #285053; background: #e9eedb;
+  border: 1px solid #a6b69a; border-left: 4px solid #367778; border-radius: 4px;
+  font-size: .76rem; line-height: 1.55; overflow-wrap: anywhere;
+}
+.xp-board-status[data-state="error"] { color: #732d24; background: #ffede0; border-color: #a55e49; }
+.xp-board-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 7px; }
+.xp-board-columns, .xp-board-row {
+  display: grid; grid-template-columns: minmax(48px, .22fr) minmax(0, 1fr) max-content;
+  align-items: center; gap: 8px; padding: 9px 11px; min-width: 0;
+}
+.xp-board-columns {
+  color: #285d60; font: 800 .68rem/1.4 "Lexend", sans-serif;
+  text-transform: uppercase; letter-spacing: .035em;
+}
+.xp-board-columns > :last-child, .xp-board-score { text-align: right; }
+.xp-board-row {
+  color: #49301f; background: #fff8e4; border: 1px solid #c2ab7b;
+  border-left: 4px solid #e4a72a; border-radius: 4px; min-height: 48px;
+}
+.xp-board-row.is-you { background: #e7efdb; border-color: #729687; border-left-color: #285d60; }
+.xp-board-rank, .xp-board-score {
+  color: #285d60; font: 800 .83rem/1.4 "Lexend", sans-serif; font-variant-numeric: tabular-nums;
+}
+.xp-board-operator { display: flex; gap: 5px 8px; flex-wrap: wrap; align-items: center; min-width: 0; }
+.xp-board-operator strong { min-width: 0; overflow-wrap: anywhere; font-size: .85rem; }
+.xp-you-label {
+  padding: 2px 7px; border-radius: 11px; color: #fff8e1; background: #285d60;
+  font: 800 .62rem/1.45 "Lexend", sans-serif;
+}
+.xp-placement-value {
+  margin: 10px 0; color: #285d60; font: 900 clamp(1.12rem, 2vw, 1.7rem)/1.12 "Montserrat", sans-serif;
+  overflow-wrap: anywhere;
+}
+.xp-placement-value[data-state="ranked"] { font-size: clamp(1.5rem, 4vw, 3.3rem); }
+.xp-placement-score { margin: 8px 0 4px; color: #49301f; font-weight: 800; font-variant-numeric: tabular-nums; }
+.xp-placement-note { margin: 8px 0 0; }
+@media (max-width: 1023px) {
+  .profile-office-page .xp-board-layout { grid-template-columns: minmax(0, 1fr); gap: 12px; min-height: 0; padding: 0; }
+  .profile-office-page .xp-board-layout > .office-paper { padding: clamp(12px, 4vw, 20px); }
+  .xp-board-layout > .xp-placement { order: -1; text-align: left; }
+  .xp-placement-value { margin: 5px 0; }
+}
+@media (max-width: 390px) {
+  .xp-board-columns, .xp-board-row { grid-template-columns: 35px minmax(0, 1fr) max-content; gap: 5px; padding-inline: 7px; }
+  .xp-board-rank, .xp-board-score, .xp-board-operator strong { font-size: .72rem; }
+}
