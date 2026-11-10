@@ -48,7 +48,7 @@
           <div class="crew-chat-person"><img class="crew-chat-avatar" data-chat-avatar alt="" width="52" height="60"><div><p class="office-kicker">Crew correspondence / confirmed friend</p><h3 id="${prefix}-chat-title" data-chat-name tabindex="-1"></h3><span class="crew-chat-presence" data-chat-presence>Checking game presence…</span></div></div>
           <button type="button" class="office-button" data-chat-action="back">Back to crew</button>
         </header>
-        <div class="crew-chat-tools"><span data-chat-checked>Latest 50 messages</span><button type="button" class="office-button" data-chat-action="refresh">Refresh messages</button></div>
+        <div class="crew-chat-tools"><span>Latest 50 messages</span><button type="button" class="office-button" data-chat-action="refresh">Refresh messages</button></div>
         <p class="crew-chat-status" data-chat-status role="status" aria-live="polite"></p>
         <div class="crew-chat-log" data-chat-log role="log" aria-live="off" aria-label="Conversation messages" tabindex="0"></div>
         <form class="crew-chat-compose" data-chat-form>
@@ -57,7 +57,7 @@
           <div class="crew-chat-compose-footer"><span id="${prefix}-message-count" data-chat-count>0 / 300</span><button class="office-button office-button-primary" type="submit" data-chat-send>Send message</button></div>
           <p id="${prefix}-message-help" class="crew-chat-help">Enter adds a new line. Ctrl/⌘ + Enter sends. Keep personal information out of messages.</p>
         </form>
-        <p class="crew-chat-footnote">Shared with the game's conversation records. Refreshes about every 15 seconds while this chat is visible. No read receipts.</p>`;
+        `;
       q(panel, "[data-chat-avatar]").addEventListener("error", event => { event.target.hidden = true; });
       sizeObserver.observe(panel);
       const frame = root.closest('.win-content, #profile-mobile-sheet-content');
@@ -87,7 +87,7 @@
       const statusNode = q(panel, "[data-chat-status]");
       statusNode.textContent = feedback;
       statusNode.dataset.kind = feedbackKind;
-      q(panel, "[data-chat-checked]").textContent = lastChecked ? `${new Date(lastChecked).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} · Latest 50` : "Latest 50 messages";
+      statusNode.hidden = !feedback;
       q(panel, "[data-chat-action='back']").disabled = writeBusy;
       q(panel, "[data-chat-action='refresh']").disabled = !current() || readBusy || writeBusy;
       q(panel, "[data-chat-action='refresh']").textContent = readBusy ? "Checking…" : "Refresh messages";
@@ -203,14 +203,11 @@
     clearTimer(); readBusy = true;
     const version = epoch, selected = conversation, id = activeId, actor = context.currentId;
     const first = !loaded;
-    if (!automatic || first) status(first ? "Opening the game's shared conversation…" : "Checking for new messages…");
-    else paintControls();
+    paintControls();
     try {
       const response = await context.call("GetWorkerMessages", { targetId: id });
       if (!same(version, selected, id)) return;
       const next = normalize(response.messages, actor, id);
-      const oldIds = new Set(messages.map(message => message.id));
-      const additions = next.filter(message => !oldIds.has(message.id)).length;
       const pending = outboxes.get(id);
       let recovered = false;
       if (pending) {
@@ -223,10 +220,9 @@
       online = typeof response.online === "boolean" ? response.online : null;
       lastChecked = Date.now();
       paintMessages(first);
-      status(recovered ? "Your earlier send is confirmed in the conversation. It was not sent again."
-        : outboxes.has(id) ? "A send is still unconfirmed. Use Retry same send; its reference and text are preserved."
-        : !first && additions ? `${additions} new ${additions === 1 ? "message" : "messages"}. Conversation updated.`
-        : "Conversation updated. Messages are shared with the game.", recovered ? "success" : "info");
+      if (recovered) status("Your earlier message was sent.", "success");
+      else if (outboxes.has(id)) status("We couldn’t confirm your message was sent. Use Retry same send to try again.", "error");
+      else if (feedbackKind !== "success") status("");
     } catch (error) {
       if (!same(version, selected, id) || error.stale) return;
       if (failure(error)) return;
@@ -268,7 +264,7 @@
       if (same(version, selected, id)) {
         messages = normalize([...messages, confirmed], actor, id);
         paintMessages(true);
-        status("Message sent and saved to the game's conversation.", "success");
+        status("Message sent.", "success");
       }
     } catch (error) {
       if (version !== epoch || !current() || error.stale) return;

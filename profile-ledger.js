@@ -19,21 +19,20 @@
   roots.forEach(root => {
     const prefix = root.dataset.ledgerBoard === "mobile" ? "mobile-ledger" : "desktop-ledger";
     root.innerHTML = `
-      <header class="ledger-heading"><div><p class="office-kicker">Operations / purchase records</p><h2>Wallet &amp; Transactions</h2></div><span class="ledger-stamp">Recorded events</span></header>
-      <p class="ledger-intro">Your captured purchase history, shared with the game's records. Prices below are game currency, not real-money charges.</p>
-      <p class="ledger-coverage">First connection: PlayFab legacy virtual-currency purchases. PayMongo payments, contract-budget purchases, and pending/failed attempts are not connected yet.</p>
-      <div class="ledger-tools"><span data-ledger-count>No history loaded</span><button class="office-button" type="button" data-ledger-action="refresh" disabled>Refresh ledger</button></div>
+      <header class="ledger-heading"><div><p class="office-kicker">Operations / purchase records</p><h2>Wallet &amp; Transactions</h2></div></header>
+      <p class="ledger-intro">This history shows completed purchases made with in-game currency. It doesn’t include real-money payments or spending from a contract budget.</p>
+      <div class="ledger-tools"><span data-ledger-count></span><button class="office-button" type="button" data-ledger-action="refresh" disabled>Refresh ledger</button></div>
       <form class="ledger-filters" data-ledger-form>
         <div class="ledger-field"><label for="${prefix}-currency">Currency</label><select id="${prefix}-currency" data-ledger-field="currency"><option value="">All currencies</option></select></div>
         <div class="ledger-field"><label for="${prefix}-from">From date</label><input id="${prefix}-from" type="date" data-ledger-field="from"></div>
         <div class="ledger-field"><label for="${prefix}-to">Through date</label><input id="${prefix}-to" type="date" data-ledger-field="to"></div>
-        <div class="ledger-field"><label for="${prefix}-q">Item ID or purchase ID</label><input id="${prefix}-q" type="search" maxlength="100" placeholder="e.g. cash-tier-09" data-ledger-field="q"></div>
+        <div class="ledger-field"><label for="${prefix}-q">Item ID or purchase ID</label><input id="${prefix}-q" type="search" maxlength="100" data-ledger-field="q"></div>
         <button class="office-button office-button-primary" type="submit" data-ledger-apply disabled>Apply filters</button>
       </form>
       <p class="ledger-status" data-ledger-status role="status" aria-live="polite"></p>
       <p class="ledger-pending" data-ledger-pending hidden></p>
       <ul class="ledger-list" data-ledger-list aria-label="Recorded purchases" aria-busy="false"></ul>
-      <footer class="ledger-footer"><p>Item names use the current catalog. If a name is unavailable, its item ID and purchase details stay visible. No balances are changed here.</p><button class="office-button" type="button" data-ledger-action="more" hidden>Load more</button></footer>`;
+      <footer class="ledger-footer" hidden><button class="office-button" type="button" data-ledger-action="more" hidden>Load more</button></footer>`;
     root.addEventListener("input", event => {
       if (!event.target.dataset.ledgerField) return;
       draft[event.target.dataset.ledgerField] = event.target.value;
@@ -97,8 +96,8 @@
   function format(value) { return new Intl.NumberFormat().format(BigInt(value)); }
   function paint() {
     roots.forEach(root => {
-      const status = q(root, "[data-ledger-status]"); status.textContent = message; status.dataset.kind = kind;
-      q(root, "[data-ledger-count]").textContent = loaded ? `${rows.length} captured ${rows.length === 1 ? "purchase" : "purchases"} shown` : "No history loaded";
+      const status = q(root, "[data-ledger-status]"); status.textContent = message; status.dataset.kind = kind; status.hidden = !message;
+      q(root, "[data-ledger-count]").textContent = loaded && rows.length ? `${rows.length} ${rows.length === 1 ? "purchase" : "purchases"} shown` : "";
       q(root, '[data-ledger-action="refresh"]').disabled = !current() || busy;
       q(root, '[data-ledger-action="refresh"]').textContent = busy ? "Loading…" : "Refresh ledger";
       q(root, "[data-ledger-apply]").disabled = !current() || busy;
@@ -109,18 +108,16 @@
       select.value = draft.currency;
       const pendingNode = q(root, "[data-ledger-pending]");
       pendingNode.hidden = !(pending > 0 || syncWarning);
-      pendingNode.textContent = pending > 0 ? `${pending} purchase event(s) are still queued in PlayFab. Refresh again later to synchronize more. This does not repeat any purchase.` : syncWarning;
+      pendingNode.textContent = pendingNode.hidden ? "" : "Recent purchases may take a moment to appear. Try refreshing again later.";
       const list = q(root, "[data-ledger-list]"); list.replaceChildren(); list.setAttribute("aria-busy", String(busy));
-      if (!rows.length) list.append(node("li", "ledger-empty", busy ? "Opening the captured purchase records…" : loaded
-        ? "No captured purchases match these filters. This does not prove there were no purchases—older events may still need importing or capture setup."
-        : "Purchase history has not loaded yet."));
+      if (!rows.length && kind !== "error") list.append(node("li", "ledger-empty", busy ? "Loading purchases…" : loaded
+        ? (Object.keys(applied).length ? "No purchases match these filters." : "No purchases to show yet.")
+        : "Purchase history is not available yet."));
       rows.forEach(row => {
         const card = node("li", "ledger-row");
         const item = node("div", "ledger-item");
         item.append(node("h3", "", typeof row.itemName === "string" && row.itemName ? row.itemName : row.itemId));
-        item.append(node("p", "", `Item ID: ${row.itemId}`));
-        if (!row.itemName) item.append(node("p", "", "Name unavailable; the item ID is retained."));
-        item.append(node("span", "ledger-badge", "Recorded purchase"));
+        if (row.itemName) item.append(node("p", "", `Item ID: ${row.itemId}`));
         const when = node("div", "ledger-date");
         const timestamp = new Date(row.occurredAt);
         const time = node("time", "", timestamp.toLocaleString()); time.dateTime = timestamp.toISOString();
@@ -132,6 +129,7 @@
         card.append(item, when, cost); list.append(card);
       });
       const more = q(root, '[data-ledger-action="more"]'); more.hidden = !next; more.disabled = busy || !current();
+      more.parentElement.hidden = !next;
     });
   }
   function flush(e, v) {
@@ -162,7 +160,7 @@
     if (!current() || busy || (more && !next)) return;
     const e = epoch, v = ++version;
     controller?.abort(); controller = new AbortController(); const requestController = controller;
-    busy = true; kind = "info"; message = synchronize ? "Synchronizing saved purchase events, then reading your ledger…" : "Loading your captured purchases…";
+    busy = true; kind = "info"; message = "";
     if (!more) { rows = []; next = null; loaded = false; }
     paint();
     try {
@@ -186,10 +184,9 @@
       rows = more ? [...new Map([...rows, ...data.transactions].map(row => [row.id, row])).values()] : data.transactions;
       next = data.nextCursor; loaded = true; lastLoaded = Date.now();
       currencies = Array.isArray(data.currencies) ? data.currencies.filter(code => typeof code === "string" && /^[A-Z0-9_-]{1,8}$/.test(code)) : [];
-      message = `Captured history updated ${new Date(lastLoaded).toLocaleTimeString()}. ${next ? "More records are available." : "End of the captured records for these filters."}`;
     } catch (error) {
       if (!same(e, v)) return;
-      message = error.name === "AbortError" ? "History read timed out. Please refresh to retry." : `${error.message} No purchase or balance was changed.`;
+      message = "Couldn’t load purchase history. Try Refresh ledger again.";
       kind = "error";
     } finally { if (same(e, v)) { busy = false; controller = null; paint(); } }
   }
@@ -206,7 +203,7 @@
       stop();
       if (!options?.sdk || !options.currentId || sessionStorage.getItem("pfSessionTicket") !== options.sessionTicket) return unavailable("Your player session is not ready.");
       auth = { sdk: options.sdk, id: options.currentId, ticket: options.sessionTicket, onExpired: options.onExpired };
-      message = "Open Operations or use Refresh ledger to load your captured purchases."; paint();
+      message = ""; paint();
       if (visible()) void load(false, true);
     },
     open() { if (current() && !busy && (!loaded || Date.now() - lastLoaded > 60000)) void load(false, true); },

@@ -20,11 +20,10 @@ function openOfficeWindow(win) {
   if (!win || !desktopMedia.matches) return;
 
   if (currentWindow && currentWindow !== win) {
-    window.RoadimentaryBookmarkDock?.release();
-    currentWindow.classList.remove("show");
-    currentWindow.setAttribute("aria-hidden", "true");
+    closeOfficeWindow(currentWindow);
   }
 
+  win.inert = false;
   win.classList.add("show");
   win.setAttribute("aria-hidden", "false");
   officeOverlay?.classList.add("show");
@@ -45,8 +44,8 @@ function closeOfficeWindow(win = currentWindow) {
   if (!win) return;
 
   const isCurrent = win === currentWindow;
-  if (isCurrent) window.RoadimentaryBookmarkDock?.release();
-  win.classList.remove("show");
+  if (window.RoadimentaryBookmarkDock?.close) window.RoadimentaryBookmarkDock.close(win);
+  else win.classList.remove("show");
   win.setAttribute("aria-hidden", "true");
   if (!isCurrent) return;
   officeOverlay?.classList.remove("show");
@@ -381,8 +380,12 @@ function formatDate(rawDate) {
 }
 
 function setStatus(message) {
-  setText("mobile-profile-status", message);
-  setText("desktop-profile-status", message);
+  for (const id of ["mobile-profile-status", "desktop-profile-status"]) {
+    const status = document.getElementById(id);
+    if (!status) continue;
+    status.textContent = message;
+    status.hidden = !message;
+  }
 }
 
 function getInitial(value) {
@@ -488,7 +491,7 @@ function loadBio() {
       const data = result?.data?.Data;
       setBio(data?.bio?.Value || "");
       setProfileAvatar(data?.ProfileAvatar?.Value);
-      setStatus("Operator file ready.");
+      setStatus("");
     }
   );
 }
@@ -516,7 +519,6 @@ function loadProfile() {
 
     const accountInfo = result.data?.AccountInfo || {};
     const fallbackUsername = savedEmail ? savedEmail.split("@")[0] : "—";
-    const playFabId = accountInfo.PlayFabId || "—";
     const username = accountInfo.Username || fallbackUsername;
     const displayName = accountInfo.TitleInfo?.DisplayName || username || "Road Operator";
     const createdRaw =
@@ -527,8 +529,6 @@ function loadProfile() {
 
     const created = formatDate(createdRaw);
 
-    setText("mobile-profile-playfabid", playFabId);
-    setText("desktop-profile-playfabid", playFabId);
     setText("mobile-profile-username", username);
     setText("desktop-profile-username", username);
     setText("mobile-profile-created", created);
@@ -585,10 +585,10 @@ function startProfileSession() {
 
   if (typeof PlayFab === "undefined" || typeof PlayFabClientSDK === "undefined") {
     setStatus("The profile service did not load. Please refresh the page.");
-    window.RoadimentaryCrew?.unavailable("PlayFab did not load. Check your connection and refresh the page.");
-    window.RoadimentaryLedger?.unavailable("PlayFab did not load. Refresh the page.");
-    window.RoadimentaryStats?.unavailable("PlayFab did not load. Refresh the page.");
-    window.RoadimentaryBoards?.stop("PlayFab did not load. Refresh the page.");
+    window.RoadimentaryCrew?.unavailable("Couldn’t load your crew. Check your connection and refresh the page.");
+    window.RoadimentaryLedger?.unavailable("Couldn’t load purchase history. Refresh the page to try again.");
+    window.RoadimentaryStats?.unavailable("Couldn’t load your stats. Refresh the page to try again.");
+    window.RoadimentaryBoards?.stop("Couldn’t load the rankings. Refresh the page to try again.");
     return;
   }
 

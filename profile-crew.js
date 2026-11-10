@@ -51,7 +51,7 @@
     root.innerHTML = `
       <header class="crew-board-heading">
         <div><p class="office-kicker">Roadimentary / operator contacts</p><h2>Your Crew Board</h2><p class="crew-board-intro">Same builders. Same crew. In game and on the web.</p></div>
-        <div class="crew-sync-tools"><span class="crew-sync-badge" data-crew-sync>Checking session</span><button class="office-button" type="button" data-crew-action="refresh" disabled>Refresh board</button></div>
+        <div class="crew-sync-tools"><button class="office-button" type="button" data-crew-action="refresh" disabled>Refresh board</button></div>
       </header>
       <div class="crew-pane-switch" role="group" aria-label="Crew board sections">
         <button class="office-button" type="button" data-crew-pane="friends" aria-pressed="true">Friends &amp; messages</button>
@@ -71,11 +71,10 @@
           <label class="crew-filter-label" for="${prefix}-filter">Filter this list</label>
           <input class="crew-input" id="${prefix}-filter" type="search" maxlength="100" placeholder="Type a builder's name…" data-crew-filter autocomplete="off" disabled>
           <div class="crew-contact-grid" data-crew-list aria-busy="false"></div>
-          <p class="crew-sync-caption" data-crew-updated>Friendships require an accepted request.</p>
         </section>
         <aside class="crew-finder office-paper" aria-labelledby="${prefix}-find-title">
           <p class="office-kicker">Recruitment desk</p><h3 id="${prefix}-find-title">Find a Builder</h3>
-          <p class="crew-search-help" id="${prefix}-search-help">Enter their exact in-game display name or account username. Email lookup is not used.</p>
+          <p class="crew-search-help" id="${prefix}-search-help">Enter their exact in-game display name or username.</p>
           <form data-crew-search-form>
             <label for="${prefix}-search">Player name</label>
             <input class="crew-input" id="${prefix}-search" type="search" maxlength="100" placeholder="e.g. RoadBuilder" data-crew-search autocomplete="off" aria-describedby="${prefix}-search-help" disabled>
@@ -83,7 +82,6 @@
           </form>
           <p class="crew-search-status" data-crew-search-status role="status" aria-live="polite"></p>
           <div data-crew-search-result></div>
-          <p class="crew-presence-help">“In game” means the game recently sent a presence update. This page does not change your in-game presence.</p>
         </aside>
       </div>
       <section class="crew-public-file office-paper" data-crew-detail hidden aria-labelledby="${prefix}-file-title"></section>
@@ -240,7 +238,7 @@
     const version = epoch;
     loading = true;
     if (options.manual) {
-      showNotice("Updating friends and requests…");
+      showNotice("");
       profiles.forEach(profile => { profile.loadedAt = 0; });
     }
     render();
@@ -254,13 +252,14 @@
         syncError = "";
         lastSync = Date.now();
         if (options.manual) writesBlocked = false;
-        if (options.manual || !options.preserveNotice) showNotice("Crew board updated. Requests are shared with the game.", "success");
+        if (!options.preserveNotice) showNotice("");
         return true;
       } catch (error) {
         if (!sameSession(version) || error.stale) return false;
         if (error.expired) { unavailable(error.message); return false; }
         syncError = error.message;
-        showNotice(`${error.message}${hasHub ? " Showing the last loaded list; actions are paused until Refresh succeeds." : ""}`, "error");
+        showNotice(hasHub ? "Couldn’t refresh your crew. Showing the previous list. Refresh the board to send or respond to requests."
+          : "Couldn’t load your crew. Try Refresh board again.", "error");
         return false;
       } finally {
         if (sameSession(version)) {
@@ -551,7 +550,6 @@
       if (!hasHub) container.append(emptyCard(loading ? "Opening your crew file…" : "Crew file not loaded", loading ? "Checking the game's shared friends system." : "Use Refresh board to retry once your player session is ready."));
       else if (!list.length) container.append(emptyCard(needle ? "No matching builders" : view === "friends" ? "Your first crew member awaits" : view === "incoming" ? "No received requests" : "No sent requests", needle ? "Try another name or clear the filter." : view === "friends" ? "Use Find a Builder to send your first friend request." : view === "incoming" ? "Requests from other builders will appear here." : "Requests you send will be filed here until answered."));
       else list.forEach(player => container.append(cardFor(player)));
-      text(root, "[data-crew-updated]", lastSync ? `Last synced ${new Date(lastSync).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}. Use Refresh for new requests and presence.` : "Friendships require an accepted request.");
     });
   }
   function renderSearch() {
@@ -602,7 +600,7 @@
         const value = element("dd"); value.setAttribute(`data-crew-${key}`, "");
         item.append(element("dt", "", label), value); stats.append(item);
       }
-      copy.append(stats, element("p", "crew-public-note", "Public game summaries may be missing or a little behind. — means this information has not synced yet."), actionsFor(player));
+      copy.append(stats, actionsFor(player));
       body.append(portrait, copy);
       panel.append(heading, body);
       paintCard(body, getProfile(player.id), true);
@@ -625,10 +623,9 @@
       node.textContent = notice;
       node.dataset.kind = noticeKind;
       node.hidden = !notice;
-      const badge = q(root, "[data-crew-sync]");
-      badge.textContent = busy ? "Saving…" : loading ? "Syncing…" : !auth ? "Sign-in required" : syncError || writesBlocked ? "Needs refresh" : hasHub ? "Shared with game" : "Not synced";
-      badge.classList.toggle("is-loading", loading || busy);
-      q(root, "[data-crew-action='refresh']").disabled = !auth || loading || busy;
+      const refresh = q(root, "[data-crew-action='refresh']");
+      refresh.disabled = !auth || loading || busy;
+      refresh.textContent = loading ? "Refreshing…" : "Refresh board";
     });
     renderLists();
     renderSearch();
@@ -687,7 +684,6 @@
           refreshHub({ preserveNotice: true });
         }
       });
-      showNotice("Opening the game's shared crew records…");
       refreshHub();
     },
     open() {

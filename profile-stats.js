@@ -89,38 +89,17 @@
 
     const completion = pair("JobsCompleted", "JobsAttempted");
     const quality = pair("WorkQualityTotal", "WorkQualityJobs");
-    const warnings = [];
-    if (!stats.ok) warnings.push("The main statistics read failed; any available public summaries are labeled below.");
-    if (!data.ok) warnings.push("Public profile summaries could not be read.");
-    if (Object.values(fields).some(field => field.source === "summary")) {
-      warnings.push("Some values use public profile summaries, which can lag behind the game's main statistics.");
-    }
-    if (Object.values(fields).some(field => field.source === "invalid")) warnings.push("An invalid saved value was withheld.");
-    if (completion.a !== null && completion.b !== null && completion.a > completion.b) {
-      warnings.push("The recorded job totals are inconsistent, so completion rate is unavailable.");
-    }
-    if (quality.a !== null && quality.b !== null && quality.a > quality.b * 100) {
-      warnings.push("The recorded quality totals are inconsistent, so average quality is unavailable.");
-    }
-    return { fields, completion, quality, warnings,
+    return { fields, completion, quality,
       earnings: legacyField(stats, payoutStat), statsAvailable: stats.ok, summariesAvailable: data.ok,
       any: Object.values(fields).some(field => field.value !== null) };
   }
 
-  function sourceText(field) {
-    if (field.source === "summary") return "Public profile summary · fallback";
-    if (field.source === "statistics") return "Saved PlayFab statistic";
-    if (field.source === "invalid") return "Invalid saved value · not displayed";
-    return loaded ? "Not recorded or unavailable" : "Not loaded yet";
-  }
-
   function ratio(pair, quality = false) {
-    if (!pair || pair.a === null || pair.b === null) return { text: "—", note: "Matching saved totals are not available." };
-    if (pair.a > pair.b * (quality ? 100 : 1)) return { text: "—", note: "Recorded totals need checking in the game." };
+    if (!pair || pair.a === null || pair.b === null || pair.a > pair.b * (quality ? 100 : 1)) return { text: "—", note: "Not available yet." };
     if (!pair.b) return { text: "Not enough data", note: quality ? "No scored completed jobs are recorded." : "No job attempts are recorded." };
     const value = quality ? pair.a / pair.b : 100 * pair.a / pair.b;
     const text = quality ? new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 }).format(value) : String(Math.round(value));
-    return { text: `${text}%`, note: `${quality ? "Average of recorded completion scores" : "Recorded completed ÷ attempted"} · ${pair.source === "summary" ? "public summary fallback" : "saved statistics"}` };
+    return { text: `${text}%`, note: quality ? "Average score on completed jobs" : "Share of attempted jobs completed" };
   }
 
   roots.forEach(root => {
@@ -128,32 +107,25 @@
     root.innerHTML = `
       <header class="performance-heading">
         <div><p class="office-kicker">Operations / career record</p><h2>Construction Performance</h2></div>
-        <span class="performance-stamp" data-stats-badge>Read-only record</span>
       </header>
-      <p class="performance-intro">Your operator progression and recorded construction results, shared with the game.</p>
-      <div class="performance-tools"><p data-stats-checked>No statistics checked yet</p><button class="office-button" type="button" data-stats-refresh disabled>Refresh stats</button></div>
+      <p class="performance-intro">Your progress and construction results. Practice tutorial runs don’t count toward job totals.</p>
+      <div class="performance-tools"><button class="office-button" type="button" data-stats-refresh disabled>Refresh stats</button></div>
       <p class="performance-status" data-stats-status role="status" aria-live="polite"></p>
       <div class="performance-progression">
-        <article class="performance-level"><span class="performance-label">Operator level</span><strong data-stats-level>—</strong><span>Total XP <b data-stats-xp>—</b></span><small data-stats-xp-source>Not loaded yet</small></article>
+        <article class="performance-level"><span class="performance-label">Operator level</span><strong data-stats-level>—</strong><span>Total XP <b data-stats-xp>—</b></span></article>
         <div class="performance-xp">
           <label for="${prefix}-xp" data-stats-progress-heading>XP progress</label>
           <p data-stats-progress-text>Open Operations to load saved XP.</p>
           <progress id="${prefix}-xp" max="1" value="0" data-stats-progress aria-label="XP progress unavailable"></progress>
-          <p data-stats-progress-remaining>Progress uses the game's current operator-level curve.</p>
+          <p data-stats-progress-remaining></p>
         </div>
       </div>
       <div class="performance-grid">
-        <article class="performance-card"><h3>Recorded jobs completed</h3><strong data-stats-completed>—</strong><small data-stats-completed-source>Not loaded yet</small></article>
-        <article class="performance-card"><h3>Recorded jobs attempted</h3><strong data-stats-attempted>—</strong><small data-stats-attempted-source>Not loaded yet</small></article>
+        <article class="performance-card"><h3>Jobs completed</h3><strong data-stats-completed>—</strong></article>
+        <article class="performance-card"><h3>Jobs attempted</h3><strong data-stats-attempted>—</strong></article>
         <article class="performance-card"><h3>Completion rate</h3><strong data-stats-completion>—</strong><small data-stats-completion-note>Not loaded yet</small></article>
         <article class="performance-card"><h3>Average work quality</h3><strong data-stats-quality>—</strong><small data-stats-quality-note>Not loaded yet</small></article>
-      </div>
-      <p class="performance-coverage" data-stats-coverage>Only results successfully saved by the game can appear here. No attempts are inferred from XP or purchases.</p>
-      <details class="performance-source-details"><summary>How these numbers are read</summary>
-        <p>Main PlayFab statistics are preferred. Public Profile summaries are used only when the matching statistic is absent or its read is unavailable; they are never added to the main totals. Matching numerator and denominator values must come from the same source.</p>
-        <p>The current game recorder excludes tutorial runs from job totals. Completed jobs contribute their overall score to average work quality; failed jobs do not. Values can reflect incomplete game-side tracking. This page does not repair results, grant XP, or change balances.</p>
-        <p>“Last checked” is when this website read PlayFab, not when the game last uploaded a result. Detailed run history and performance-over-time charts are not connected.</p>
-      </details>`;
+      </div>`;
     q(root, "[data-stats-refresh]").addEventListener("click", () => { if (current() && !busy) void load(); });
   });
   overviews.forEach(root => {
@@ -165,17 +137,13 @@
     const scored = snapshot?.quality?.b;
     const hasQuality = quality.text.endsWith("%");
     const hasData = [xp, completed, attempted, earnings].some(field => field.value !== null) || hasQuality;
-    const usesSummary = [xp, completed, attempted].some(field => field.value !== null && field.source === "summary")
-      || (hasQuality && snapshot.quality.source === "summary");
-    const status = busy ? "Checking your saved career stats…"
+    const status = busy ? ""
       : !validSession() ? (kind === "error" ? message : "Sign in to check your saved career stats.")
-      : !loaded ? "Waiting to check your saved career stats."
+      : !loaded ? ""
       : !hasData ? (!snapshot?.statsAvailable || !snapshot.summariesAvailable
         ? "Career stats couldn’t be read. Use Refresh stats to try again." : "No saved career stats are available yet.")
-      : (usesSummary ? "Some values use the game’s public profile summary. " : "") +
-        (checkedAt ? "Checked " + new Date(checkedAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) + "." : "");
-    const badge = busy ? "Checking" : hasData ? (usesSummary ? "Summary fallback" : "Saved stats")
-      : loaded || kind === "error" ? "Unavailable" : "Career record";
+      : "";
+    const badge = loaded && !hasData ? "Unavailable" : "Career record";
     for (const root of overviews) {
       const write = (key, value) => {
         const element = q(root, `[data-overview-${key}]`);
@@ -183,8 +151,9 @@
       };
       root.setAttribute("aria-busy", String(busy));
       write("badge", badge); write("status", status);
+      q(root, "[data-overview-status]")?.toggleAttribute("hidden", !status);
       const badgeElement = q(root, "[data-overview-badge]");
-      if (badgeElement) badgeElement.dataset.kind = hasData && !usesSummary ? "saved" : "neutral";
+      if (badgeElement) badgeElement.dataset.kind = hasData ? "saved" : "neutral";
       const button = q(root, "[data-overview-refresh]");
       if (button) {
         button.disabled = busy || !validSession();
@@ -217,16 +186,13 @@
     paintOverview(xp, progression, completed, attempted, quality);
     roots.forEach(root => {
       root.setAttribute("aria-busy", String(busy));
-      set(root, "status", message); q(root, "[data-stats-status]").dataset.kind = kind;
-      set(root, "checked", checkedAt ? `Last checked ${new Date(checkedAt).toLocaleString()}` : "No statistics checked yet");
-      set(root, "badge", busy ? "Checking records" : snapshot?.any ? "Saved values" : "Read-only record");
+      const status = q(root, "[data-stats-status]");
+      status.textContent = message; status.dataset.kind = kind; status.hidden = !message;
       const refresh = q(root, "[data-stats-refresh]"); refresh.disabled = busy || !validSession(); refresh.textContent = busy ? "Checking…" : "Refresh stats";
       set(root, "level", progression ? format(progression.level) : "—");
       set(root, "xp", xp.value === null ? "—" : format(xp.value));
-      set(root, "xp-source", sourceText(xp));
       set(root, "completed", completed.value === null ? "—" : format(completed.value));
       set(root, "attempted", attempted.value === null ? "—" : format(attempted.value));
-      set(root, "completed-source", sourceText(completed)); set(root, "attempted-source", sourceText(attempted));
       set(root, "completion", completion.text); set(root, "completion-note", completion.note);
       set(root, "quality", quality.text); set(root, "quality-note", quality.note);
       const progress = q(root, "[data-stats-progress]");
@@ -234,10 +200,7 @@
       progress.setAttribute("aria-label", progression ? `${format(progression.current)} of ${format(progression.needed)} XP toward level ${progression.level + 1}` : "XP progress unavailable");
       set(root, "progress-heading", progression ? `Progress to level ${format(progression.level + 1)}` : "XP progress");
       set(root, "progress-text", progression ? `${format(progression.current)} / ${format(progression.needed)} XP` : busy ? "Checking saved XP…" : "Saved XP is not available yet.");
-      set(root, "progress-remaining", progression ? `${format(progression.needed - progression.current)} XP to the next level` : "Progress uses the game's current operator-level curve.");
-      set(root, "coverage", attempted.value === 0
-        ? "No job attempts are recorded in this saved source yet. This does not prove no jobs were played; game-side recording may be incomplete. XP is saved separately."
-        : "Only results successfully saved by the game can appear here. No attempts are inferred from XP or purchases; failed outcomes are not reclassified by the website.");
+      set(root, "progress-remaining", progression ? `${format(progression.needed - progression.current)} XP to the next level` : "");
     });
   }
 
@@ -268,7 +231,7 @@
     if (!current() || busy) return;
     const version = epoch, session = auth;
     busy = true; snapshot = null; loaded = false; checkedAt = 0;
-    message = "Checking your saved XP and construction totals…"; kind = "info"; paint();
+    message = ""; kind = "info"; paint();
     const [stats, data] = await Promise.all([
       read("GetPlayerStatistics", { StatisticNames: [...names, payoutStat] }, version, session),
       read("GetUserData", { Keys: names.map(name => `Profile${name}`) }, version, session)
@@ -283,13 +246,11 @@
     snapshot = normalize(stats, data);
     checkedAt = Date.now(); busy = false; loaded = true;
     if (!stats.ok && !data.ok) {
-      message = "Saved statistics could not be read. Check your connection and use Refresh stats to retry. No values were changed."; kind = "error";
+      message = "Couldn’t load your stats. Check your connection and try Refresh stats."; kind = "error";
     } else if (!snapshot.any) {
-      message = "No usable saved performance values were returned. Missing records are not treated as zero."; kind = "warning";
+      message = "No construction stats are available yet."; kind = "info";
     } else {
-      const partial = Object.values(snapshot.fields).some(field => field.value === null);
-      message = snapshot.warnings.join(" ") || (partial ? "Available statistics loaded. Some performance values have not been recorded yet." : "Saved construction statistics loaded.");
-      kind = snapshot.warnings.length || partial ? "warning" : "success";
+      message = ""; kind = "info";
     }
     paint();
   }
@@ -314,7 +275,7 @@
       }
       auth = { sdk: options.sdk, id: options.currentId, ticket: options.sessionTicket, onExpired: options.onExpired };
       if (!current()) return;
-      message = "Open Overview or Operations to read your saved performance."; paint();
+      message = ""; paint();
       if (visible()) void load();
     },
     open() { if (current() && !busy && (!loaded || Date.now() - checkedAt >= CACHE_MS)) void load(); },

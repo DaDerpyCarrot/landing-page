@@ -133,7 +133,7 @@
           <button type="button" class="office-button" data-board-directory-button hidden>Load more Companies</button>
         </div>
         <p class="xp-board-caption" data-board-caption></p>
-        <div class="xp-board-tools"><button type="button" class="office-button" data-xp-refresh disabled>Refresh board</button><span data-xp-checked></span></div>
+        <div class="xp-board-tools"><button type="button" class="office-button" data-xp-refresh disabled>Refresh board</button></div>
         <p class="xp-board-status" data-xp-status role="status"></p>
         <div class="xp-board-columns" data-xp-columns aria-hidden="true" hidden><span>Rank</span><span>Operator</span><span data-board-column></span></div>
         <ol class="xp-board-list" data-xp-list hidden></ol>
@@ -192,9 +192,6 @@
       const status = q(root, "[data-xp-status]");
       status.textContent = view.message;
       status.dataset.state = view.kind;
-      const timestamp = isCompany ? view.snapshotAt : view.checkedAt;
-      q(root, "[data-xp-checked]").textContent = timestamp
-        ? (isCompany ? "Scores read " : "Last checked ") + new Date(timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
       const list = q(root, "[data-xp-list]");
       list.setAttribute("aria-label", heading + " ranked by " + metric.label);
       list.setAttribute("aria-busy", String(view.kind === "loading"));

@@ -27,6 +27,7 @@ function openWindow(win) {
     closeWindow(currentWindow);
   }
 
+  win.inert = false;
   win.classList.add('show');
 
   if (overlay) {
@@ -47,8 +48,8 @@ function closeWindow(win) {
   if (!win) return;
 
   const isCurrent = win === currentWindow;
-  if (isCurrent) window.RoadimentaryBookmarkDock?.release();
-  win.classList.remove('show');
+  if (window.RoadimentaryBookmarkDock?.close) window.RoadimentaryBookmarkDock.close(win);
+  else win.classList.remove('show');
   if (!isCurrent) return;
 
   if (overlay) {

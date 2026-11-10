@@ -1,4 +1,17 @@
 /* Standalone dock rules, so an older shared style.css cannot undo them. */
+.desktop-window {
+  transition: transform .45s cubic-bezier(.22,.61,.36,1), opacity .35s ease,
+    visibility 0s linear .45s;
+}
+
+.desktop-window.show { transition-delay: 0s; }
+.desktop-window:not(.show) { z-index: 899; }
+.bookmark.bookmark-returning:not(:focus-visible) { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .desktop-window, .desktop-window.show { transition: none; }
+}
+
 .desktop-window.has-bookmark-dock {
   --dock-window-top: var(--desktop-window-top, 120px);
   max-height: calc(100vh - var(--dock-window-top) - 72px);
