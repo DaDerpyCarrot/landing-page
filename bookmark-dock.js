@@ -1,16 +1,18 @@
-/* Move the original button to the window edge. CSS owns the position. */
+/* Dock the original button without adding a row to the popup's layout. */
 (() => {
   "use strict";
   let active = null;
 
   function release() {
     if (!active) return;
-    const { button, windowElement, wrapper, next, dock } = active;
+    const { button, windowElement, home, inlineStyle, stopAligning } = active;
     active = null;
+    stopAligning();
     const hadFocus = windowElement.contains(document.activeElement);
-    wrapper.insertBefore(button, next?.parentNode === wrapper ? next : null);
+    if (inlineStyle === null) button.removeAttribute("style");
+    else button.setAttribute("style", inlineStyle);
+    home.replaceWith(button);
     button.setAttribute("aria-expanded", "false");
-    dock.remove();
     windowElement.classList.remove("has-bookmark-dock");
     document.body.classList.remove("has-docked-bookmark");
     if (hadFocus) button.focus({ preventScroll: true });
@@ -22,21 +24,49 @@
     const wrapper = button?.closest(".bookmark-wrapper");
     const rail = wrapper?.parentElement;
     if (!rail || !windowElement) return;
-    const slots = Array.from(rail.children).filter(child => child.classList.contains("bookmark-wrapper"));
-    const index = slots.indexOf(wrapper);
-    if (index < 0) return;
-
-    const dock = document.createElement("div");
-    dock.className = "window-bookmark-dock";
-    dock.style.setProperty("--dock-slots", String(slots.length));
-    dock.style.setProperty("--dock-column", String(index + 1));
     const hadFocus = document.activeElement === button;
-    active = { button, wrapper, windowElement, next: button.nextSibling, dock };
+    // The hidden copy occupies exactly the original slot, even if the rail's
+    // spacing or a bookmark's width changes at a breakpoint.
+    const home = button.cloneNode(true);
+    for (const attr of ["id", "data-window", "aria-controls", "aria-expanded"]) home.removeAttribute(attr);
+    home.setAttribute("aria-hidden", "true");
+    home.tabIndex = -1;
+    home.inert = true;
+    home.style.visibility = "hidden";
+    home.style.pointerEvents = "none";
+
+    const inlineStyle = button.getAttribute("style");
+    const state = active = { button, windowElement, home, inlineStyle, stopAligning: () => {} };
+    // Set the essential placement on the button itself. An older cached
+    // stylesheet must not turn the bookmark into an in-flow flex row.
+    Object.assign(button.style, { position: "absolute", top: "calc(100% - 6px)",
+      zIndex: "1", maxWidth: "none", pointerEvents: "auto" });
     windowElement.classList.add("has-bookmark-dock");
     document.body.classList.add("has-docked-bookmark");
-    windowElement.append(dock);
-    dock.append(button);
+    button.replaceWith(home);
+    windowElement.append(button);
     button.setAttribute("aria-expanded", "true");
+
+    function align() {
+      if (active !== state) return;
+      const slot = home.getBoundingClientRect();
+      const popup = windowElement.getBoundingClientRect();
+      if (!slot.width || !popup.width) return;
+      // Measure only the stable horizontal slot. The vertical attachment
+      // stays relative to the popup's bottom edge through layout changes.
+      button.style.left = `${slot.left - popup.left - windowElement.clientLeft}px`;
+      button.style.width = `${slot.width}px`;
+    }
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(align) : null;
+    [home, rail, windowElement].forEach(element => observer?.observe(element));
+    window.addEventListener("resize", align);
+    window.visualViewport?.addEventListener("resize", align);
+    state.stopAligning = () => {
+      observer?.disconnect();
+      window.removeEventListener("resize", align);
+      window.visualViewport?.removeEventListener("resize", align);
+    };
+    align();
     if (hadFocus) button.focus({ preventScroll: true });
   }
 

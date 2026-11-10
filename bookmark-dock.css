@@ -1,0 +1,13 @@
+/* Standalone dock rules, so an older shared style.css cannot undo them. */
+.desktop-window.has-bookmark-dock {
+  --dock-window-top: var(--desktop-window-top, 120px);
+  max-height: calc(100vh - var(--dock-window-top) - 72px);
+  max-height: calc(100dvh - var(--dock-window-top) - 72px);
+}
+
+.profile-office-page .desktop-window.has-bookmark-dock {
+  --dock-window-top: var(--desktop-window-top, 122px);
+  min-height: 0;
+}
+
+body.has-docked-bookmark #footer-tab:not(.active) { z-index: 850; }
