@@ -1,7 +1,10 @@
-/* All Operators: each live category reads one existing PlayFab statistic. */
+/* Operator Boards: global PlayFab rankings and member-only Company rankings. */
 (() => {
   "use strict";
   const LIMIT = 20, MAX = 2147483647, CACHE_MS = 60000, READ_MS = 10000;
+  const COMPANY_TIMEOUT = 22000;
+  const COMPANY_API = (["localhost", "127.0.0.1"].includes(typeof location === "undefined" ? "" : location.hostname)
+    ? "http://localhost:3000/api" : "https://roadimentary-admin-dashboard.onrender.com/api") + "/player/companies";
   const metrics = Object.freeze({
     xp: Object.freeze({ stat: "TotalXP", label: "Total XP", column: "Total XP", unit: " XP",
       caption: "Top 20 operators with a saved Total XP score." }),
@@ -14,6 +17,7 @@
   });
   const nonnegativeInt = value => Number.isInteger(value) && value >= 0 && value <= MAX;
   const playerId = value => typeof value === "string" && /^[A-Za-z0-9_-]{3,64}$/.test(value) ? value.toUpperCase() : null;
+  const companyId = value => typeof value === "string" && /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(value) ? value.toLowerCase() : null;
   const badData = () => new Error("PlayFab returned unreadable ranking data. Refresh the board to try again.");
   function displayName(value) {
     if (typeof value !== "string" || value.includes("@")) return "Unnamed operator";
@@ -48,8 +52,36 @@
     if (!row || row.score !== score || row.rank <= LIMIT) return { state: "pending", score };
     return { state: "ranked", rank: row.rank, score: row.score };
   }
+  function parseCompanyBoard(data, scope, metric) {
+    const invalid = () => new Error("The Company service returned unreadable rankings. Refresh the board to try again.");
+    const { rankedCount, memberCount, snapshotAt, placement } = data;
+    if (data.company?.id !== scope || data.metric !== metric || !nonnegativeInt(memberCount) || !memberCount
+      || memberCount > 50 || !nonnegativeInt(rankedCount) || rankedCount > memberCount
+      || !Number.isSafeInteger(snapshotAt) || snapshotAt <= 0 || snapshotAt > 8640000000000000
+      || !Array.isArray(data.rows) || data.rows.length !== Math.min(LIMIT, rankedCount)) throw invalid();
+    const rows = data.rows.map((row, index) => {
+      const prev = data.rows[index - 1];
+      if (!nonnegativeInt(row?.score) || typeof row.isYou !== "boolean" || (prev && row.score > prev.score)
+        || row.rank !== (prev && row.score === prev.score ? prev.rank : index + 1)) throw invalid();
+      return { rank: row.rank, score: row.score, name: displayName(row.name), isYou: row.isYou };
+    });
+    const own = rows.filter(row => row.isYou);
+    if (own.length > 1 || !["ranked", "unranked"].includes(placement?.state)) throw invalid();
+    if (placement.state === "ranked") {
+      if (!nonnegativeInt(placement.score) || !nonnegativeInt(placement.rank) || !placement.rank
+        || placement.rank > rankedCount
+        || (own.length && (own[0].score !== placement.score || own[0].rank !== placement.rank))
+        || (!own.length && (rankedCount <= LIMIT || placement.score > rows.at(-1).score
+          || (placement.score === rows.at(-1).score ? placement.rank !== rows.at(-1).rank : placement.rank <= LIMIT)))) {
+        throw invalid();
+      }
+    } else if (own.length) throw invalid();
+    return { rows, rankedCount, memberCount, snapshotAt,
+      placement: placement.state === "unranked" ? { state: "unranked" }
+        : { state: "ranked", rank: placement.rank, score: placement.score } };
+  }
   if (typeof module === "object" && module.exports) {
-    module.exports = { parseBoard, savedScore, savedXP: savedScore, place };
+    module.exports = { parseBoard, savedScore, savedXP: savedScore, place, parseCompanyBoard };
     return;
   }
 
@@ -57,11 +89,13 @@
   if (!roots.length) return;
   const q = (root, selector) => root.querySelector(selector);
   const fmt = new Intl.NumberFormat();
-  const fresh = message => ({ board: null, message, kind: "idle", placement: { state: "idle" }, checkedAt: 0 });
-  let auth = null, flight = null, category = "xp", view = fresh("Verifying your player session…");
+  const fresh = message => ({ board: null, message, kind: "idle", placement: { state: "idle" }, checkedAt: 0, snapshotAt: 0 });
+  const emptyDirectory = () => ({ options: new Map(), cursor: null, checkedAt: 0, message: "", retry: false });
+  let auth = null, flight = null, category = "xp", scope = "all", view = fresh("Verifying your player session…");
+  let directory = emptyDirectory(), directoryJob = null;
   const cache = new Map();
   const sessionMatches = () => auth && sessionStorage.getItem("pfSessionTicket") === auth.sessionTicket;
-  const current = job => flight === job && auth === job.context && job.category === category && sessionMatches();
+  const current = job => flight === job && auth === job.context && job.category === category && job.scope === scope && sessionMatches();
   const stale = () => Object.assign(new Error("Player session changed."), { stale: true });
   const expires = new Set(["InvalidSessionTicket", "SessionTicketExpired", "NotAuthenticated", "AccountBanned"]);
   function node(tag, className, value) {
@@ -76,17 +110,27 @@
     root.innerHTML = `
       <section class="office-paper leaderboard-paper xp-board-paper" aria-labelledby="${heading}">
         <div class="xp-board-header">
-          <div><p class="office-kicker">Regional rankings</p><h2 id="${heading}">All Operators</h2></div>
+          <div><p class="office-kicker" data-board-kicker>Regional rankings</p><h2 id="${heading}" data-board-heading>All Operators</h2></div>
           <span class="construction-tag" data-board-metric>Total XP</span>
         </div>
-        <div class="board-category">
-          <label for="${heading}-category">Ranking category</label>
-          <select id="${heading}-category" data-board-category disabled>
-            <option value="xp">Total XP</option>
-            <option value="completed">Contracts Completed</option>
-            <option value="activity">Contract Activity</option>
-            <option value="earnings">Contract Earnings</option>
-          </select>
+        <div class="xp-board-filters">
+          <div class="board-category">
+            <label for="${heading}-scope">Board scope</label>
+            <select id="${heading}-scope" data-board-scope disabled><option value="all">All Operators</option></select>
+          </div>
+          <div class="board-category">
+            <label for="${heading}-category">Ranking category</label>
+            <select id="${heading}-category" data-board-category disabled>
+              <option value="xp">Total XP</option>
+              <option value="completed">Contracts Completed</option>
+              <option value="activity">Contract Activity</option>
+              <option value="earnings">Contract Earnings</option>
+            </select>
+          </div>
+        </div>
+        <div class="xp-board-directory">
+          <span data-board-directory-note role="status" hidden></span>
+          <button type="button" class="office-button" data-board-directory-button hidden>Load more Companies</button>
         </div>
         <p class="xp-board-caption" data-board-caption></p>
         <div class="xp-board-tools"><button type="button" class="office-button" data-xp-refresh disabled>Refresh board</button><span data-xp-checked></span></div>
@@ -102,6 +146,8 @@
       </aside>`;
     q(root, "[data-xp-refresh]").addEventListener("click", () => { void refresh(); });
     q(root, "[data-board-category]").addEventListener("change", event => choose(event.target.value));
+    q(root, "[data-board-scope]").addEventListener("change", event => chooseScope(event.target.value));
+    q(root, "[data-board-directory-button]").addEventListener("click", () => { void loadDirectory(Boolean(directory.cursor)); });
   });
   const placementCopy = {
     idle: ["—", "Open the board to check your placement."],
@@ -109,11 +155,32 @@
     unranked: ["Unranked", "No score is saved for you in this category yet."],
     pending: ["Pending", "Your saved score and placement couldn't be matched yet. Refresh in a moment."],
     error: ["Unavailable", "Your placement couldn't be checked. Use Refresh board to retry."],
-    ranked: ["", "Your position on the All Operators board."]
+    ranked: ["", ""]
   };
   function render() {
     const metric = metrics[category];
+    const isCompany = scope !== "all", heading = isCompany ? directory.options.get(scope) || "Company" : "All Operators";
     roots.forEach(root => {
+      const scopeSelect = q(root, "[data-board-scope]");
+      if (scopeSelect._boardDirectory !== directory.options) {
+        const options = [["all", "All Operators"], ...directory.options];
+        scopeSelect.replaceChildren(...options.map(([value, name]) => {
+          const item = node("option", "", name); item.value = value; return item;
+        }));
+        scopeSelect._boardDirectory = directory.options;
+      }
+      scopeSelect.value = scope;
+      scopeSelect.disabled = !sessionMatches() || !directory.options.size;
+      q(root, "[data-board-kicker]").textContent = isCompany ? "Company rankings" : "Regional rankings";
+      q(root, "[data-board-heading]").textContent = heading;
+      const directoryNote = q(root, "[data-board-directory-note]");
+      directoryNote.textContent = directoryJob ? "Checking your Companies…" : directory.message;
+      directoryNote.hidden = !directoryNote.textContent;
+      const more = q(root, "[data-board-directory-button]");
+      const empty = directory.checkedAt && !directory.options.size;
+      more.hidden = !sessionMatches() || (!directory.cursor && !directory.retry && !empty);
+      more.disabled = Boolean(directoryJob);
+      more.textContent = directory.retry ? "Retry Companies" : directory.cursor ? "Load more Companies" : "Refresh Companies";
       const selector = q(root, "[data-board-category]");
       selector.value = category; selector.disabled = !sessionMatches();
       q(root, "[data-board-metric]").textContent = metric.label;
@@ -125,14 +192,15 @@
       const status = q(root, "[data-xp-status]");
       status.textContent = view.message;
       status.dataset.state = view.kind;
-      q(root, "[data-xp-checked]").textContent = view.checkedAt
-        ? "Last checked " + new Date(view.checkedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
+      const timestamp = isCompany ? view.snapshotAt : view.checkedAt;
+      q(root, "[data-xp-checked]").textContent = timestamp
+        ? (isCompany ? "Scores read " : "Last checked ") + new Date(timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
       const list = q(root, "[data-xp-list]");
-      list.setAttribute("aria-label", "All Operators ranked by " + metric.label);
+      list.setAttribute("aria-label", heading + " ranked by " + metric.label);
       list.setAttribute("aria-busy", String(view.kind === "loading"));
       list.replaceChildren();
       for (const row of view.board?.rows || []) {
-        const own = row.id === auth?.currentId;
+        const own = isCompany ? row.isYou : row.id === auth?.currentId;
         const li = node("li", "xp-board-row" + (own ? " is-you" : ""));
         const rank = node("span", "xp-board-rank", "#" + fmt.format(row.rank));
         const operator = node("div", "xp-board-operator");
@@ -150,7 +218,8 @@
       score.hidden = !nonnegativeInt(p.score);
       score.textContent = score.hidden ? "" : fmt.format(p.score) + (category === "completed" ? " completed"
         : category === "activity" ? (p.score === 1 ? " attempt" : " attempts") : metric.unit);
-      q(root, "[data-xp-personal-note]").textContent = copy[1];
+      q(root, "[data-xp-personal-note]").textContent = p.state === "ranked"
+        ? (isCompany ? "Your position among current Company members." : "Your position on the All Operators board.") : copy[1];
     });
   }
   function cancelRead() {
@@ -159,7 +228,11 @@
     old?.cancel?.();
   }
   function stop(message = "Sign in to view the Operator Boards.") {
-    cancelRead(); auth = null; category = "xp"; cache.clear();
+    cancelRead();
+    const oldDirectory = directoryJob; directoryJob = null;
+    oldDirectory?.controller.abort();
+    auth = null; category = "xp"; scope = "all"; cache.clear();
+    directory = emptyDirectory();
     view = fresh(message);
     render();
   }
@@ -167,8 +240,76 @@
     if (!sessionMatches()) { stop(); return; }
     if (!Object.hasOwn(metrics, key) || category === key) return;
     cancelRead(); category = key;
-    view = cache.get(key) || fresh("Open this category to load its rankings.");
+    view = (scope === "all" && cache.get(key)) || fresh("Loading this category’s rankings…");
     render(); open();
+  }
+  function chooseScope(key) {
+    if (!sessionMatches()) { stop(); return; }
+    if (scope === key || (key !== "all" && !directory.options.has(key))) return;
+    cancelRead(); scope = key;
+    view = (scope === "all" && cache.get(category)) || fresh("Loading this board…");
+    render(); open();
+  }
+  async function companyGet(context, path, controller) {
+    const timer = setTimeout(() => controller.abort(), COMPANY_TIMEOUT);
+    try {
+      const response = await fetch(COMPANY_API + path, {
+        signal: controller.signal, cache: "no-store", redirect: "error", credentials: "omit",
+        headers: { Authorization: "Bearer " + context.sessionTicket }
+      });
+      if (!response.ok) {
+        const messages = {
+          401: "Sign in again to use Company boards.",
+          404: "This Company board is unavailable. Check that you're still a member.",
+          409: "The Company roster changed. Refresh the board to try again.",
+          429: "Too many Company requests. Wait a moment, then refresh."
+        };
+        throw Object.assign(new Error(messages[response.status] || "The Company service is unavailable. Try again in a moment."), { companyError: true });
+      }
+      const result = await response.json();
+      if (result?.ok !== true) throw new Error();
+      return result;
+    } catch (error) {
+      if (error.companyError) throw error;
+      throw new Error(controller.signal.aborted ? "The Company request timed out. Try again."
+        : "Could not read the Company service response. Try again.");
+    } finally { clearTimeout(timer); }
+  }
+  async function loadDirectory(more = false) {
+    if (!sessionMatches() || directoryJob || (more && !directory.cursor)) return;
+    const context = auth, controller = new AbortController();
+    const job = directoryJob = { controller };
+    const alive = () => directoryJob === job && auth === context && sessionMatches();
+    const after = more ? directory.cursor : null;
+    render();
+    try {
+      const data = await companyGet(context, after ? "?after=" + encodeURIComponent(after) : "", controller);
+      if (!alive()) return;
+      const cursor = data.nextCursor === null ? null : companyId(data.nextCursor);
+      if (!Array.isArray(data.companies) || data.companies.length > 30
+        || (data.nextCursor !== null && (!cursor || (after && cursor <= after)))) throw badData();
+      const options = more ? new Map(directory.options) : new Map();
+      const seen = new Set();
+      for (const company of data.companies) {
+        const id = companyId(company?.id);
+        if (!id || (after && id <= after) || seen.has(id) || typeof company.name !== "string" || !company.name.trim()) throw badData();
+        seen.add(id);
+        options.set(id, company.name.slice(0, 120));
+      }
+      // A member can stay on a selection from a later page while the directory is paginated.
+      if (scope !== "all" && !options.has(scope) && directory.options.has(scope)) options.set(scope, directory.options.get(scope));
+      directory = { options, cursor, checkedAt: Date.now(), retry: false,
+        message: options.size ? "" : "Join or create a Company in Crew to get a Company board." };
+    } catch (_) {
+      if (!alive()) return;
+      directory = { ...directory, checkedAt: Date.now(), retry: true,
+        message: "Could not load your Companies. All Operators is still available." };
+    } finally {
+      if (directoryJob === job) {
+        directoryJob = null;
+        if (auth === context && sessionMatches()) render();
+      }
+    }
   }
   function ensure(job) { if (!current(job)) throw stale(); }
   function read(job, method, input) {
@@ -204,12 +345,27 @@
     if (!sessionMatches()) { stop(); return; }
     const metric = metrics[category], stat = metric.stat;
     if (flight) return;
-    const job = flight = { context: auth, category, cancel: null };
-    cache.delete(category);
+    const job = flight = { context: auth, category, scope, cancel: null };
+    if (scope === "all") cache.delete(category);
     const own = job.context.currentId;
     view = fresh("Reading the " + metric.label + " leaderboard…");
     view.kind = "loading"; view.placement = { state: "loading" }; render();
     try {
+      if (job.scope !== "all") {
+        const controller = new AbortController();
+        job.cancel = () => controller.abort();
+        const data = await companyGet(job.context, "/" + encodeURIComponent(job.scope) + "/boards?metric=" + job.category, controller);
+        ensure(job);
+        const board = parseCompanyBoard(data, job.scope, job.category);
+        view.board = board; view.placement = board.placement;
+        view.checkedAt = Date.now(); view.snapshotAt = board.snapshotAt;
+        view.kind = board.rows.length ? "ready" : "empty";
+        view.message = board.rows.length
+          ? (board.rankedCount > LIMIT ? "Showing the top " + LIMIT + ". " : "") +
+            board.rankedCount + " of " + board.memberCount + " current Company members ranked."
+          : "No Company members have a saved score in this category yet.";
+        return;
+      }
       const board = parseBoard(await read(job, "GetLeaderboard", { StatisticName: stat, StartPosition: 0, MaxResultsCount: LIMIT }));
       ensure(job);
       view.board = board; view.checkedAt = Date.now(); view.kind = board.rows.length ? "ready" : "empty";
@@ -233,14 +389,16 @@
       view.placement = { state: "error" };
     } finally {
       if (flight === job) {
-        if (view.board) cache.set(job.category, view);
+        if (view.board && job.scope === "all") cache.set(job.category, view);
         flight = null; render();
       }
     }
   }
   function open() {
     if (auth && !sessionMatches()) { stop(); return; }
-    if (auth && (!view.checkedAt || Date.now() - view.checkedAt >= CACHE_MS)) void refresh();
+    if (!auth) return;
+    if (!directory.checkedAt || (scope === "all" && Date.now() - directory.checkedAt >= CACHE_MS)) void loadDirectory();
+    if (scope !== "all" || !view.checkedAt || Date.now() - view.checkedAt >= CACHE_MS) void refresh();
   }
   function checkSession() { if (auth && !sessionMatches()) stop(); }
   window.addEventListener("pageshow", checkSession);
