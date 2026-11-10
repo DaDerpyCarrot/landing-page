@@ -9,8 +9,8 @@
       caption: "Ranks saved successful non-tutorial contracts. New results appear after the game syncs." }),
     activity: Object.freeze({ stat: "JobsAttempted", label: "Contract Activity", column: "Attempts", unit: "",
       caption: "Ranks recorded non-tutorial attempts, including runs that did not succeed. This measures activity, not success." }),
-    earnings: Object.freeze({ stat: null, label: "Contract Earnings", column: "Cash earned", unit: "",
-      caption: "A future ranking for confirmed game Cash earned from contracts, separate from wallet balances and purchases." })
+    earnings: Object.freeze({ stat: "ContractCashEarned", label: "Contract Earnings", column: "Cash earned", unit: " Cash",
+      caption: "Ranks in-game Cash earned from confirmed contract payouts since tracking began. Spending Cash doesn't lower your score." })
   });
   const nonnegativeInt = value => Number.isInteger(value) && value >= 0 && value <= MAX;
   const playerId = value => typeof value === "string" && /^[A-Za-z0-9_-]{3,64}$/.test(value) ? value.toUpperCase() : null;
@@ -85,7 +85,7 @@
             <option value="xp">Total XP</option>
             <option value="completed">Contracts Completed</option>
             <option value="activity">Contract Activity</option>
-            <option value="earnings">Contract Earnings · Not tracked</option>
+            <option value="earnings">Contract Earnings</option>
           </select>
         </div>
         <p class="xp-board-caption" data-board-caption></p>
@@ -109,7 +109,6 @@
     unranked: ["Unranked", "No score is saved for you in this category yet."],
     pending: ["Pending", "Your saved score and placement couldn't be matched yet. Refresh in a moment."],
     error: ["Unavailable", "Your placement couldn't be checked. Use Refresh board to retry."],
-    "not-tracked": ["Not tracked", "No earned-Cash ranking has been published yet."],
     ranked: ["", "Your position on the All Operators board."]
   };
   function render() {
@@ -121,8 +120,7 @@
       q(root, "[data-board-caption]").textContent = metric.caption;
       q(root, "[data-board-column]").textContent = metric.column;
       const button = q(root, "[data-xp-refresh]");
-      button.hidden = !metric.stat;
-      button.disabled = !sessionMatches() || Boolean(flight) || !metric.stat;
+      button.disabled = !sessionMatches() || Boolean(flight);
       button.textContent = flight ? "Checking…" : "Refresh board";
       const status = q(root, "[data-xp-status]");
       status.textContent = view.message;
@@ -169,12 +167,7 @@
     if (!sessionMatches()) { stop(); return; }
     if (!Object.hasOwn(metrics, key) || category === key) return;
     cancelRead(); category = key;
-    if (!metrics[key].stat) {
-      view = fresh("Contract Earnings is not tracked as a leaderboard stat yet. Wallet balances and purchases are not used as substitutes.");
-      view.kind = "not-tracked"; view.placement = { state: "not-tracked" };
-    } else {
-      view = cache.get(key) || fresh("Open this category to load its rankings.");
-    }
+    view = cache.get(key) || fresh("Open this category to load its rankings.");
     render(); open();
   }
   function ensure(job) { if (!current(job)) throw stale(); }
@@ -210,7 +203,7 @@
   async function refresh() {
     if (!sessionMatches()) { stop(); return; }
     const metric = metrics[category], stat = metric.stat;
-    if (flight || !stat) return;
+    if (flight) return;
     const job = flight = { context: auth, category, cancel: null };
     cache.delete(category);
     const own = job.context.currentId;
@@ -247,7 +240,7 @@
   }
   function open() {
     if (auth && !sessionMatches()) { stop(); return; }
-    if (auth && metrics[category].stat && (!view.checkedAt || Date.now() - view.checkedAt >= CACHE_MS)) void refresh();
+    if (auth && (!view.checkedAt || Date.now() - view.checkedAt >= CACHE_MS)) void refresh();
   }
   function checkSession() { if (auth && !sessionMatches()) stop(); }
   window.addEventListener("pageshow", checkSession);
