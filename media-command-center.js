@@ -2,8 +2,8 @@
    ROADIMENTARY MEDIA COMMAND CENTER
 
    Add, remove, or reorder entries in MEDIA_ITEMS to change both the
-   desktop and mobile media windows. Only the selected video is loaded,
-   which keeps additional YouTube entries from slowing the page down.
+   desktop and mobile media windows. Videos use browser controls and
+   do not preload their media bytes or autoplay.
    ================================================================ */
 
 const MEDIA_ITEMS = [
@@ -13,7 +13,8 @@ const MEDIA_ITEMS = [
     label: "Video 01",
     title: "Gameplay Trailer",
     caption: "Gameplay footage and development highlights from Roadimentary.",
-    youtubeId: "VIDEO_ID"
+    src: "assets/Roadimentary-Trailer.mp4",
+    poster: "assets/contractplan_img.png"
   },
   {
     id: "gameplay-image-01",
@@ -127,6 +128,23 @@ function initializeMediaCommandCenter(center) {
 
   let activeFilter = "all";
   let activeId = MEDIA_ITEMS[0]?.id;
+  const desktopWindow = center.closest(".desktop-window");
+  const mobilePanel = center.closest(".mobile-panel");
+  const mobileSheet = center.closest(".mobile-bottom-sheet");
+  const desktopLayout = window.matchMedia("(min-width: 1024px)");
+
+  function pauseTrailer() { stage.querySelector("video")?.pause(); }
+  function pauseWhenHidden() {
+    const visible = desktopWindow ? desktopLayout.matches && desktopWindow.classList.contains("show")
+      : !desktopLayout.matches && mobilePanel?.classList.contains("active") && mobileSheet?.classList.contains("open");
+    if (!visible) pauseTrailer();
+  }
+  const visibilityObserver = new MutationObserver(pauseWhenHidden);
+  [desktopWindow, mobilePanel, mobileSheet].filter(Boolean).forEach(node => {
+    visibilityObserver.observe(node, { attributes: true, attributeFilter: ["class"] });
+  });
+  desktopLayout.addEventListener("change", pauseWhenHidden);
+  window.addEventListener("pagehide", pauseTrailer);
 
   const visibleItems = () => MEDIA_ITEMS.filter((item) => {
     return activeFilter === "all" || item.type === activeFilter;
@@ -155,6 +173,7 @@ function initializeMediaCommandCenter(center) {
   function renderStage() {
     const item = activeItem();
     const items = visibleItems();
+    pauseTrailer();
     stage.replaceChildren();
 
     if (!item) {
@@ -171,14 +190,26 @@ function initializeMediaCommandCenter(center) {
     activeId = item.id;
 
     if (item.type === "video") {
-      const iframe = document.createElement("iframe");
-      iframe.src = `https://www.youtube.com/embed/${encodeURIComponent(item.youtubeId)}`;
-      iframe.title = item.title;
-      iframe.loading = "lazy";
-      iframe.referrerPolicy = "strict-origin-when-cross-origin";
-      iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-      iframe.allowFullscreen = true;
-      stage.append(iframe);
+      const video = document.createElement("video");
+      video.controls = true;
+      video.playsInline = true;
+      video.preload = "none";
+      video.poster = item.poster;
+      video.setAttribute("aria-label", "Roadimentary " + item.title);
+      const directLink = document.createElement("a");
+      directLink.href = item.src;
+      directLink.textContent = "Open the MP4 directly";
+      video.append(directLink);
+      video.addEventListener("error", () => {
+        if (!stage.contains(video)) return;
+        const notice = document.createElement("p");
+        notice.className = "media-empty-state media-video-error";
+        notice.append("The trailer couldn’t load here. ", directLink);
+        stage.replaceChildren(notice);
+        expand.disabled = true;
+      });
+      video.src = item.src;
+      stage.append(video);
       expand.textContent = "Fullscreen";
     } else {
       const imageButton = document.createElement("button");
@@ -208,8 +239,10 @@ function initializeMediaCommandCenter(center) {
   }
 
   function chooseItem(itemId, shouldScroll = false) {
-    activeId = itemId;
-    renderStage();
+    if (activeId !== itemId) {
+      activeId = itemId;
+      renderStage();
+    }
 
     if (shouldScroll) {
       const selected = playlist.querySelector(`[data-media-id="${CSS.escape(itemId)}"]`);
@@ -286,19 +319,26 @@ function initializeMediaCommandCenter(center) {
   previous.addEventListener("click", () => moveSelection(-1));
   next.addEventListener("click", () => moveSelection(1));
 
-  expand.addEventListener("click", () => {
+  expand.addEventListener("click", async () => {
     const item = activeItem();
     if (!item) return;
 
     if (item.type === "image") {
       openImageViewer(item);
-    } else if (stage.requestFullscreen) {
-      stage.requestFullscreen();
+    } else {
+      const video = stage.querySelector("video");
+      if (!video) return;
+      try {
+        if (video.requestFullscreen) await video.requestFullscreen();
+        else video.webkitEnterFullscreen?.();
+      } catch (_) {
+        // Fullscreen may be restricted; the native player remains usable inline.
+      }
     }
   });
 
   center.addEventListener("keydown", (event) => {
-    if (event.target.matches("input, textarea, select, button, a, iframe")) return;
+    if (event.target.matches("input, textarea, select, button, a, video")) return;
     if (event.key === "ArrowLeft") moveSelection(-1);
     if (event.key === "ArrowRight") moveSelection(1);
   });

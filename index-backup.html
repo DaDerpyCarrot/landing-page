@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Roadimentary</title>
   <link rel="icon" type="image/png" href="/assets/fav_logo.png">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=homepage-content-1">
+  <link rel="stylesheet" href="mobile-office.css">
+  <link rel="stylesheet" href="release-download.css">
 </head>
 <body class="beaver-office-content-theme">
 
@@ -83,20 +85,26 @@
 
         <section class="mobile-download-card">
           <h2>Download Roadimentary</h2>
-          <p class="mobile-download-build-label">Pre-Alpha Internal Build</p>
+          <p class="mobile-download-build-label">Windows installer &middot; Thesis build</p>
 
           <div class="mobile-download-meta">
-            <div><strong>Version:</strong> 1.0.1</div>
+            <div><strong>Version:</strong> 1.0.0</div>
             <div><strong>Platform:</strong> Windows 64-bit</div>
-            <div><strong>File Size:</strong> 2.8 GB</div>
+            <div><strong>Download:</strong> 342 MiB (358 MB)</div>
           </div>
 
-          <button class="mobile-download-main-btn">Download Installer</button>
-          <button class="mobile-download-secondary-btn">View Patch Notes</button>
+          <a class="mobile-download-main-btn release-action" href="https://github.com/DaDerpyCarrot/roadimentary-downloads/releases/download/v1.0.0/Roadimentary-Setup-1.0.0-Windows-x64-guard1.exe">Download Windows Installer</a>
+          <a class="mobile-download-secondary-btn release-action" href="https://github.com/DaDerpyCarrot/roadimentary-downloads/releases/tag/v1.0.0" target="_blank" rel="noopener noreferrer">View Release Notes &nearr;<span class="release-visually-hidden"> (opens in a new tab)</span></a>
 
           <p class="mobile-download-note">
-            Download links are not connected yet. This panel is currently a prototype.
+            The compressed installer includes the full game files. Run Setup on a Windows 10/11 x64 PC. Internet access is required for sign-in and online features.
           </p>
+          <p class="release-device-note">Windows PC only &mdash; this build does not run on Android, iOS, or macOS. Downloading on a phone? Transfer the installer to a compatible Windows PC.</p>
+          <details class="release-integrity">
+            <summary>Verify installer (SHA-256)</summary>
+            <p>Compare this with the downloaded file's SHA-256 before running it:</p>
+            <code class="release-checksum">4E701FEE968DA7C9D9EF5CCAFDC49895B8BB6F855AD8234FEF50AD32729F42F1</code>
+          </details>
         </section>
 
         <section class="mobile-requirements-card">
@@ -136,7 +144,7 @@
 
         <div class="mobile-feature-hero">
           <div class="mobile-feature-hero-image">
-            <img src="assets/UI1.png" alt="Roadimentary shop interface preview">
+            <img src="assets/openContract_img.png" alt="Roadimentary shop interface preview">
           </div>
 
           <div class="mobile-feature-hero-text">
@@ -151,7 +159,7 @@
 
           <div class="mobile-feature-card preview-card" data-step="01">
             <div class="mobile-feature-preview">
-              <img src="assets/UI2.png" alt="Construction materials interface">
+              <img src="assets/materialDraft_img.png" alt="Construction materials interface">
             </div>
             <div class="mobile-feature-copy">
               <h3>Choose Your Materials</h3>
@@ -163,7 +171,7 @@
 
           <div class="mobile-feature-card preview-card" data-step="02">
             <div class="mobile-feature-preview">
-              <img src="assets/UI3.png" alt="Contract selection interface">
+              <img src="assets/contractSelection_img.png" alt="Contract selection interface">
             </div>
             <div class="mobile-feature-copy">
               <h3>Select Contracts</h3>
@@ -175,7 +183,7 @@
 
           <div class="mobile-feature-card preview-card" data-step="03">
             <div class="mobile-feature-preview">
-              <img src="assets/Profile.png" alt="Player profile interface">
+              <img src="assets/MetaProgression_img.png" alt="Player profile interface">
             </div>
             <div class="mobile-feature-copy">
               <h3>Track Your Progress</h3>
@@ -187,7 +195,7 @@
 
           <div class="mobile-feature-card preview-card" data-step="04">
             <div class="mobile-feature-preview">
-              <img src="assets/UI4.png" alt="Player profile interface">
+              <img src="assets/crewDraft_img.png" alt="Player profile interface">
             </div>
             <div class="mobile-feature-copy">
               <h3>Lead a Beaver Crew</h3>
@@ -203,26 +211,68 @@
 
     <!-- MEDIA PANEL -->
     <div class="mobile-panel" id="media">
-      <div class="mobile-media">
+      <div class="mobile-media media-command-shell">
+        <div class="media-command-center" data-media-command-center data-media-context="mobile">
+          <div class="media-command-toolbar">
+            <div class="media-command-heading">
+              <span class="media-command-eyebrow">Site Archive</span>
+              <h2>Field Media</h2>
+            </div>
 
-        <div class="mobile-media-video">
-          <iframe
-            src="https://www.youtube.com/embed/VIDEO_ID"
-            title="Roadimentary Gameplay Trailer"
-            frameborder="0"
-            allowfullscreen>
-          </iframe>
+            <div class="media-filter-group" role="group" aria-label="Filter media">
+              <button class="media-filter is-active" type="button" data-media-filter="all" aria-pressed="true">All</button>
+              <button class="media-filter" type="button" data-media-filter="video" aria-pressed="false">Videos</button>
+              <button class="media-filter" type="button" data-media-filter="image" aria-pressed="false">Images</button>
+            </div>
+          </div>
+
+          <div class="media-command-layout">
+            <aside class="media-playlist" aria-label="Media playlist">
+              <div class="media-playlist-heading">
+                <span>Media Files</span>
+                <span data-media-result-count>7 Items</span>
+              </div>
+              <div class="media-playlist-scroll" data-media-playlist></div>
+            </aside>
+
+            <section class="media-stage" aria-label="Selected media">
+              <div class="media-stage-frame" data-media-stage aria-live="polite">
+                <video controls playsinline preload="none" poster="assets/contractplan_img.png" aria-label="Roadimentary Gameplay Trailer">
+                  <source src="assets/Roadimentary-Trailer.mp4" type="video/mp4">
+                  <a href="assets/Roadimentary-Trailer.mp4">Open the MP4 directly</a>
+                </video>
+              </div>
+
+              <div class="media-stage-details">
+                <div class="media-stage-copy">
+                  <span class="media-type-badge" data-media-type>Video 01</span>
+                  <h3 data-media-title>Gameplay Trailer</h3>
+                  <p data-media-caption>Gameplay footage and development highlights from Roadimentary.</p>
+                </div>
+
+                <div class="media-stage-footer">
+                  <span class="media-counter" data-media-counter>1 / 7</span>
+                  <div class="media-stage-controls">
+                    <button type="button" data-media-previous aria-label="Previous media">&#8592;</button>
+                    <button type="button" data-media-fullscreen>Expand</button>
+                    <button type="button" data-media-next aria-label="Next media">&#8594;</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <noscript>
+            <div class="media-noscript-grid">
+              <img src="assets/contractplan_img.png" alt="Roadimentary gameplay screenshot 1">
+              <img src="assets/crewatwork_img.png" alt="Roadimentary gameplay screenshot 2">
+              <img src="assets/IngameShop_img.png" alt="Roadimentary gameplay screenshot 3">
+              <img src="assets/activesite_img.png" alt="Roadimentary gameplay screenshot 4">
+              <img src="assets/contractProgress_img.png" alt="Roadimentary gameplay screenshot 5">
+              <img src="assets/ingameCrew_img.png" alt="Roadimentary gameplay screenshot 6">
+            </div>
+          </noscript>
         </div>
-
-        <div class="mobile-media-gallery">
-          <img src="assets/sample1.png" alt="Roadimentary gameplay screenshot 1">
-          <img src="assets/sample2.png" alt="Roadimentary gameplay screenshot 2">
-          <img src="assets/sample3.png" alt="Roadimentary gameplay screenshot 3">
-          <img src="assets/sample4.png" alt="Roadimentary gameplay screenshot 4">
-          <img src="assets/sample5.png" alt="Roadimentary gameplay screenshot 5">
-          <img src="assets/sample6.png" alt="Roadimentary gameplay screenshot 6">
-        </div>
-
       </div>
     </div>
 
@@ -259,6 +309,23 @@
           </div>
           <button class="signin-btn" id="mobile-signin-btn">Sign In</button>
           <p id="mobile-signin-status"></p>
+
+          <section class="admin-destination-choice" id="mobile-admin-choice" hidden aria-labelledby="mobile-admin-choice-title">
+            <p class="admin-access-badge">Administrator access detected</p>
+            <h4 id="mobile-admin-choice-title">Choose your destination</h4>
+            <p class="admin-choice-copy">
+              Continue as a player, or securely open the Roadimentary admin dashboard.
+            </p>
+            <div class="admin-choice-actions">
+              <button type="button" class="admin-choice-btn admin-choice-btn-player" data-admin-destination="profile">
+                View Player Profile
+              </button>
+              <button type="button" class="admin-choice-btn admin-choice-btn-dashboard" data-admin-destination="dashboard">
+                Open Admin Dashboard
+              </button>
+            </div>
+            <p class="admin-choice-status" role="status" aria-live="polite"></p>
+          </section>
         </div>
 
         <div class="signin-links">
@@ -406,7 +473,8 @@
     <!-- ABOUT PANEL -->
     <div class="mobile-panel" id="about">
       <div class="footer-window-content">
-        <div class="about-container">
+        <div class="studio-project-board" data-studio-project-board data-board-context="mobile"></div>
+        <div class="about-container legacy-about-copy" aria-hidden="true">
 
           <div class="about-header">
             <h2>LNJK Studio</h2>
@@ -492,7 +560,7 @@
 
         <div class="feature-hero">
           <div class="feature-hero-image">
-            <img src="assets/UI1.png" alt="Roadimentary company management interface">
+            <img src="assets/openContract_img.png" alt="Roadimentary company management interface">
           </div>
 
           <div class="feature-hero-text">
@@ -507,7 +575,7 @@
 
           <div class="feature-card feature-preview" data-step="01">
             <div class="feature-preview-image">
-              <img src="assets/UI2.png" alt="Construction materials interface">
+              <img src="assets/materialDraft_img.png" alt="Construction materials interface">
             </div>
             <div class="feature-copy">
               <span class="feature-route-label">Project Milestone</span>
@@ -520,7 +588,7 @@
 
           <div class="feature-card feature-preview" data-step="02">
             <div class="feature-preview-image">
-              <img src="assets/UI3.png" alt="Contract selection interface">
+              <img src="assets/contractSelection_img.png" alt="Contract selection interface">
             </div>
             <div class="feature-copy">
               <span class="feature-route-label">Project Milestone</span>
@@ -533,7 +601,7 @@
 
           <div class="feature-card feature-preview" data-step="03">
             <div class="feature-preview-image">
-              <img src="assets/Profile.png" alt="Player profile interface">
+              <img src="assets/MetaProgression_img.png" alt="Player profile interface">
             </div>
             <div class="feature-copy">
               <span class="feature-route-label">Project Milestone</span>
@@ -546,7 +614,7 @@
 
           <div class="feature-card feature-preview" data-step="04">
             <div class="feature-preview-image">
-              <img src="assets/UI4.png" alt="Player profile interface">
+              <img src="assets/crewDraft_img.png" alt="Player profile interface">
             </div>
             <div class="feature-copy">
               <span class="feature-route-label">Project Milestone</span>
@@ -572,43 +640,68 @@
     </div>
 
     <div class="win-content">
-      <div class="media-showcase">
+      <div class="media-showcase media-command-shell">
+        <div class="media-command-center" data-media-command-center data-media-context="desktop">
+          <div class="media-command-toolbar">
+            <div class="media-command-heading">
+              <span class="media-command-eyebrow">Site Archive</span>
+              <h2>Roadimentary Field Media</h2>
+            </div>
 
-        <div class="media-featured">
-          <iframe
-            src="https://www.youtube.com/embed/VIDEO_ID"
-            title="Roadimentary Gameplay Trailer"
-            frameborder="0"
-            allowfullscreen>
-          </iframe>
+            <div class="media-filter-group" role="group" aria-label="Filter media">
+              <button class="media-filter is-active" type="button" data-media-filter="all" aria-pressed="true">All</button>
+              <button class="media-filter" type="button" data-media-filter="video" aria-pressed="false">Videos</button>
+              <button class="media-filter" type="button" data-media-filter="image" aria-pressed="false">Images</button>
+            </div>
+          </div>
+
+          <div class="media-command-layout">
+            <aside class="media-playlist" aria-label="Media playlist">
+              <div class="media-playlist-heading">
+                <span>Media Files</span>
+                <span data-media-result-count>7 Items</span>
+              </div>
+              <div class="media-playlist-scroll" data-media-playlist></div>
+            </aside>
+
+            <section class="media-stage" aria-label="Selected media">
+              <div class="media-stage-frame" data-media-stage aria-live="polite">
+                <video controls playsinline preload="none" poster="assets/contractplan_img.png" aria-label="Roadimentary Gameplay Trailer">
+                  <source src="assets/Roadimentary-Trailer.mp4" type="video/mp4">
+                  <a href="assets/Roadimentary-Trailer.mp4">Open the MP4 directly</a>
+                </video>
+              </div>
+
+              <div class="media-stage-details">
+                <div class="media-stage-copy">
+                  <span class="media-type-badge" data-media-type>Video 01</span>
+                  <h3 data-media-title>Gameplay Trailer</h3>
+                  <p data-media-caption>Gameplay footage and development highlights from Roadimentary.</p>
+                </div>
+
+                <div class="media-stage-footer">
+                  <span class="media-counter" data-media-counter>1 / 7</span>
+                  <div class="media-stage-controls">
+                    <button type="button" data-media-previous aria-label="Previous media">&#8592;</button>
+                    <button type="button" data-media-fullscreen>Expand</button>
+                    <button type="button" data-media-next aria-label="Next media">&#8594;</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <noscript>
+            <div class="media-noscript-grid">
+              <img src="assets/contractplan_img.png" alt="Roadimentary gameplay screenshot 1">
+              <img src="assets/crewatwork_img.png" alt="Roadimentary gameplay screenshot 2">
+              <img src="assets/IngameShop_img.png" alt="Roadimentary gameplay screenshot 3">
+              <img src="assets/activesite_img.png" alt="Roadimentary gameplay screenshot 4">
+              <img src="assets/contractProgress_img.png" alt="Roadimentary gameplay screenshot 5">
+              <img src="assets/ingameCrew_img.png" alt="Roadimentary gameplay screenshot 6">
+            </div>
+          </noscript>
         </div>
-
-        <div class="media-gallery">
-          <div class="media-card">
-            <img src="assets/sample1.png" alt="Roadimentary gameplay screenshot 1">
-          </div>
-
-          <div class="media-card">
-            <img src="assets/sample2.png" alt="Roadimentary gameplay screenshot 2">
-          </div>
-
-          <div class="media-card">
-            <img src="assets/sample3.png" alt="Roadimentary gameplay screenshot 3">
-          </div>
-
-          <div class="media-card">
-            <img src="assets/sample4.png" alt="Roadimentary gameplay screenshot 4">
-          </div>
-
-          <div class="media-card">
-            <img src="assets/sample5.png" alt="Roadimentary gameplay screenshot 5">
-          </div>
-
-          <div class="media-card">
-            <img src="assets/sample6.png" alt="Roadimentary gameplay screenshot 6">
-          </div>
-        </div>
-
       </div>
     </div>
   </div>
@@ -666,6 +759,23 @@
               </div>
             <button class="signin-btn" id="desktop-signin-btn">Sign In</button>
             <p id="desktop-signin-status"></p>
+
+            <section class="admin-destination-choice" id="desktop-admin-choice" hidden aria-labelledby="desktop-admin-choice-title">
+              <p class="admin-access-badge">Administrator access detected</p>
+              <h4 id="desktop-admin-choice-title">Choose your destination</h4>
+              <p class="admin-choice-copy">
+                Continue as a player, or securely open the Roadimentary admin dashboard.
+              </p>
+              <div class="admin-choice-actions">
+                <button type="button" class="admin-choice-btn admin-choice-btn-player" data-admin-destination="profile">
+                  View Player Profile
+                </button>
+                <button type="button" class="admin-choice-btn admin-choice-btn-dashboard" data-admin-destination="dashboard">
+                  Open Admin Dashboard
+                </button>
+              </div>
+              <p class="admin-choice-status" role="status" aria-live="polite"></p>
+            </section>
           </div>
 
           <div class="signin-links">
@@ -692,20 +802,26 @@
 
         <section class="download-panel">
           <h2>Download Roadimentary</h2>
-          <p class="download-build-label">Pre-Alpha Internal Build</p>
+          <p class="download-build-label">Windows installer &middot; Thesis build</p>
 
           <div class="download-meta">
-            <div><strong>Version:</strong> 1.0.1</div>
+            <div><strong>Version:</strong> 1.0.0</div>
             <div><strong>Platform:</strong> Windows 64-bit</div>
-            <div><strong>File Size:</strong> 2.8 GB</div>
+            <div><strong>Download:</strong> 342 MiB (358 MB)</div>
           </div>
 
-          <button class="download-main-btn">Download Installer</button>
-          <button class="download-secondary-btn">View Patch Notes</button>
+          <a class="download-main-btn release-action" href="https://github.com/DaDerpyCarrot/roadimentary-downloads/releases/download/v1.0.0/Roadimentary-Setup-1.0.0-Windows-x64-guard1.exe">Download Windows Installer</a>
+          <a class="download-secondary-btn release-action" href="https://github.com/DaDerpyCarrot/roadimentary-downloads/releases/tag/v1.0.0" target="_blank" rel="noopener noreferrer">View Release Notes &nearr;<span class="release-visually-hidden"> (opens in a new tab)</span></a>
 
           <p class="download-note">
-            Download links are not connected yet. This panel is currently a prototype.
+            The compressed installer includes the full game files. Run Setup on a Windows 10/11 x64 PC. Internet access is required for sign-in and online features.
           </p>
+          <p class="release-device-note">For Windows PCs only. This release does not include an automatic updater; future versions will be published as new installers.</p>
+          <details class="release-integrity">
+            <summary>Verify installer (SHA-256)</summary>
+            <p>Compare this with the downloaded file's SHA-256 before running it:</p>
+            <code class="release-checksum">4E701FEE968DA7C9D9EF5CCAFDC49895B8BB6F855AD8234FEF50AD32729F42F1</code>
+          </details>
         </section>
 
         <section class="requirements-panel">
@@ -948,7 +1064,8 @@
 
   <div class="win-content">
     <div class="footer-window-content">
-      <div class="about-container">
+      <div class="studio-project-board" data-studio-project-board data-board-context="desktop"></div>
+      <div class="about-container legacy-about-copy" aria-hidden="true">
 
         <div class="about-header">
           <h2>LNJK Studio</h2>
@@ -1002,6 +1119,9 @@
 <div id="screenshot-viewer">
   <img id="viewer-image" alt="Expanded screenshot preview">
 </div>
+
+<script src="media-command-center.js?v=homepage-content-1"></script>
+<script src="about-project-board.js?v=homepage-content-1"></script>
 
 </body>
 </html>

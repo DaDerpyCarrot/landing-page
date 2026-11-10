@@ -10,32 +10,26 @@ const STUDIO_MEMBERS = [
   {
     id: "crew-member-01",
     file: "01",
-    name: "Crew Member 01",
-    role: "Role / Discipline",
-    summary: "Add a short description of this member's main contribution to Roadimentary.",
-    bio: "Replace this placeholder with a brief introduction, background, and what this member enjoys about working on the project.",
-    specialties: ["Primary specialty", "Project responsibility", "Team contribution"],
-    portrait: ""
+    name: "Lois JM Nichole G. Del Castillo",
+    role: "Project Manager",
+    bio: "I'm a passionate and creative individual interested in game development, programming, and digital design. I enjoy learning new skills, exploring technology, solving problems, and turning creative ideas into reality. I consider myself a hands-on learner who is always looking for opportunities to grow, improve, and challenge myself both personally and professionally.",
+    portrait: "assets/studio-crew/crew-01.jpg"
   },
   {
     id: "crew-member-02",
     file: "02",
-    name: "Crew Member 02",
-    role: "Role / Discipline",
-    summary: "Add a short description of this member's main contribution to Roadimentary.",
-    bio: "Replace this placeholder with a brief introduction, background, and what this member enjoys about working on the project.",
-    specialties: ["Primary specialty", "Project responsibility", "Team contribution"],
-    portrait: ""
+    name: "Jewie Ron M. Castillo",
+    role: "Lead Developer",
+    bio: "The mind behind Roadimentary. Making systems work together. Bringing beavers to reality.",
+    portrait: "assets/studio-crew/crew-02.jpg"
   },
   {
     id: "crew-member-03",
     file: "03",
-    name: "Crew Member 03",
-    role: "Role / Discipline",
-    summary: "Add a short description of this member's main contribution to Roadimentary.",
-    bio: "Replace this placeholder with a brief introduction, background, and what this member enjoys about working on the project.",
-    specialties: ["Primary specialty", "Project responsibility", "Team contribution"],
-    portrait: ""
+    name: "Noelchristian Emman E. Concepcion",
+    role: "Web Developer",
+    bio: "“reads video game, plays books, listens to movies, watches music”",
+    portrait: "assets/studio-crew/crew-03.jpg"
   },
   {
     id: "crew-member-04",
@@ -57,8 +51,14 @@ function createMemberPortrait(member, className) {
 
   if (member.portrait) {
     const image = document.createElement("img");
+    image.alt = className === "member-card-portrait" ? "" : `${member.name} portrait`;
+    image.loading = "lazy";
+    image.decoding = "async";
+    image.addEventListener("error", () => {
+      portrait.textContent = member.file;
+      portrait.setAttribute("aria-hidden", "true");
+    }, { once: true });
     image.src = member.portrait;
-    image.alt = `${member.name} portrait`;
     portrait.append(image);
   } else {
     portrait.textContent = member.file;
@@ -159,6 +159,8 @@ function initializeStudioProjectBoard(board, boardIndex) {
 
   function renderDossier(member) {
     dossier.replaceChildren();
+    const fieldNotes = member.specialties?.length ? member.specialties : [];
+    dossier.classList.toggle("has-field-notes", fieldNotes.length > 0);
 
     const portraitWrap = document.createElement("div");
     portraitWrap.className = "crew-dossier-portrait-wrap";
@@ -183,30 +185,35 @@ function initializeStudioProjectBoard(board, boardIndex) {
     role.className = "crew-dossier-role";
     role.textContent = member.role;
 
-    const summary = document.createElement("p");
-    summary.className = "crew-dossier-summary";
-    summary.textContent = member.summary;
+    copy.append(fileLabel, name, role);
+    if (member.summary) {
+      const summary = document.createElement("p");
+      summary.className = "crew-dossier-summary";
+      summary.textContent = member.summary;
+      copy.append(summary);
+    }
+    if (member.bio) {
+      const bio = document.createElement("p");
+      bio.className = "crew-dossier-intro";
+      bio.textContent = member.bio;
+      copy.append(bio);
+    }
+    dossier.append(portraitWrap, copy);
 
-    const bio = document.createElement("p");
-    bio.textContent = member.bio;
-
-    copy.append(fileLabel, name, role, summary, bio);
-
-    const specialties = document.createElement("div");
-    specialties.className = "crew-dossier-specialties";
-
-    const specialtiesLabel = document.createElement("span");
-    specialtiesLabel.textContent = "Field Notes";
-    const specialtiesList = document.createElement("ul");
-
-    member.specialties.forEach((specialty) => {
-      const item = document.createElement("li");
-      item.textContent = specialty;
-      specialtiesList.append(item);
-    });
-
-    specialties.append(specialtiesLabel, specialtiesList);
-    dossier.append(portraitWrap, copy, specialties);
+    if (fieldNotes.length) {
+      const specialties = document.createElement("div");
+      specialties.className = "crew-dossier-specialties";
+      const label = document.createElement("span");
+      label.textContent = "Field Notes";
+      const list = document.createElement("ul");
+      fieldNotes.forEach(note => {
+        const item = document.createElement("li");
+        item.textContent = note;
+        list.append(item);
+      });
+      specialties.append(label, list);
+      dossier.append(specialties);
+    }
 
     if (!studioBoardReducedMotion.matches) {
       dossier.classList.remove("is-opening");
