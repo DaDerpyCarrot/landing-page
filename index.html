@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Roadimentary</title>
   <link rel="icon" type="image/png" href="/assets/fav_logo.png">
-  <link rel="stylesheet" href="style.css?v=homepage-content-1">
+  <link rel="stylesheet" href="style.css?v=bookmark-dock-1">
   <link rel="stylesheet" href="mobile-office.css">
   <link rel="stylesheet" href="release-download.css">
 </head>
@@ -1035,13 +1035,13 @@
 
   <div class="bookmark-container">
     <div class="bookmark-wrapper">
-      <button class="bookmark" data-window="win-features">Features</button>
+      <button type="button" class="bookmark" data-window="win-features" aria-controls="win-features" aria-expanded="false">Features</button>
     </div>
     <div class="bookmark-wrapper">
-      <button class="bookmark" data-window="win-media">Media</button>
+      <button type="button" class="bookmark" data-window="win-media" aria-controls="win-media" aria-expanded="false">Media</button>
     </div>
     <div class="bookmark-wrapper">
-      <button class="bookmark" data-window="win-signin">Account</button>
+      <button type="button" class="bookmark" data-window="win-signin" aria-controls="win-signin" aria-expanded="false">Account</button>
     </div>
   </div>
 </header>
@@ -1113,7 +1113,8 @@
 </div>
 
 <script src="https://download.playfab.com/PlayFabClientApi.js"></script>
-<script src="script.js"></script>
+<script src="bookmark-dock.js?v=bookmark-dock-1"></script>
+<script src="script.js?v=bookmark-dock-1"></script>
 <script src="route-animation.js"></script>
 
 <div id="screenshot-viewer">
@@ -1121,7 +1122,7 @@
 </div>
 
 <script src="media-command-center.js?v=homepage-content-1"></script>
-<script src="about-project-board.js?v=homepage-content-1"></script>
+<script src="about-project-board.js?v=bookmark-dock-1"></script>
 
 </body>
 </html>

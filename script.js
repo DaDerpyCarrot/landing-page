@@ -1,6 +1,5 @@
 const bookmarks = document.querySelectorAll('.bookmark');
 const windows = document.querySelectorAll('.desktop-window');
-const wrappers = document.querySelectorAll('.bookmark-wrapper');
 const overlay = document.getElementById('overlay');
 
 const desktopDownloadBtn = document.getElementById('desktop-download-btn');
@@ -19,31 +18,9 @@ const ADMIN_API_BASE_URL = "https://roadimentary-admin-dashboard.onrender.com/ap
 const PLAYER_PROFILE_URL = "profile.html";
 
 
-/* ================= BOOMARK DROP LOGIC ================= */
-
-function setBookmarkDrop(wrapper, win) {
-  if (!wrapper || !win) return;
-
-  wrapper.style.setProperty("--drop-distance", "0px");
-
-  const wrapperRect = wrapper.getBoundingClientRect();
-  const wrapperTop = wrapperRect.top;
-  const overlap = 6;
-
-  const winTop = parseFloat(getComputedStyle(win).top) || 0;
-  const winHeight = win.offsetHeight;
-  const winBottom = winTop + winHeight;
-
-  const targetTop = winBottom - overlap;
-  const distance = targetTop - wrapperTop;
-
-  wrapper.style.setProperty("--drop-distance", `${distance}px`);
-}
-
-
 /* ================= CORE WINDOW LOGIC ================= */
 
-function openWindow(win, wrapper = null) {
+function openWindow(win) {
   if (!win) return;
 
   if (currentWindow && currentWindow !== win) {
@@ -56,22 +33,12 @@ function openWindow(win, wrapper = null) {
     overlay.classList.add('show');
   }
 
-  wrappers.forEach(w => {
-    w.classList.remove('active');
-    w.style.setProperty("--drop-distance", "0px");
-  });
-
   if (downloadTriggerWrapper) {
     downloadTriggerWrapper.classList.remove('active');
   }
 
-  if (wrapper) {
-    wrapper.classList.add('active');
-
-    requestAnimationFrame(() => {
-      setBookmarkDrop(wrapper, win);
-    });
-  }
+  const bookmark = Array.from(bookmarks).find(button => button.dataset.window === win.id);
+  window.RoadimentaryBookmarkDock?.attach(win, bookmark);
 
   currentWindow = win;
 }
@@ -79,16 +46,14 @@ function openWindow(win, wrapper = null) {
 function closeWindow(win) {
   if (!win) return;
 
+  const isCurrent = win === currentWindow;
+  if (isCurrent) window.RoadimentaryBookmarkDock?.release();
   win.classList.remove('show');
+  if (!isCurrent) return;
 
   if (overlay) {
     overlay.classList.remove('show');
   }
-
-  wrappers.forEach(w => {
-    w.classList.remove('active');
-    w.style.setProperty("--drop-distance", "0px");
-  });
 
   if (downloadTriggerWrapper) {
     downloadTriggerWrapper.classList.remove('active');
@@ -519,12 +484,10 @@ if (mobileRecoveryBtn) {
 bookmarks.forEach(bookmark => {
   bookmark.addEventListener('click', () => {
     const win = document.getElementById(bookmark.dataset.window);
-    const wrapper = bookmark.closest('.bookmark-wrapper');
-
     if (currentWindow === win) {
       closeWindow(win);
     } else {
-      openWindow(win, wrapper);
+      openWindow(win);
     }
   });
 });
@@ -903,18 +866,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-/* ================= RESIZE LOGIC ================= */
-
-window.addEventListener("resize", () => {
-  if (!currentWindow) return;
-
-  const activeWrapper = document.querySelector(".bookmark-wrapper.active");
-  if (activeWrapper) {
-    setBookmarkDrop(activeWrapper, currentWindow);
-  }
-});
-
-
 /* ================= PLAYFAB LOGIN ================= */
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -925,7 +876,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (shouldOpenAdminLogin) {
     const mobileAccountTab = document.querySelector('.mobile-tab[data-tab="signin"]');
-    const desktopAccountBookmark = document.querySelector('.bookmark[data-window="win-signin"]');
 
     if (window.matchMedia("(max-width: 1023px)").matches) {
       openMobileSheet("signin", {
@@ -940,8 +890,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     } else {
       const accountWindow = document.getElementById("win-signin");
-      const accountWrapper = desktopAccountBookmark?.closest(".bookmark-wrapper") || null;
-      openWindow(accountWindow, accountWrapper);
+      openWindow(accountWindow);
 
       const desktopReturnStatus = document.getElementById("desktop-signin-status");
       if (desktopReturnStatus) {

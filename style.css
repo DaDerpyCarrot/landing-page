@@ -1875,7 +1875,7 @@ body {
 .desktop-window {
   position: fixed;
   left: 50%;
-  top: 120px; /* leave space for header/bookmarks */
+  top: var(--desktop-window-top, 120px); /* leave space for header/bookmarks */
   width: 80%;
   height: 74%; /* fixed size */
   background: transparent;
@@ -2128,8 +2128,7 @@ background-size:16px 16px;
   transform: translateX(-50%);
   display: flex;
   justify-content: space-between;   /* 👈 important */
-  width: 70%;                       /* 👈 gives them room */
-  max-width: 700px;
+  width: var(--bookmark-rail-width, min(70vw, 700px));
   pointer-events: auto;
 }
 
@@ -2140,22 +2139,29 @@ background-size:16px 16px;
   display: flex;
   justify-content: center;
   gap: 30px;
-  transition: transform 0.45s cubic-bezier(.22,.61,.36,1);
 }
 
-.bookmark-wrapper {
-  transition: transform 0.45s cubic-bezier(.22,.61,.36,1);
+.desktop-window.has-bookmark-dock {
+  /* Reserve space for the tab in short desktop windows. */
+  max-height: calc(100vh - var(--desktop-window-top, 120px) - 72px);
+  max-height: calc(100dvh - var(--desktop-window-top, 120px) - 72px);
 }
 
-.bookmark-wrapper.active {
-  transform: translateY(var(--drop-distance, 0px));
+.window-bookmark-dock {
+  position: absolute;
+  z-index: 1;
+  top: calc(100% - 6px);
+  left: 50%;
+  width: var(--bookmark-rail-width, min(70vw, 700px));
+  transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: repeat(var(--dock-slots), minmax(0, 1fr));
+  pointer-events: none;
 }
 
-
-
-
-
-.bookmark-wrapper.active .bookmark {
+.window-bookmark-dock > .bookmark {
+  grid-column: var(--dock-column);
+  justify-self: center;
   pointer-events: auto;
 }
 
@@ -2879,6 +2885,11 @@ background-size:24px 24px;
 
 #footer-tab.active {
   bottom: calc(60% - 2px);
+}
+
+/* Keep the idle About dock clickable, but behind an open window's bookmark. */
+body.has-docked-bookmark #footer-tab:not(.active) {
+  z-index: 850;
 }
 
 

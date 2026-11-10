@@ -7,7 +7,6 @@ const PASSWORD_RECOVERY_TEMPLATE_ID = "774566C3D66B63D3";
 
 const desktopBookmarks = document.querySelectorAll(".profile-bookmark");
 const desktopWindows = document.querySelectorAll(".profile-office-window");
-const bookmarkWrappers = document.querySelectorAll(".profile-bookmark-container .bookmark-wrapper");
 const officeOverlay = document.getElementById("overlay");
 const desktopMedia = window.matchMedia("(min-width: 1024px)");
 
@@ -17,50 +16,20 @@ function getBookmarkForWindow(windowId) {
   return document.querySelector(`.profile-bookmark[data-window="${windowId}"]`);
 }
 
-function setBookmarkDrop(wrapper, win) {
-  if (!wrapper || !win || !desktopMedia.matches) return;
-
-  wrapper.style.setProperty("--drop-distance", "0px");
-
-  const wrapperTop = wrapper.getBoundingClientRect().top;
-  const windowTop = parseFloat(getComputedStyle(win).top) || 0;
-  const targetTop = windowTop + win.offsetHeight - 6;
-  const distance = Math.max(0, targetTop - wrapperTop);
-
-  wrapper.style.setProperty("--drop-distance", `${distance}px`);
-}
-
-function clearDesktopWindowState() {
-  bookmarkWrappers.forEach(wrapper => {
-    wrapper.classList.remove("active");
-    wrapper.style.setProperty("--drop-distance", "0px");
-  });
-
-  desktopBookmarks.forEach(bookmark => bookmark.setAttribute("aria-expanded", "false"));
-}
-
-function openOfficeWindow(win, wrapper = null) {
+function openOfficeWindow(win) {
   if (!win || !desktopMedia.matches) return;
 
   if (currentWindow && currentWindow !== win) {
+    window.RoadimentaryBookmarkDock?.release();
     currentWindow.classList.remove("show");
     currentWindow.setAttribute("aria-hidden", "true");
   }
-
-  clearDesktopWindowState();
 
   win.classList.add("show");
   win.setAttribute("aria-hidden", "false");
   officeOverlay?.classList.add("show");
 
-  const bookmark = getBookmarkForWindow(win.id);
-  const activeWrapper = wrapper || bookmark?.closest(".bookmark-wrapper");
-
-  if (bookmark) bookmark.setAttribute("aria-expanded", "true");
-  if (activeWrapper) {
-    activeWrapper.classList.add("active");
-    requestAnimationFrame(() => setBookmarkDrop(activeWrapper, win));
-  }
+  window.RoadimentaryBookmarkDock?.attach(win, getBookmarkForWindow(win.id));
 
   currentWindow = win;
   if (win.id === "win-profile-crew") window.RoadimentaryCrew?.open();
@@ -75,9 +44,11 @@ function openOfficeWindow(win, wrapper = null) {
 function closeOfficeWindow(win = currentWindow) {
   if (!win) return;
 
+  const isCurrent = win === currentWindow;
+  if (isCurrent) window.RoadimentaryBookmarkDock?.release();
   win.classList.remove("show");
   win.setAttribute("aria-hidden", "true");
-  clearDesktopWindowState();
+  if (!isCurrent) return;
   officeOverlay?.classList.remove("show");
   currentWindow = null;
 }
@@ -85,12 +56,10 @@ function closeOfficeWindow(win = currentWindow) {
 desktopBookmarks.forEach(bookmark => {
   bookmark.addEventListener("click", () => {
     const targetWindow = document.getElementById(bookmark.dataset.window);
-    const wrapper = bookmark.closest(".bookmark-wrapper");
-
     if (currentWindow === targetWindow) {
       closeOfficeWindow(targetWindow);
     } else {
-      openOfficeWindow(targetWindow, wrapper);
+      openOfficeWindow(targetWindow);
     }
   });
 });
@@ -114,16 +83,8 @@ document.addEventListener("keydown", event => {
   if (event.key === "Escape" && currentWindow) closeOfficeWindow();
 });
 
-window.addEventListener("resize", () => {
-  if (!desktopMedia.matches) {
-    if (currentWindow) closeOfficeWindow();
-    return;
-  }
-
-  if (currentWindow) {
-    const activeWrapper = document.querySelector(".profile-bookmark-container .bookmark-wrapper.active");
-    setBookmarkDrop(activeWrapper, currentWindow);
-  }
+desktopMedia.addEventListener("change", () => {
+  if (!desktopMedia.matches && currentWindow) closeOfficeWindow();
 });
 
 /* ==========================================================

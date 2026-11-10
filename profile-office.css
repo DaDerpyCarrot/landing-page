@@ -546,9 +546,8 @@
   display: block;
 }
 
-.profile-office-page .profile-bookmark-container {
-  width: min(82vw, 900px);
-  max-width: none;
+.profile-office-page {
+  --bookmark-rail-width: min(82vw, 900px);
 }
 
 .profile-office-page .desktop-office-background {
@@ -621,11 +620,16 @@
 }
 
 .profile-office-page .profile-office-window {
-  top: 122px;
+  --desktop-window-top: 122px;
+  top: var(--desktop-window-top);
   width: min(92vw, 1380px);
   height: calc(100vh - 215px);
   height: calc(100dvh - 215px);
   min-height: 320px;
+}
+
+.profile-office-page .profile-office-window.has-bookmark-dock {
+  min-height: 0;
 }
 
 .profile-office-page .profile-office-window .win-header {
@@ -1314,8 +1318,8 @@
     grid-template-columns: 1fr;
   }
 
-  .profile-office-page .profile-bookmark-container {
-    width: 78vw;
+  .profile-office-page {
+    --bookmark-rail-width: 78vw;
   }
 }
 

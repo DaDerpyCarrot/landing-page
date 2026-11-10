@@ -28,7 +28,7 @@ const STUDIO_MEMBERS = [
     file: "03",
     name: "Noelchristian Emman E. Concepcion",
     role: "Web Developer",
-    bio: "“reads video game, plays books, listens to movies, watches music”",
+    bio: "reads video games, plays books, listens to movies, watches music. Hi. I made this website.",
     portrait: "assets/studio-crew/crew-03.jpg"
   },
   {
@@ -81,8 +81,8 @@ function initializeStudioProjectBoard(board, boardIndex) {
           simulation experiences with strategy, personality, and purpose.
         </p>
         <p>
-          Our current project, Roadimentary, turns the fundamentals of road
-          construction into an approachable game led by a hardworking beaver crew.
+          Our current project, Roadimentary, turns the work of repairing damaged
+          roads into an approachable game led by a hardworking beaver crew.
         </p>
 
         <div class="studio-principles" aria-label="Studio principles">
@@ -99,10 +99,10 @@ function initializeStudioProjectBoard(board, boardIndex) {
           <strong>RD-001</strong>
         </div>
         <h3>Roadimentary</h3>
-        <p>A simplified and cartoonish introduction to planning and building roads.</p>
+        <p>A cartoon construction strategy game about planning repairs and fixing damaged roads.</p>
         <dl>
           <div><dt>Format</dt><dd>Construction Strategy</dd></div>
-          <div><dt>Focus</dt><dd>Road-building Basics</dd></div>
+          <div><dt>Focus</dt><dd>Road Repair Basics</dd></div>
           <div><dt>Crew</dt><dd>4 Members</dd></div>
           <div><dt>Status</dt><dd><span class="project-status-light"></span> In Development</dd></div>
         </dl>
