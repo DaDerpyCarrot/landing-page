@@ -65,6 +65,7 @@ function openOfficeWindow(win, wrapper = null) {
   currentWindow = win;
   if (win.id === "win-profile-crew") window.RoadimentaryCrew?.open();
   if (win.id === "win-profile-boards") window.RoadimentaryBoards?.open();
+  if (win.id === "win-profile-overview") window.RoadimentaryStats?.open();
   if (win.id === "win-profile-operations") {
     window.RoadimentaryStats?.open();
     window.RoadimentaryLedger?.open();
@@ -103,6 +104,7 @@ document.querySelectorAll("[data-open-window]").forEach(button => {
   button.addEventListener("click", () => {
     const targetWindow = document.getElementById(button.dataset.openWindow);
     openOfficeWindow(targetWindow);
+    if (currentWindow === targetWindow) targetWindow?.querySelector(".win-close")?.focus({ preventScroll: true });
   });
 });
 
@@ -195,6 +197,7 @@ function openMobileProfileSheet(panelId, options = {}) {
   document.body.classList.add("mobile-sheet-open");
   if (panelId === "mobile-office-crew") window.RoadimentaryCrew?.open();
   if (panelId === "mobile-office-boards") window.RoadimentaryBoards?.open();
+  if (panelId === "mobile-office-overview") window.RoadimentaryStats?.open();
   if (panelId === "mobile-office-operations") {
     window.RoadimentaryStats?.open();
     window.RoadimentaryLedger?.open();
@@ -245,6 +248,14 @@ mobileTabs.forEach(tab => {
 profileMobileOpenFile?.addEventListener("click", () => {
   openMobileProfileSheet(profileMobileOpenFile.dataset.profileTab, {
     trigger: profileMobileOpenFile
+  });
+});
+
+document.querySelectorAll("[data-open-profile-panel]").forEach(button => {
+  button.addEventListener("click", () => {
+    const panelId = button.dataset.openProfilePanel;
+    openMobileProfileSheet(panelId);
+    if (currentMobileProfilePanel === panelId) document.getElementById(panelId)?.focus({ preventScroll: true });
   });
 });
 
@@ -373,6 +384,12 @@ if (profileMobileSheet && profileMobileSheetDragArea) {
 
 const sessionTicket = sessionStorage.getItem("pfSessionTicket");
 const savedEmail = sessionStorage.getItem("pfEmail");
+const operatorAvatars = new Set([
+  "avatar_roadbuilder", "avatar_maplecrew", "avatar_asphaltace", "avatar_pavepaws", "avatar_brickbuddy",
+  "avatar_surveyor", "avatar_forewoman", "avatar_uniform_white_khaki", "avatar_uniform_white_khaki_male"
+]);
+let portraitRevision = 0;
+let portraitSessionVerified = false;
 
 function setText(id, value) {
   const element = document.getElementById(id);
@@ -415,10 +432,50 @@ function getInitial(value) {
 function setProfileName(value) {
   const displayName = value || "Road Operator";
   setText("mobile-profile-displayname", displayName);
+  setText("mobile-overview-displayname", displayName);
   setText("desktop-profile-displayname", displayName);
   setText("mobile-profile-initial", getInitial(displayName));
+  setText("mobile-overview-initial", getInitial(displayName));
   setText("desktop-profile-initial", getInitial(displayName));
 }
+
+function setProfileAvatar(avatar) {
+  const revision = ++portraitRevision;
+  const source = operatorAvatars.has(avatar) ? `assets/crew-avatars/${avatar}.png` : null;
+  document.querySelectorAll("[data-profile-portrait]").forEach(portrait => {
+    const image = portrait.querySelector("[data-profile-avatar]");
+    const initial = portrait.querySelector("[data-avatar-initial]");
+    if (!image || !initial) return;
+    image.onload = null;
+    const showInitial = () => {
+      portrait.classList.remove("has-portrait");
+      image.hidden = true; initial.hidden = false;
+    };
+    showInitial();
+    if (!source) { image.removeAttribute("src"); return; }
+    const showPortrait = () => {
+      if (!portraitSessionVerified || revision !== portraitRevision || sessionStorage.getItem("pfSessionTicket") !== sessionTicket
+        || !image.naturalWidth || image.getAttribute("src") !== source) return;
+      portrait.classList.add("has-portrait");
+      image.hidden = false; initial.hidden = true;
+    };
+    image.onload = showPortrait;
+    image.src = source;
+    if (image.complete) showPortrait();
+  });
+}
+
+function clearProfileAvatar() {
+  portraitSessionVerified = false;
+  setProfileAvatar(null);
+}
+
+function checkPortraitSession() {
+  if (portraitSessionVerified && sessionStorage.getItem("pfSessionTicket") !== sessionTicket) clearProfileAvatar();
+}
+window.addEventListener("pageshow", checkPortraitSession);
+window.addEventListener("storage", checkPortraitSession);
+document.addEventListener("visibilitychange", checkPortraitSession);
 
 function updateBioCount(inputId, countId) {
   const input = document.getElementById(inputId);
@@ -456,17 +513,20 @@ function setDisplayNameFields(value) {
 
 function loadBio() {
   PlayFabClientSDK.GetUserData(
-    { Keys: ["bio"] },
+    { Keys: ["bio", "ProfileAvatar"] },
     function (result, error) {
+      if (!portraitSessionVerified || sessionStorage.getItem("pfSessionTicket") !== sessionTicket) return;
       if (error) {
         console.error("GetUserData error:", error);
+        setProfileAvatar(null);
         setBio("");
         setStatus("Operator file loaded, but the bio could not be retrieved.");
         return;
       }
 
-      const bio = result.data?.Data?.bio?.Value || "";
-      setBio(bio);
+      const data = result?.data?.Data;
+      setBio(data?.bio?.Value || "");
+      setProfileAvatar(data?.ProfileAvatar?.Value);
       setStatus("Operator file ready.");
     }
   );
@@ -474,6 +534,7 @@ function loadBio() {
 
 function loadProfile() {
   setStatus("Loading operator file...");
+  clearProfileAvatar();
   window.RoadimentaryStats?.stop();
   window.RoadimentaryBoards?.stop();
 
@@ -481,6 +542,7 @@ function loadProfile() {
   setText("desktop-profile-email", savedEmail || "—");
 
   PlayFabClientSDK.GetAccountInfo({}, function (result, error) {
+    if (sessionStorage.getItem("pfSessionTicket") !== sessionTicket) return;
     if (error) {
       console.error("GetAccountInfo error:", error);
       setStatus(error.errorMessage || "The operator file could not be loaded.");
@@ -514,10 +576,12 @@ function loadProfile() {
     setDisplayNameFields(displayName);
 
     if (accountInfo.PlayFabId) {
+      portraitSessionVerified = true;
       window.RoadimentaryStats?.init({
         sdk: PlayFabClientSDK, currentId: accountInfo.PlayFabId, sessionTicket,
         onExpired: message => {
           setStatus(message);
+          clearProfileAvatar();
           window.RoadimentaryLedger?.unavailable(message);
           window.RoadimentaryCrew?.unavailable(message);
           window.RoadimentaryBoards?.stop(message);
@@ -527,6 +591,7 @@ function loadProfile() {
         sdk: PlayFabClientSDK, currentId: accountInfo.PlayFabId, sessionTicket,
         onExpired: message => {
           setStatus(message);
+          clearProfileAvatar();
           window.RoadimentaryCrew?.unavailable(message);
           window.RoadimentaryStats?.unavailable(message);
           window.RoadimentaryBoards?.stop(message);
@@ -540,13 +605,13 @@ function loadProfile() {
       window.RoadimentaryBoards?.init({
         sdk: PlayFabClientSDK, currentId: accountInfo.PlayFabId, sessionTicket
       });
+      loadBio();
     } else {
       window.RoadimentaryCrew?.unavailable("Your player ID could not be verified. Sign in again from the landing page.");
       window.RoadimentaryLedger?.unavailable("Your player ID could not be verified. Sign in again.");
       window.RoadimentaryStats?.unavailable("Your player ID could not be verified. Sign in again.");
       window.RoadimentaryBoards?.stop("Your player ID could not be verified. Sign in again.");
     }
-    loadBio();
   });
 }
 
@@ -691,6 +756,7 @@ function handleSendReset(button) {
 });
 
 function handleLogout() {
+  clearProfileAvatar();
   window.RoadimentaryBoards?.stop();
   window.RoadimentaryStats?.stop();
   window.RoadimentaryLedger?.stop();

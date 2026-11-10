@@ -6,7 +6,7 @@
   <meta name="description" content="Your Roadimentary operator field office." />
   <title>Operator Field Office | Roadimentary</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="profile-office.css" />
+  <link rel="stylesheet" href="profile-office.css?v=overview-1" />
   <link rel="stylesheet" href="profile-crew.css?v=crew-friends-1" />
   <link rel="stylesheet" href="profile-companies.css?v=companies-1" />
   <link rel="stylesheet" href="profile-messages.css?v=messages-1" />
@@ -31,8 +31,9 @@
 
     <main class="mobile-profile-stage">
       <section class="mobile-operator-ticket" aria-labelledby="mobile-profile-displayname">
-        <div class="operator-avatar operator-avatar-small" aria-hidden="true">
-          <span id="mobile-profile-initial">R</span>
+        <div class="operator-avatar operator-avatar-small" data-profile-portrait aria-hidden="true">
+          <span id="mobile-profile-initial" data-avatar-initial>R</span>
+          <img alt="" data-profile-avatar hidden />
         </div>
         <div class="operator-ticket-copy">
           <p class="office-eyebrow">Roadimentary operations</p>
@@ -69,10 +70,16 @@
       <main class="mobile-office-content mobile-tab-content" id="profile-mobile-sheet-content">
       <section class="mobile-office-panel" id="mobile-office-overview" tabindex="-1">
         <article class="office-paper identity-paper">
-          <div class="paper-heading-row">
-            <div>
-              <p class="office-kicker">Personnel record</p>
-              <h2>Operator Overview</h2>
+          <div class="paper-heading-row overview-personnel-heading">
+            <div class="overview-personnel-name">
+              <div class="operator-avatar operator-avatar-small" data-profile-portrait aria-hidden="true">
+                <span id="mobile-overview-initial" data-avatar-initial>R</span>
+                <img alt="" data-profile-avatar hidden />
+              </div>
+              <div>
+                <p class="office-kicker">Personnel record</p>
+                <h2 id="mobile-overview-displayname">Loading...</h2>
+              </div>
             </div>
             <span class="office-stamp">Verified file</span>
           </div>
@@ -84,30 +91,36 @@
           </dl>
         </article>
 
+        <section class="career-snapshot overview-mobile-snapshot" data-career-snapshot aria-labelledby="mobile-snapshot-title">
+          <div class="section-heading">
+            <div><p class="office-kicker">At-a-glance report</p><h2 id="mobile-snapshot-title">Career Snapshot</h2></div>
+            <span class="construction-tag overview-stamp" data-overview-badge>Career record</span>
+          </div>
+          <div class="office-stat-grid">
+            <article><span>Operator level</span><strong data-overview-level>—</strong><small data-overview-xp>No saved XP loaded</small></article>
+            <article><span>Contracts completed</span><strong data-overview-completed>—</strong><small data-overview-attempted>Recorded attempts —</small></article>
+            <article><span>Average work quality</span><strong data-overview-quality>—</strong><small data-overview-quality-note>Scored jobs only</small></article>
+            <article><span>Contract Cash earned</span><strong data-overview-earnings>—</strong><small data-overview-earnings-note>Since tracking began</small></article>
+          </div>
+          <div class="overview-sync">
+            <p data-overview-status role="status">Sign in to check your saved career stats.</p>
+            <button type="button" class="paper-link" data-overview-refresh disabled>Refresh stats</button>
+          </div>
+        </section>
+
         <article class="office-paper operator-note-paper">
           <p class="office-kicker">Pinned operator note</p>
           <blockquote id="mobile-profile-bio-preview">No operator note filed yet.</blockquote>
+          <button type="button" class="paper-link" data-open-profile-panel="mobile-office-account">Edit operator file →</button>
         </article>
 
-        <section class="mobile-stat-snapshot" aria-label="Career snapshot">
-          <article class="office-mini-stat"><span>Contracts</span><strong>—</strong><small>Awaiting game data</small></article>
-          <article class="office-mini-stat"><span>Road score</span><strong>—</strong><small>Awaiting game data</small></article>
-        </section>
-
         <article class="office-paper field-log-paper">
-          <div class="paper-heading-row">
-            <div>
-              <p class="office-kicker">Latest field report</p>
-              <h2>Activity Log</h2>
-            </div>
-            <span class="construction-tag">Under construction</span>
-          </div>
-          <div class="empty-ledger">
-            <span class="empty-ledger-marker" aria-hidden="true"></span>
-            <div>
-              <strong>No contract reports received</strong>
-              <p>Your latest jobs and milestones will be filed here once gameplay records are connected.</p>
-            </div>
+          <p class="office-kicker">Records desk</p>
+          <h2>Field Log</h2>
+          <p class="overview-log-note">Individual contract reports aren’t available here yet. Browse your saved performance and purchase records, or see where you rank.</p>
+          <div class="overview-log-links">
+            <button type="button" class="office-button" data-open-profile-panel="mobile-office-operations">Open Operations →</button>
+            <button type="button" class="office-button" data-open-profile-panel="mobile-office-boards">View rankings →</button>
           </div>
         </article>
       </section>
@@ -238,7 +251,10 @@
           <div class="office-overview-grid">
             <aside class="operator-id-folder">
               <div class="folder-tab">Personnel</div>
-              <div class="operator-avatar" aria-hidden="true"><span id="desktop-profile-initial">R</span></div>
+              <div class="operator-avatar" data-profile-portrait aria-hidden="true">
+                <span id="desktop-profile-initial" data-avatar-initial>R</span>
+                <img alt="" data-profile-avatar hidden />
+              </div>
               <p class="office-eyebrow">Roadimentary operations</p>
               <h1 id="desktop-profile-displayname">Loading...</h1>
               <p class="operator-role">Road Crew Operator</p>
@@ -252,16 +268,20 @@
             </aside>
 
             <div class="overview-workspace">
-              <section class="career-snapshot" aria-labelledby="snapshot-title">
+              <section class="career-snapshot" data-career-snapshot aria-labelledby="snapshot-title">
                 <div class="section-heading">
                   <div><p class="office-kicker">At-a-glance report</p><h2 id="snapshot-title">Career Snapshot</h2></div>
-                  <span class="construction-tag">Telemetry pending</span>
+                  <span class="construction-tag overview-stamp" data-overview-badge>Career record</span>
                 </div>
                 <div class="office-stat-grid">
-                  <article><span>Contracts</span><strong>—</strong><small>Awaiting game data</small></article>
-                  <article><span>Road score</span><strong>—</strong><small>Awaiting game data</small></article>
-                  <article><span>Operator level</span><strong>—</strong><small>Awaiting game data</small></article>
-                  <article><span>Total earnings</span><strong>—</strong><small>Awaiting game data</small></article>
+                  <article><span>Operator level</span><strong data-overview-level>—</strong><small data-overview-xp>No saved XP loaded</small></article>
+                  <article><span>Contracts completed</span><strong data-overview-completed>—</strong><small data-overview-attempted>Recorded attempts —</small></article>
+                  <article><span>Average work quality</span><strong data-overview-quality>—</strong><small data-overview-quality-note>Scored jobs only</small></article>
+                  <article><span>Contract Cash earned</span><strong data-overview-earnings>—</strong><small data-overview-earnings-note>Since tracking began</small></article>
+                </div>
+                <div class="overview-sync">
+                  <p data-overview-status role="status">Sign in to check your saved career stats.</p>
+                  <button type="button" class="paper-link" data-overview-refresh disabled>Refresh stats</button>
                 </div>
               </section>
 
@@ -273,13 +293,12 @@
                 </article>
 
                 <article class="office-paper field-log-paper">
-                  <div class="section-heading compact-heading">
-                    <div><p class="office-kicker">Latest report</p><h2>Field Log</h2></div>
-                    <span class="construction-tag">Under construction</span>
-                  </div>
-                  <div class="empty-ledger">
-                    <span class="empty-ledger-marker" aria-hidden="true"></span>
-                    <div><strong>No contract reports received</strong><p>Completed jobs and milestones will be filed here.</p></div>
+                  <p class="office-kicker">Records desk</p>
+                  <h2>Field Log</h2>
+                  <p class="overview-log-note">Individual contract reports aren’t available here yet. Browse your saved performance and purchase records, or see where you rank.</p>
+                  <div class="overview-log-links">
+                    <button type="button" class="office-button" data-open-window="win-profile-operations">Open Operations →</button>
+                    <button type="button" class="office-button" data-open-window="win-profile-boards">View rankings →</button>
                   </div>
                 </article>
               </div>
@@ -400,12 +419,12 @@
     <p id="desktop-profile-status" class="profile-status-toast" role="status" aria-live="polite">Loading operator file...</p>
   </div>
 
-  <script src="profile-stats.js?v=stats-1"></script>
+  <script src="profile-stats.js?v=overview-1"></script>
   <script src="profile-messages.js?v=messages-1"></script>
   <script src="profile-companies.js?v=companies-1"></script>
   <script src="profile-crew.js?v=companies-1"></script>
   <script src="profile-ledger.js?v=ledger-1"></script>
   <script src="profile-boards.js?v=operator-boards-4"></script>
-  <script src="profile.js?v=xp-board-1"></script>
+  <script src="profile.js?v=overview-1"></script>
 </body>
 </html>

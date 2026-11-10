@@ -244,6 +244,25 @@
   font-size: 1.75rem;
 }
 
+.operator-avatar [data-profile-avatar] {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.operator-avatar [hidden] { display: none !important; }
+
+.operator-avatar.has-portrait {
+  background: radial-gradient(circle at 35% 24%, #fff5dc, #e4c184);
+}
+
+.operator-avatar.has-portrait::before,
+.operator-avatar.has-portrait::after { display: none; }
+
 .operator-online-dot {
   display: inline-flex;
   align-items: center;
@@ -751,6 +770,53 @@
   color: var(--office-teal-deep, #285d60);
   font: 900 1.65rem/1 "Montserrat", sans-serif;
 }
+
+.career-snapshot .office-stat-grid strong {
+  font-size: clamp(1.08rem, 2vw, 1.58rem);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.career-snapshot [data-overview-earnings][data-long-value] { font-size: clamp(.82rem, 1.65vw, 1.3rem); }
+
+.career-snapshot .office-stat-grid small { line-height: 1.4; }
+.career-snapshot .overview-stamp[data-kind="saved"] { color: #1c4c47; background: #e3ebd3; border-color: #6a9077; }
+.career-snapshot .overview-stamp[data-kind="neutral"] { color: #503621; background: #f6e0ab; border-color: #a4773c; }
+
+.overview-sync {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 10px;
+}
+
+.overview-sync p,
+.overview-log-note {
+  margin: 0;
+  color: var(--office-copy, #664732);
+  font-size: .79rem;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.overview-sync button { min-height: 38px; }
+.overview-sync button:disabled { color: #6c583f; cursor: default; text-decoration: none; }
+.overview-log-note { margin: 10px 0 14px; }
+.overview-log-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.overview-log-links .office-button { min-height: 44px; max-width: 100%; }
+.overview-mobile-snapshot { padding: 14px; }
+.overview-mobile-snapshot .office-stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 12px; gap: 8px; }
+.overview-mobile-snapshot .office-stat-grid article { padding: 10px 8px; }
+.overview-personnel-name { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.overview-personnel-name > div:last-child { min-width: 0; }
+.overview-personnel-name h2 { overflow-wrap: anywhere; }
+.overview-personnel-name .operator-avatar-small { width: 56px; height: 56px; flex-basis: 56px; }
+.overview-personnel-name .operator-avatar-small::before { width: 38px; height: 15px; top: -8px; }
+.overview-personnel-name .operator-avatar-small::after { width: 49px; top: 2px; }
+.overview-personnel-name .operator-avatar-small span { font-size: 1.42rem; }
+.overview-personnel-heading .office-stamp { align-self: flex-start; }
 
 .overview-lower-grid {
   display: grid;

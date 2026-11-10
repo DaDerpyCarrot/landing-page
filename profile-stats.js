@@ -2,8 +2,10 @@
   "use strict";
 
   const roots = Array.from(document.querySelectorAll("[data-stats-board]"));
-  if (!roots.length) return;
+  const overviews = Array.from(document.querySelectorAll("[data-career-snapshot]"));
+  if (!roots.length && !overviews.length) return;
   const names = ["TotalXP", "JobsCompleted", "JobsAttempted", "WorkQualityTotal", "WorkQualityJobs"];
+  const payoutStat = "ContractCashEarned";
   const MAX = 2147483647;
   const CACHE_MS = 60000;
   const REQUEST_MS = 15000;
@@ -48,7 +50,7 @@
   }
 
   function visible() {
-    return roots.some(root => !root.closest('[aria-hidden="true"]') && root.getClientRects().length);
+    return [...roots, ...overviews].some(root => !root.closest('[aria-hidden="true"]') && root.getClientRects().length);
   }
 
   function number(value, source, stringValue = false) {
@@ -58,15 +60,17 @@
       ? { value: parsed, source } : { value: null, source: "invalid" };
   }
 
+  function legacyField(stats, name) {
+    if (!stats.ok) return empty();
+    const found = stats.data.Statistics.filter(item => item?.StatisticName === name);
+    if (found.length === 1) return number(found[0].Value, "statistics");
+    return found.length ? { value: null, source: "invalid" } : empty();
+  }
+
   function normalize(stats, data) {
     const legacy = {}, summary = {};
     names.forEach(name => {
-      legacy[name] = empty(); summary[name] = empty();
-      if (stats.ok) {
-        const found = stats.data.Statistics.filter(item => item?.StatisticName === name);
-        if (found.length === 1) legacy[name] = number(found[0].Value, "statistics");
-        else if (found.length > 1) legacy[name] = { value: null, source: "invalid" };
-      }
+      legacy[name] = legacyField(stats, name); summary[name] = empty();
       const key = `Profile${name}`;
       if (data.ok && own(data.data.Data, key)) summary[name] = number(data.data.Data[key]?.Value, "summary", true);
     });
@@ -98,7 +102,9 @@
     if (quality.a !== null && quality.b !== null && quality.a > quality.b * 100) {
       warnings.push("The recorded quality totals are inconsistent, so average quality is unavailable.");
     }
-    return { fields, completion, quality, warnings, any: Object.values(fields).some(field => field.value !== null) };
+    return { fields, completion, quality, warnings,
+      earnings: legacyField(stats, payoutStat), statsAvailable: stats.ok, summariesAvailable: data.ok,
+      any: Object.values(fields).some(field => field.value !== null) };
   }
 
   function sourceText(field) {
@@ -150,6 +156,55 @@
       </details>`;
     q(root, "[data-stats-refresh]").addEventListener("click", () => { if (current() && !busy) void load(); });
   });
+  overviews.forEach(root => {
+    q(root, "[data-overview-refresh]")?.addEventListener("click", () => { if (current() && !busy) void load(); });
+  });
+
+  function paintOverview(xp, progression, completed, attempted, quality) {
+    const earnings = snapshot?.earnings || empty();
+    const scored = snapshot?.quality?.b;
+    const hasQuality = quality.text.endsWith("%");
+    const hasData = [xp, completed, attempted, earnings].some(field => field.value !== null) || hasQuality;
+    const usesSummary = [xp, completed, attempted].some(field => field.value !== null && field.source === "summary")
+      || (hasQuality && snapshot.quality.source === "summary");
+    const status = busy ? "Checking your saved career stats…"
+      : !validSession() ? (kind === "error" ? message : "Sign in to check your saved career stats.")
+      : !loaded ? "Waiting to check your saved career stats."
+      : !hasData ? (!snapshot?.statsAvailable || !snapshot.summariesAvailable
+        ? "Career stats couldn’t be read. Use Refresh stats to try again." : "No saved career stats are available yet.")
+      : (usesSummary ? "Some values use the game’s public profile summary. " : "") +
+        (checkedAt ? "Checked " + new Date(checkedAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) + "." : "");
+    const badge = busy ? "Checking" : hasData ? (usesSummary ? "Summary fallback" : "Saved stats")
+      : loaded || kind === "error" ? "Unavailable" : "Career record";
+    for (const root of overviews) {
+      const write = (key, value) => {
+        const element = q(root, `[data-overview-${key}]`);
+        if (element) element.textContent = value;
+      };
+      root.setAttribute("aria-busy", String(busy));
+      write("badge", badge); write("status", status);
+      const badgeElement = q(root, "[data-overview-badge]");
+      if (badgeElement) badgeElement.dataset.kind = hasData && !usesSummary ? "saved" : "neutral";
+      const button = q(root, "[data-overview-refresh]");
+      if (button) {
+        button.disabled = busy || !validSession();
+        button.textContent = busy ? "Checking…" : "Refresh stats";
+      }
+      write("level", progression ? format(progression.level) : "—");
+      write("xp", xp.value === null ? "Saved XP unavailable" : format(xp.value) + " total XP");
+      write("completed", completed.value === null ? "—" : format(completed.value));
+      write("attempted", attempted.value === null ? "Attempt total unavailable" : format(attempted.value) + " recorded " + (attempted.value === 1 ? "attempt" : "attempts"));
+      write("quality", hasQuality ? quality.text : "—");
+      write("quality-note", hasQuality ? format(scored) + " scored " + (scored === 1 ? "job" : "jobs")
+        : quality.text === "Not enough data" ? "No scored jobs" : "No usable quality average");
+      const cashText = earnings.value === null ? "—" : format(earnings.value);
+      write("earnings", cashText);
+      q(root, "[data-overview-earnings]")?.toggleAttribute("data-long-value", cashText.length > 10);
+      write("earnings-note", earnings.value !== null || !loaded ? "Since tracking began"
+        : !snapshot?.statsAvailable ? "Saved total unavailable"
+        : earnings.source === "invalid" ? "Saved total unreadable" : "No saved payout total");
+    }
+  }
 
   function paint() {
     const fields = snapshot?.fields;
@@ -159,6 +214,7 @@
     const progression = levelFor(xp.value);
     const completion = ratio(snapshot?.completion);
     const quality = ratio(snapshot?.quality, true);
+    paintOverview(xp, progression, completed, attempted, quality);
     roots.forEach(root => {
       root.setAttribute("aria-busy", String(busy));
       set(root, "status", message); q(root, "[data-stats-status]").dataset.kind = kind;
@@ -214,7 +270,7 @@
     busy = true; snapshot = null; loaded = false; checkedAt = 0;
     message = "Checking your saved XP and construction totals…"; kind = "info"; paint();
     const [stats, data] = await Promise.all([
-      read("GetPlayerStatistics", { StatisticNames: names.slice() }, version, session),
+      read("GetPlayerStatistics", { StatisticNames: [...names, payoutStat] }, version, session),
       read("GetUserData", { Keys: names.map(name => `Profile${name}`) }, version, session)
     ]);
     if (!current(version)) return;
@@ -258,7 +314,7 @@
       }
       auth = { sdk: options.sdk, id: options.currentId, ticket: options.sessionTicket, onExpired: options.onExpired };
       if (!current()) return;
-      message = "Open Operations or use Refresh stats to read your saved performance."; paint();
+      message = "Open Overview or Operations to read your saved performance."; paint();
       if (visible()) void load();
     },
     open() { if (current() && !busy && (!loaded || Date.now() - checkedAt >= CACHE_MS)) void load(); },
