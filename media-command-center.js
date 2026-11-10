@@ -344,6 +344,18 @@ function initializeMediaCommandCenter(center) {
   });
 
   renderPlaylist();
+
+  const homeTrailer = document.querySelector(center.dataset.mediaContext === "mobile"
+    ? '[data-home-trailer="mobile"]' : '[data-home-trailer="desktop"]');
+  homeTrailer?.addEventListener("click", () => {
+    if (mobilePanel) openMobileSheet(mobilePanel.id, { trigger: homeTrailer });
+    else if (desktopWindow) openWindow(desktopWindow);
+    // If the visitor left Media on screenshots, switch back to a filter that
+    // includes the trailer. Opening the player does not start playback.
+    if (activeFilter === "image") filters.find(filter => filter.dataset.mediaFilter === "video")?.click();
+    chooseItem("gameplay-trailer");
+    stage.querySelector("video")?.focus({ preventScroll: true });
+  });
 }
 
 document.querySelectorAll("[data-media-command-center]").forEach(initializeMediaCommandCenter);
