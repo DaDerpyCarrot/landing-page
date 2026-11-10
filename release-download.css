@@ -70,3 +70,90 @@ body.beaver-office-content-theme .release-checksum {
   white-space: nowrap;
   border: 0;
 }
+
+/* First-launch information, ahead of requirements and installer verification. */
+body.beaver-office-content-theme :is(.release-access-note, .release-quickstart) {
+  min-width: 0;
+  color: #49301f;
+  font: 500 .86rem/1.55 "Lexend", "Segoe UI", sans-serif;
+  overflow-wrap: anywhere;
+}
+
+body.beaver-office-content-theme .release-access-note {
+  margin: 14px 0 16px;
+  padding: 10px 13px;
+  background: #eaf1e4;
+  border: 1px solid #88a79a;
+  border-inline-start: 4px solid #367778;
+  border-radius: 4px;
+}
+
+body.beaver-office-content-theme .release-access-note p { margin: 0; }
+body.beaver-office-content-theme .release-access-note p + p { margin-top: 5px; }
+body.beaver-office-content-theme .release-access-note strong { color: #24585a; }
+
+body.beaver-office-content-theme .release-quickstart {
+  margin: 20px 0 12px;
+  padding: clamp(13px, 2vw, 20px);
+  background: #fff8e4;
+  border: 2px solid #a5b6a5;
+  border-top: 5px solid #e4a72a;
+  border-radius: 5px;
+}
+
+body.beaver-office-content-theme .release-quickstart-label {
+  margin: 0 0 3px;
+  color: #285d60;
+  font: 800 .68rem/1.4 "Montserrat", "Segoe UI", sans-serif;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+body.beaver-office-content-theme .release-quickstart h3 {
+  margin: 0 0 10px;
+  color: #4b2b1a;
+  font: 850 1.15rem/1.25 "Montserrat", "Segoe UI", sans-serif;
+}
+
+body.beaver-office-content-theme .release-quickstart ol {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: release-step;
+}
+
+body.beaver-office-content-theme .release-quickstart li {
+  position: relative;
+  min-height: 24px;
+  padding-inline-start: 34px;
+  counter-increment: release-step;
+}
+
+body.beaver-office-content-theme .release-quickstart li::before {
+  content: counter(release-step, decimal-leading-zero);
+  position: absolute;
+  inset: 1px auto auto 0;
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 23px;
+  color: #fff8e4;
+  background: #285d60;
+  border-radius: 3px;
+  font: 800 .64rem/1 "Montserrat", "Segoe UI", sans-serif;
+}
+
+/* Undated build highlights, not a schedule. */
+body.beaver-office-content-theme .studio-build-checkpoints::before,
+body.beaver-office-content-theme .studio-build-checkpoints::after { content: none; }
+
+body.beaver-office-content-theme .studio-build-checkpoints small { font-size: .77rem; line-height: 1.45; }
+
+body.beaver-office-content-theme .studio-contact-strip nav[data-studio-release-links] {
+  display: flex;
+  justify-content: flex-start;
+}
+
+body.beaver-office-content-theme .studio-contact-strip nav[data-studio-release-links][hidden] { display: none; }

@@ -86,7 +86,7 @@ function initializeStudioProjectBoard(board, boardIndex) {
         </p>
 
         <div class="studio-principles" aria-label="Studio principles">
-          <span>Learn by Building</span>
+          <span>Learn by Repairing</span>
           <span>Strategy with Personality</span>
           <span>Made by Students</span>
         </div>
@@ -126,32 +126,47 @@ function initializeStudioProjectBoard(board, boardIndex) {
     <section class="studio-progress-section" aria-labelledby="${boardLabel}-progress-title">
       <header class="studio-section-heading studio-section-heading--compact">
         <div>
-          <span class="studio-board-eyebrow">Development Schedule</span>
+          <span class="studio-board-eyebrow">Build Log</span>
           <h2 id="${boardLabel}-progress-title">Project Milestones</h2>
         </div>
+        <p>Highlights from the playable thesis project.</p>
       </header>
 
-      <ol class="studio-timeline">
-        <li class="is-complete"><span class="timeline-marker">01</span><strong>Team Formed</strong><small>Crew assembled</small></li>
-        <li class="is-complete"><span class="timeline-marker">02</span><strong>Concept Shaped</strong><small>Core idea approved</small></li>
-        <li class="is-complete"><span class="timeline-marker">03</span><strong>Prototype Built</strong><small>Systems tested</small></li>
-        <li class="is-active"><span class="timeline-marker">04</span><strong>In Development</strong><small>Current work zone</small></li>
-      </ol>
+      <ul class="studio-timeline studio-build-checkpoints" role="list">
+        <li class="is-complete"><span class="timeline-marker" aria-hidden="true">01</span><strong>Playable repair jobs</strong><small>Take on Highway Run and Surgical Repair contracts.</small></li>
+        <li class="is-complete"><span class="timeline-marker" aria-hidden="true">02</span><strong>Operator progression</strong><small>Develop skills in the Foreman’s Blueprint between contracts.</small></li>
+        <li class="is-complete"><span class="timeline-marker" aria-hidden="true">03</span><strong>Windows thesis build</strong><small>Install the playable build from the Download panel.</small></li>
+        <li class="is-complete"><span class="timeline-marker" aria-hidden="true">04</span><strong>Gameplay trailer</strong><small>See the repair gameplay in the Media panel.</small></li>
+      </ul>
     </section>
 
     <footer class="studio-contact-strip">
       <div>
-        <span class="studio-board-eyebrow">Follow Development</span>
-        <strong>Keep up with the crew.</strong>
+        <span class="studio-board-eyebrow">Release Desk</span>
+        <strong>Roadimentary for Windows</strong>
       </div>
-      <nav aria-label="LNJK Studio links">
-        <a href="#">YouTube</a>
-        <a href="#">Discord</a>
-        <a href="#">Email</a>
-      </nav>
+      <nav aria-label="Build information" data-studio-release-links hidden></nav>
       <small>&copy; 2026 LNJK Studio</small>
     </footer>
   `;
+
+  const releaseSource = document.querySelector(board.dataset.boardContext === "mobile"
+    ? "#download [data-build-release-notes]" : "#win-download [data-build-release-notes]");
+  const releaseLinks = board.querySelector("[data-studio-release-links]");
+  if (releaseSource?.protocol === "https:" && releaseSource.hostname === "github.com"
+    && releaseSource.getAttribute("href")?.startsWith("https://")) {
+    const link = document.createElement("a");
+    link.href = releaseSource.href;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = "Windows release notes ↗";
+    const hint = document.createElement("span");
+    hint.className = "release-visually-hidden";
+    hint.textContent = " (opens in a new tab)";
+    link.append(hint);
+    releaseLinks.append(link);
+    releaseLinks.hidden = false;
+  }
 
   const roster = board.querySelector("[data-studio-roster]");
   const dossier = board.querySelector("[data-studio-dossier]");

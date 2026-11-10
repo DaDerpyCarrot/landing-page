@@ -12,7 +12,7 @@ const MEDIA_ITEMS = [
     type: "video",
     label: "Video 01",
     title: "Gameplay Trailer",
-    caption: "Gameplay footage and development highlights from Roadimentary.",
+    caption: "See Roadimentary’s repair gameplay in motion. The screenshots alongside the trailer show the choices you make before and during a job.",
     src: "assets/Roadimentary-Trailer.mp4",
     poster: "assets/contractplan_img.png"
   },
@@ -20,55 +20,55 @@ const MEDIA_ITEMS = [
     id: "gameplay-image-01",
     type: "image",
     label: "Image 01",
-    title: "Planning the Next Job",
-    caption: "A look at the planning tools used before the crew heads into the field.",
+    title: "Choose a Loadout",
+    caption: "Check the job’s time and budget before you start. Here, the roller adds capacity, the crew helps with drainage, and the admixture adds durability.",
     src: "assets/contractplan_img.png",
-    alt: "Roadimentary gameplay screenshot showing the planning interface"
+    alt: "Contract loadout showing the Vibratory Roller, Comeback Crew, and A.W. Admixture"
   },
   {
     id: "gameplay-image-02",
     type: "image",
     label: "Image 02",
     title: "Crew at Work",
-    caption: "The construction crew gets to work on a new section of road.",
+    caption: "This repair starts with cracked pavement. The checklist shows what to tackle first: remove the damaged surface before cleaning the cavity and placing aggregate.",
     src: "assets/crewatwork_img.png",
-    alt: "Roadimentary gameplay screenshot showing a construction crew"
+    alt: "Two beaver operators at a cracked section of road with the repair checklist open"
   },
   {
     id: "gameplay-image-03",
     type: "image",
     label: "Image 03",
-    title: "Material Management",
-    caption: "Choosing the right materials is part of every successful contract.",
+    title: "Shop for Supplies",
+    caption: "Crushed aggregate is priced by volume at the supplies depot. Choose how much base fill the cavity needs and check the total against your job budget.",
     src: "assets/IngameShop_img.png",
-    alt: "Roadimentary gameplay screenshot showing construction materials"
+    alt: "Road Supplies Depot showing crushed aggregate, a quantity selector, and the total cost"
   },
   {
     id: "gameplay-image-04",
     type: "image",
     label: "Image 04",
-    title: "On the Road",
-    caption: "A field view from one of Roadimentary's active construction sites.",
+    title: "Start the Repair",
+    caption: "Use the checklist to choose the right tool for the current step. At this site, that means breaking up the damaged surface before preparing the cavity.",
     src: "assets/activesite_img.png",
-    alt: "Roadimentary gameplay screenshot showing an active road site"
+    alt: "A beaver operator using a tool to remove damaged pavement"
   },
   {
     id: "gameplay-image-05",
     type: "image",
     label: "Image 05",
     title: "Contract Progress",
-    caption: "Track the job, adapt the plan, and keep the project moving forward.",
+    caption: "The checklist separates required steps from optional ones. Check the time and budget before deciding whether to use treated material or focus on finishing the repair.",
     src: "assets/contractProgress_img.png",
-    alt: "Roadimentary gameplay screenshot showing contract progress"
+    alt: "A partially repaired road and a checklist showing an optional treated-material objective"
   },
   {
     id: "gameplay-image-06",
     type: "image",
     label: "Image 06",
-    title: "Meet the Crew",
-    caption: "Every beaver brings a different strength to the construction team.",
+    title: "Assign Your Crew",
+    caption: "Use the jobsite map to find repair locations, then check Crew Activity to see who’s available and where to assign them.",
     src: "assets/ingameCrew_img.png",
-    alt: "Roadimentary gameplay screenshot showing the beaver crew"
+    alt: "Crew Activity panel with worker assignment buttons beside the jobsite map"
   }
 ];
 
