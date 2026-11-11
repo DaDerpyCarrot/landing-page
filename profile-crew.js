@@ -54,8 +54,8 @@
         <div class="crew-sync-tools"><button class="office-button" type="button" data-crew-action="refresh" disabled>Refresh board</button></div>
       </header>
       <div class="crew-pane-switch" role="group" aria-label="Crew board sections">
-        <button class="office-button" type="button" data-crew-pane="friends" aria-pressed="true">Friends &amp; messages</button>
-        <button class="office-button" type="button" data-crew-pane="companies" aria-pressed="false">Companies</button>
+        <button class="office-button" type="button" data-crew-pane="friends" aria-pressed="true">Friends &amp; messages<span class="crew-count-badge" data-pending-badge="friends" aria-hidden="true" hidden></span></button>
+        <button class="office-button" type="button" data-crew-pane="companies" aria-pressed="false">Companies<span class="crew-count-badge" data-pending-badge="companies" aria-hidden="true" hidden></span></button>
       </div>
       <div data-crew-friends>
       <p class="crew-notice" data-crew-notice role="status" aria-live="polite"></p>
@@ -238,6 +238,7 @@
     const version = epoch;
     loading = true;
     if (options.manual) {
+      window.RoadimentaryCompanies?.checkInvites(true);
       showNotice("");
       profiles.forEach(profile => { profile.loadedAt = 0; });
     }
@@ -534,10 +535,13 @@
   }
 
   function renderLists() {
+    if (auth && hasHub && !syncError) window.RoadimentaryNotices?.set("friends", hub.incoming.length, false, auth.sessionTicket);
+    else window.RoadimentaryNotices?.clear("friends");
     roots.forEach(root => {
       root.querySelectorAll("[data-crew-view]").forEach(button => {
         button.setAttribute("aria-pressed", String(button.dataset.crewView === view));
         q(button, "[data-crew-count]").textContent = hasHub ? hub[button.dataset.crewView].length : "—";
+        button.classList.toggle("has-pending", button.dataset.crewView === "incoming" && hasHub && hub.incoming.length > 0);
       });
       text(root, "[data-crew-list-title]", view === "friends" ? "Your Friends" : view === "incoming" ? "Received Requests" : "Sent Requests");
       const container = q(root, "[data-crew-list]");
@@ -687,6 +691,7 @@
       refreshHub();
     },
     open(options = {}) {
+      window.RoadimentaryCompanies?.checkInvites();
       if (options.pane === "companies" && window.RoadimentaryCompanies) {
         pane = "companies";
         paintPane();

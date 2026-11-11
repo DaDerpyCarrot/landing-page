@@ -9,6 +9,23 @@
   let rows = [], next = null, currencies = [], lastLoaded = 0, pending = null, syncWarning = "";
   let message = "Sign in to view your purchase ledger.", kind = "info";
   let draft = { currency: "", from: "", to: "", q: "" }, applied = {};
+  const mobileFilters = window.matchMedia("(max-width: 1023px)");
+  let filtersOpen = false;
+  function paintFilters() {
+    const hasApplied = Object.keys(applied).length > 0;
+    const canClear = hasApplied || Object.values(draft).some(value => value.trim());
+    roots.forEach(root => {
+      const expanded = !mobileFilters.matches || filtersOpen;
+      const panel = q(root, "[data-ledger-filter-panel]");
+      const toggle = q(root, "[data-ledger-toggle]");
+      if (!expanded && panel.contains(document.activeElement)) toggle.focus({ preventScroll: true });
+      panel.hidden = !expanded;
+      toggle.setAttribute("aria-expanded", String(expanded));
+      toggle.textContent = (expanded ? "Hide filters" : "Filter purchases") + (hasApplied ? " · active" : "");
+      q(root, "[data-ledger-clear]").hidden = !canClear;
+      q(root, "[data-ledger-clear]").disabled = busy || !auth;
+    });
+  }
   function current() {
     if (!auth) return false;
     if (sessionStorage.getItem("pfSessionTicket") !== auth.ticket) { stop(); return false; }
@@ -22,13 +39,17 @@
       <header class="ledger-heading"><div><p class="office-kicker">Operations / purchase records</p><h2>Wallet &amp; Transactions</h2></div></header>
       <p class="ledger-intro">This history shows completed purchases made with in-game currency. It doesn’t include real-money payments or spending from a contract budget.</p>
       <div class="ledger-tools"><span data-ledger-count></span><button class="office-button" type="button" data-ledger-action="refresh" disabled>Refresh ledger</button></div>
+      <button class="office-button ledger-filter-toggle" type="button" data-ledger-toggle aria-expanded="false" aria-controls="${prefix}-filters">Filter purchases</button>
+      <div id="${prefix}-filters" data-ledger-filter-panel>
       <form class="ledger-filters" data-ledger-form>
         <div class="ledger-field"><label for="${prefix}-currency">Currency</label><select id="${prefix}-currency" data-ledger-field="currency"><option value="">All currencies</option></select></div>
         <div class="ledger-field"><label for="${prefix}-from">From date</label><input id="${prefix}-from" type="date" data-ledger-field="from"></div>
         <div class="ledger-field"><label for="${prefix}-to">Through date</label><input id="${prefix}-to" type="date" data-ledger-field="to"></div>
         <div class="ledger-field"><label for="${prefix}-q">Item ID or purchase ID</label><input id="${prefix}-q" type="search" maxlength="100" data-ledger-field="q"></div>
         <button class="office-button office-button-primary" type="submit" data-ledger-apply disabled>Apply filters</button>
+        <button class="office-button ledger-clear" type="button" data-ledger-clear hidden>Clear filters</button>
       </form>
+      </div>
       <p class="ledger-status" data-ledger-status role="status" aria-live="polite"></p>
       <p class="ledger-pending" data-ledger-pending hidden></p>
       <ul class="ledger-list" data-ledger-list aria-label="Recorded purchases" aria-busy="false"></ul>
@@ -37,26 +58,37 @@
       if (!event.target.dataset.ledgerField) return;
       draft[event.target.dataset.ledgerField] = event.target.value;
       roots.forEach(other => { q(other, `[data-ledger-field="${event.target.dataset.ledgerField}"]`).value = event.target.value; });
+      paintFilters();
     });
     root.addEventListener("change", event => {
       if (event.target.dataset.ledgerField === "currency") {
         draft.currency = event.target.value;
         roots.forEach(other => { q(other, '[data-ledger-field="currency"]').value = draft.currency; });
+        paintFilters();
       }
     });
     root.addEventListener("submit", event => {
       if (!event.target.matches("[data-ledger-form]")) return;
       event.preventDefault();
       if (busy || !current()) return;
-      try { applied = filters(); void load(false, false); }
+      try { applied = filters(); if (mobileFilters.matches) filtersOpen = false; paintFilters(); void load(false, false); }
       catch (error) { message = error.message; kind = "error"; paint(); }
     });
     root.addEventListener("click", event => {
+      if (event.target.closest("[data-ledger-toggle]")) { filtersOpen = !filtersOpen; paintFilters(); return; }
+      if (event.target.closest("[data-ledger-clear]")) {
+        if (busy || !current()) return;
+        draft = { currency: "", from: "", to: "", q: "" }; applied = {};
+        roots.forEach(other => other.querySelectorAll("[data-ledger-field]").forEach(field => { field.value = ""; }));
+        if (mobileFilters.matches) filtersOpen = false;
+        paintFilters(); void load(false, false); return;
+      }
       const button = event.target.closest("[data-ledger-action]");
       if (!button || button.disabled || busy || !current()) return;
       void load(button.dataset.ledgerAction === "more", button.dataset.ledgerAction === "refresh");
     });
   });
+  mobileFilters.addEventListener("change", paintFilters);
 
   function date(value, end) {
     if (!value) return "";
@@ -131,6 +163,7 @@
       const more = q(root, '[data-ledger-action="more"]'); more.hidden = !next; more.disabled = busy || !current();
       more.parentElement.hidden = !next;
     });
+    paintFilters();
   }
   function flush(e, v) {
     return new Promise(resolve => {
@@ -193,7 +226,7 @@
   function stop() {
     epoch++; version++; controller?.abort(); controller = null; auth = null;
     rows = []; next = null; currencies = []; lastLoaded = 0; pending = null; syncWarning = "";
-    busy = loaded = false; draft = { currency: "", from: "", to: "", q: "" }; applied = {};
+    busy = loaded = false; draft = { currency: "", from: "", to: "", q: "" }; applied = {}; filtersOpen = false;
     roots.forEach(root => root.querySelectorAll("[data-ledger-field]").forEach(input => { input.value = ""; }));
     message = "Sign in to view your purchase ledger."; kind = "info"; paint();
   }

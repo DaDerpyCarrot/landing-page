@@ -12,10 +12,11 @@
   <link rel="stylesheet" href="profile-crew.css?v=crew-friends-1" />
   <link rel="stylesheet" href="profile-companies.css?v=companies-1" />
   <link rel="stylesheet" href="profile-messages.css?v=messages-1" />
-  <link rel="stylesheet" href="profile-ledger.css?v=ledger-1" />
+  <link rel="stylesheet" href="profile-ledger.css?v=profile-polish-2" />
   <link rel="stylesheet" href="profile-stats.css?v=stats-1" />
   <link rel="stylesheet" href="profile-boards.css?v=operator-boards-4" />
   <link rel="stylesheet" href="bookmark-dock.css?v=bookmark-dock-3" />
+  <link rel="stylesheet" href="profile-interactions.css?v=profile-polish-2" />
   <script src="https://download.playfab.com/PlayFabClientApi.js"></script>
 </head>
 <body class="beaver-office-content-theme profile-office-page">
@@ -172,8 +173,9 @@
 
           <div class="office-form-group">
             <label for="mobile-displayname-input">Display name</label>
-            <input type="text" id="mobile-displayname-input" maxlength="25" autocomplete="nickname" />
+            <input type="text" id="mobile-displayname-input" maxlength="25" autocomplete="nickname" aria-describedby="mobile-name-feedback" />
             <button type="button" class="office-button office-button-primary" id="mobile-save-displayname-btn">Update display name</button>
+            <p id="mobile-name-feedback" class="account-inline-feedback" data-account-feedback="name" role="status" aria-live="polite" hidden></p>
           </div>
 
           <div class="office-form-group">
@@ -181,15 +183,16 @@
               <label for="mobile-profile-bio">Operator bio</label>
               <span id="mobile-bio-count">0 / 180</span>
             </div>
-            <textarea id="mobile-profile-bio" maxlength="180" rows="5" placeholder="Write a short operator note..."></textarea>
+            <textarea id="mobile-profile-bio" maxlength="180" rows="5" placeholder="Write a short operator note..." aria-describedby="mobile-bio-count mobile-bio-feedback"></textarea>
             <button type="button" class="office-button" id="mobile-save-bio-btn">Save operator bio</button>
+            <p id="mobile-bio-feedback" class="account-inline-feedback" data-account-feedback="bio" role="status" aria-live="polite" hidden></p>
           </div>
         </article>
 
         <article class="office-paper account-actions-paper">
           <p class="office-kicker">Account actions</p>
           <div class="account-action-grid">
-            <button type="button" class="office-button office-button-primary" id="mobile-send-reset-btn">Send password reset</button>
+            <div class="account-reset-action"><button type="button" class="office-button office-button-primary" id="mobile-send-reset-btn" aria-describedby="mobile-reset-feedback">Send password reset</button><p id="mobile-reset-feedback" class="account-inline-feedback" data-account-feedback="reset" role="status" aria-live="polite" hidden></p></div>
             <button type="button" class="office-button office-button-danger" id="mobile-logout-btn">Log out</button>
           </div>
         </article>
@@ -209,6 +212,7 @@
       <button class="mobile-tab mobile-office-tab" data-profile-tab="mobile-office-crew" aria-label="Open Crew" aria-controls="mobile-office-crew" aria-selected="false">
         <img src="assets/icon_three_beaver.png" alt="" class="tab-icon-img">
         <span class="mobile-tab-label">Crew</span>
+        <span class="crew-count-badge" data-pending-badge="all" aria-hidden="true" hidden></span>
       </button>
       <button class="mobile-tab mobile-office-tab" data-profile-tab="mobile-office-boards" aria-label="Open Boards" aria-controls="mobile-office-boards" aria-selected="false">
         <img src="assets/icon_gameplay.png" alt="" class="tab-icon-img">
@@ -233,7 +237,7 @@
       <nav class="bookmark-container profile-bookmark-container" aria-label="Operator office windows">
         <div class="bookmark-wrapper"><button class="bookmark profile-bookmark" data-window="win-profile-overview" aria-expanded="false">Overview</button></div>
         <div class="bookmark-wrapper"><button class="bookmark profile-bookmark" data-window="win-profile-operations" aria-expanded="false">Operations</button></div>
-        <div class="bookmark-wrapper"><button class="bookmark profile-bookmark" data-window="win-profile-crew" aria-expanded="false">Crew</button></div>
+        <div class="bookmark-wrapper"><button class="bookmark profile-bookmark" data-window="win-profile-crew" aria-expanded="false">Crew<span class="crew-count-badge" data-pending-badge="all" aria-hidden="true" hidden></span></button></div>
         <div class="bookmark-wrapper"><button class="bookmark profile-bookmark" data-window="win-profile-boards" aria-expanded="false">Boards</button></div>
         <div class="bookmark-wrapper"><button class="bookmark profile-bookmark" data-window="win-profile-account" aria-expanded="false">Account</button></div>
       </nav>
@@ -393,15 +397,17 @@
               <div class="office-form-group">
                 <label for="desktop-displayname-input">Display name</label>
                 <div class="office-inline-form">
-                  <input type="text" id="desktop-displayname-input" maxlength="25" autocomplete="nickname" />
+                  <input type="text" id="desktop-displayname-input" maxlength="25" autocomplete="nickname" aria-describedby="desktop-name-feedback" />
                   <button type="button" class="office-button office-button-primary" id="desktop-save-displayname-btn">Update name</button>
                 </div>
+                <p id="desktop-name-feedback" class="account-inline-feedback" data-account-feedback="name" role="status" aria-live="polite" hidden></p>
               </div>
 
               <div class="office-form-group">
                 <div class="office-label-row"><label for="desktop-profile-bio">Operator bio</label><span id="desktop-bio-count">0 / 180</span></div>
-                <textarea id="desktop-profile-bio" maxlength="180" rows="5" placeholder="Write a short operator note..."></textarea>
+                <textarea id="desktop-profile-bio" maxlength="180" rows="5" placeholder="Write a short operator note..." aria-describedby="desktop-bio-count desktop-bio-feedback"></textarea>
                 <button type="button" class="office-button" id="desktop-save-bio-btn">Save operator bio</button>
+                <p id="desktop-bio-feedback" class="account-inline-feedback" data-account-feedback="bio" role="status" aria-live="polite" hidden></p>
               </div>
             </section>
 
@@ -412,7 +418,7 @@
               </article>
               <article class="office-paper account-actions-paper">
                 <p class="office-kicker">Account actions</p>
-                <button type="button" class="office-button office-button-primary" id="desktop-send-reset-btn">Send password reset</button>
+                <div class="account-reset-action"><button type="button" class="office-button office-button-primary" id="desktop-send-reset-btn" aria-describedby="desktop-reset-feedback">Send password reset</button><p id="desktop-reset-feedback" class="account-inline-feedback" data-account-feedback="reset" role="status" aria-live="polite" hidden></p></div>
                 <button type="button" class="office-button office-button-danger" id="desktop-logout-btn">Log out</button>
               </article>
             </aside>
@@ -426,11 +432,12 @@
 
   <script src="profile-stats.js?v=profile-polish-1"></script>
   <script src="profile-messages.js?v=profile-polish-1"></script>
-  <script src="profile-companies.js?v=overview-dispatch-1"></script>
-  <script src="profile-crew.js?v=overview-dispatch-1"></script>
-  <script src="profile-ledger.js?v=profile-polish-1"></script>
+  <script src="profile-notices.js?v=profile-polish-2"></script>
+  <script src="profile-companies.js?v=profile-polish-2"></script>
+  <script src="profile-crew.js?v=profile-polish-2"></script>
+  <script src="profile-ledger.js?v=profile-polish-2"></script>
   <script src="profile-boards.js?v=profile-polish-1"></script>
   <script src="bookmark-dock.js?v=bookmark-dock-3"></script>
-  <script src="profile.js?v=overview-dispatch-1"></script>
+  <script src="profile.js?v=profile-polish-2"></script>
 </body>
 </html>

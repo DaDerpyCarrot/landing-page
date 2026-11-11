@@ -21,6 +21,31 @@
   const overviewRoots = Array.from(document.querySelectorAll("[data-company-overview]"));
   const emptyOverview = () => ({ rows: null, next: null, checkedAt: 0, error: "" });
   let overviewState = emptyOverview(), overviewFlight = null, overviewVersion = 0;
+  let inviteFlight = null, inviteVersion = 0, invitesCheckedAt = 0;
+  function invalidateInvites() {
+    inviteVersion++; inviteFlight = null; invitesCheckedAt = 0;
+    window.RoadimentaryNotices?.clear("companies");
+  }
+  function rememberInvites(result, context) {
+    if (new Set(result.rows.map(row => row.id)).size !== result.rows.length) throw malformed();
+    ensure(context);
+    inviteVersion++; inviteFlight = null; invitesCheckedAt = Date.now();
+    window.RoadimentaryNotices?.set("companies", result.rows.length, Boolean(result.next), context.sessionTicket);
+  }
+  async function checkInvites(force = false) {
+    if (!active(auth) || inviteFlight || state.busy || (!force && invitesCheckedAt && Date.now() - invitesCheckedAt < 60000)) return;
+    const context = auth, version = inviteVersion, flight = inviteFlight = {};
+    try {
+      const result = await request(context, "/invites");
+      ensure(context);
+      if (version !== inviteVersion || inviteFlight !== flight) return;
+      rememberInvites(page(result, "invites", raw => inbox(raw, context)), context);
+    } catch (error) {
+      if (context !== auth || version !== inviteVersion || inviteFlight !== flight) return;
+      invalidateInvites();
+      if (!active(context) || error.expired) stop("Sign in again to check your invitations.");
+    } finally { if (inviteFlight === flight) inviteFlight = null; }
+  }
 
   function overviewVisible() {
     return overviewRoots.some(root => !root.closest('[aria-hidden="true"]') && root.getClientRects().length);
@@ -168,7 +193,7 @@
     const controller = new AbortController();
     controllers.add(controller);
     const timer = setTimeout(() => controller.abort(), TIMEOUT);
-    if (method !== "GET") { operation.sent = true; invalidateOverview(); }
+    if (method !== "GET") { operation.sent = true; invalidateOverview(); invalidateInvites(); }
     try {
       let response, result;
       try {
@@ -221,6 +246,7 @@
   }
   async function directory(context) {
     state.directory = null;
+    invalidateInvites();
     const [list, invites] = await Promise.all([request(context, ""), request(context, "/invites")]);
     ensure(context);
     state.directory = {
@@ -228,6 +254,7 @@
       invites: page(invites, "invites", raw => inbox(raw, context))
     };
     rememberOverview(state.directory.companies);
+    rememberInvites(state.directory.invites, context);
     state.blocked = false;
   }
   async function roster(context) {
@@ -309,6 +336,7 @@
       else if (active(context)) {
         state.busy = "";
         render();
+        if (operation.sent && !invitesCheckedAt) void checkInvites(true);
         if (focus) focusAt(root, focus);
       }
     }
@@ -518,6 +546,7 @@
         if (next.next === existing.next) throw malformed();
         ensure(context);
         state.directory[key] = { rows: [...new Map([...existing.rows, ...next.rows].map(row => [row.id, row])).values()], next: next.next };
+        if (key === "invites") rememberInvites(state.directory.invites, context);
       }, root, ".company-page-title"); return;
     }
     if (code === "close-file") {
@@ -616,6 +645,7 @@
   function stop(message = "Sign in to use Companies.") {
     auth = null;
     invalidateOverview();
+    invalidateInvites();
     for (const controller of controllers) controller.abort();
     controllers.clear();
     state = initial(message);
@@ -627,7 +657,7 @@
   window.addEventListener("pageshow", () => { if (auth && !active(auth)) stop(); });
   document.addEventListener("visibilitychange", () => { if (auth && !active(auth)) stop(); });
   window.RoadimentaryCompanies = Object.freeze({
-    mount, open, stop, overview,
+    mount, open, stop, overview, checkInvites,
     init(options) {
       stop();
       const currentId = player(options?.currentId);
@@ -636,6 +666,7 @@
       auth = { ...options, currentId };
       state.message = "";
       render();
+      void checkInvites();
       if (overviewVisible()) void overview();
     }
   });

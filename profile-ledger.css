@@ -9,6 +9,8 @@
 .ledger-tools { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin: 14px 0; }
 .ledger-tools > span { color: #65513a; font-size: .72rem; }
 .ledger-filters { display: grid; grid-template-columns: 1fr 1fr 1fr 1.5fr auto; align-items: end; gap: 10px; }
+.ledger-filter-toggle { display: none; }
+.ledger-clear { grid-column: 1 / -1; justify-self: start; }
 .ledger-field { min-width: 0; }
 .ledger-field label { display: block; font-size: .67rem; color: #285d60; font-weight: 800; margin-bottom: 6px; }
 .profile-office-page .ledger-field input, .profile-office-page .ledger-field select { box-sizing: border-box; width: 100%; min-width: 0; height: 44px; padding: 8px; background: #fffdf4; border: 1px solid #a4b198; border-radius: 4px; color: #47311f; font: inherit; font-size: .76rem; }
@@ -34,6 +36,10 @@
 .ledger-board button:disabled { cursor: not-allowed; opacity: .6; }
 .ledger-board button:focus-visible, .ledger-board input:focus-visible, .ledger-board select:focus-visible { outline: 3px solid #2d7a7c; outline-offset: 3px; }
 @media (max-width: 1250px) { .ledger-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 1023px) {
+  .ledger-filter-toggle { display: inline-flex; margin-bottom: 14px; }
+  [data-ledger-filter-panel] { margin-bottom: 16px; }
+}
 @media (max-width: 700px) {
   .ledger-row { grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 14px; }
   .ledger-date { padding-top: 10px; border-top: 1px dashed #b6b294; }

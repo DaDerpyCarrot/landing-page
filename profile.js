@@ -362,6 +362,7 @@ if (profileMobileSheet && profileMobileSheetDragArea) {
 
 const sessionTicket = sessionStorage.getItem("pfSessionTicket");
 const savedEmail = sessionStorage.getItem("pfEmail");
+let accountEmail = savedEmail || "";
 const operatorAvatars = new Set([
   "avatar_roadbuilder", "avatar_maplecrew", "avatar_asphaltace", "avatar_pavepaws", "avatar_brickbuddy",
   "avatar_surveyor", "avatar_forewoman", "avatar_uniform_white_khaki", "avatar_uniform_white_khaki_male"
@@ -405,6 +406,60 @@ function setStatus(message) {
     status.hidden = !message;
   }
 }
+
+const accountControls = {
+  name: { inputs: ["mobile-displayname-input", "desktop-displayname-input"], buttons: ["mobile-save-displayname-btn", "desktop-save-displayname-btn"] },
+  bio: { inputs: ["mobile-profile-bio", "desktop-profile-bio"], buttons: ["mobile-save-bio-btn", "desktop-save-bio-btn"] },
+  reset: { inputs: [], buttons: ["mobile-send-reset-btn", "desktop-send-reset-btn"] }
+};
+const accountPending = new Map();
+function accountFeedback(key, message, kind = "info", invalid = false) {
+  document.querySelectorAll(`[data-account-feedback="${key}"]`).forEach(node => {
+    node.textContent = message; node.dataset.kind = kind; node.hidden = !message;
+  });
+  accountControls[key].inputs.forEach(id => document.getElementById(id)?.setAttribute("aria-invalid", String(invalid)));
+}
+function lockAccountAction(key, locked) {
+  const controls = accountControls[key];
+  [...controls.buttons, ...controls.inputs].forEach(id => { const node = document.getElementById(id); if (node) node.disabled = locked; });
+}
+function clearAccountFeedback() {
+  for (const [key, pending] of accountPending) { clearTimeout(pending.timer); lockAccountAction(key, false); }
+  accountPending.clear();
+  Object.keys(accountControls).forEach(key => accountFeedback(key, ""));
+}
+function runAccountAction(key, method, args, progress, success, update) {
+  if (accountPending.has(key)) return;
+  if (sessionStorage.getItem("pfSessionTicket") !== sessionTicket || !portraitSessionVerified) {
+    accountFeedback(key, "Please sign in again before changing your account.", "error"); return;
+  }
+  const operation = {};
+  accountPending.set(key, operation); lockAccountAction(key, true); accountFeedback(key, progress);
+  const finish = (result, error, timedOut = false) => {
+    if (accountPending.get(key) !== operation) return;
+    clearTimeout(operation.timer); accountPending.delete(key); lockAccountAction(key, false);
+    if (sessionStorage.getItem("pfSessionTicket") !== sessionTicket || !portraitSessionVerified) return;
+    if (error || timedOut) {
+      const message = timedOut ? (key === "reset" ? "We couldn’t confirm the email was sent. Check your inbox before trying again." : "We couldn’t confirm the change. Refresh your profile before trying again.")
+        : ["SessionTicketExpired", "InvalidSessionTicket", "NotAuthenticated"].includes(error?.error) ? "Your session expired. Sign in again to continue."
+        : key === "name" && error?.error === "NameNotAvailable" ? "That display name is taken. Try another."
+        : key === "name" ? "Couldn’t update your display name. Try again."
+        : key === "bio" ? "Couldn’t save your bio. Try again." : "Couldn’t send the reset email. Try again.";
+      accountFeedback(key, message, "error", key === "name" && error?.error === "NameNotAvailable"); return;
+    }
+    update?.(result);
+    accountFeedback(key, success, "success");
+  };
+  operation.timer = setTimeout(() => finish(null, null, true), 20000);
+  try { PlayFabClientSDK[method](args, (result, error) => finish(result, error)); }
+  catch (_) { finish(null, { error: "Unavailable" }); }
+}
+Object.entries(accountControls).forEach(([key, controls]) => controls.inputs.forEach(id => {
+  document.getElementById(id)?.addEventListener("input", () => { if (!accountPending.has(key)) accountFeedback(key, ""); });
+}));
+document.addEventListener("visibilitychange", () => {
+  if (sessionStorage.getItem("pfSessionTicket") !== sessionTicket) clearAccountFeedback();
+});
 
 function getInitial(value) {
   const normalized = String(value || "R").trim();
@@ -537,6 +592,7 @@ function loadProfile() {
 
     const accountInfo = result.data?.AccountInfo || {};
     const email = accountInfo.PrivateInfo?.Email || savedEmail || "—";
+    accountEmail = email === "—" ? "" : email;
     setText("mobile-profile-email", email);
     setText("desktop-profile-email", email);
     const fallbackUsername = savedEmail ? savedEmail.split("@")[0] : "—";
@@ -615,6 +671,7 @@ function startProfileSession() {
 
   PlayFab.settings.titleId = PLAYFAB_TITLE_ID;
   PlayFab._internalSettings.sessionTicket = sessionTicket;
+  window.RoadimentaryNotices?.init(sessionTicket);
   loadProfile();
 }
 
@@ -626,61 +683,27 @@ function handleDisplayNameUpdate(inputId, button) {
   const newName = getInputValue(inputId);
 
   if (!newName) {
-    setStatus("Please enter a display name.");
+    accountFeedback("name", "Please enter a display name.", "error", true);
     return;
   }
 
-  if (newName.length < 3) {
-    setStatus("Display name must be at least 3 characters.");
+  if (newName.length < 3 || newName.length > 25) {
+    accountFeedback("name", "Use a display name with 3–25 characters.", "error", true);
     return;
   }
 
-  button.disabled = true;
-  setStatus("Updating display name...");
-
-  PlayFabClientSDK.UpdateUserTitleDisplayName(
-    { DisplayName: newName },
-    function (result, error) {
-      button.disabled = false;
-
-      if (error) {
-        console.error("Display name update error:", error);
-        setStatus(error.errorMessage || "The display name could not be updated.");
-        return;
-      }
-
-      const updatedName = result.data?.DisplayName || newName;
+  runAccountAction("name", "UpdateUserTitleDisplayName", { DisplayName: newName }, "Updating display name…", "Display name updated.", result => {
+      const updatedName = result?.data?.DisplayName || newName;
       setProfileName(updatedName);
       setDisplayNameFields(updatedName);
-      setStatus("Display name updated successfully.");
-    }
-  );
+  });
 }
 
 function handleBioSave(inputId, button) {
   const bio = getInputValue(inputId);
 
-  button.disabled = true;
-  setStatus("Saving operator bio...");
-
-  PlayFabClientSDK.UpdateUserData(
-    {
-      Data: { bio },
-      Permission: "Private"
-    },
-    function (result, error) {
-      button.disabled = false;
-
-      if (error) {
-        console.error("Bio save error:", error);
-        setStatus(error.errorMessage || "The operator bio could not be saved.");
-        return;
-      }
-
-      setBio(bio);
-      setStatus("Operator bio saved successfully.");
-    }
-  );
+  if (bio.length > 180) { accountFeedback("bio", "Keep your bio within 180 characters.", "error", true); return; }
+  runAccountAction("bio", "UpdateUserData", { Data: { bio }, Permission: "Private" }, "Saving bio…", "Bio saved.", () => setBio(bio));
 }
 
 [
@@ -704,31 +727,18 @@ function handleBioSave(inputId, button) {
    ========================================================== */
 
 function handleSendReset(button) {
-  if (!savedEmail) {
-    setStatus("No account email was found for this session.");
+  if (!accountEmail) {
+    accountFeedback("reset", "No email is available for this account. Sign in again and try once more.", "error");
     return;
   }
 
-  button.disabled = true;
-  setStatus("Sending password reset email...");
-
-  PlayFabClientSDK.SendAccountRecoveryEmail(
+  runAccountAction("reset", "SendAccountRecoveryEmail",
     {
       TitleId: PLAYFAB_TITLE_ID,
-      Email: savedEmail,
+      Email: accountEmail,
       EmailTemplateId: PASSWORD_RECOVERY_TEMPLATE_ID
     },
-    function (result, error) {
-      button.disabled = false;
-
-      if (error) {
-        console.error("Recovery email error:", error);
-        setStatus(error.errorMessage || "The password reset email could not be sent.");
-        return;
-      }
-
-      setStatus("Password reset email sent. Please check your inbox.");
-    }
+    "Sending reset email…", "Password reset email sent. Check your inbox."
   );
 }
 
@@ -738,6 +748,8 @@ function handleSendReset(button) {
 });
 
 function handleLogout() {
+  clearAccountFeedback();
+  window.RoadimentaryNotices?.stop();
   clearProfileAvatar();
   window.RoadimentaryBoards?.stop();
   window.RoadimentaryStats?.stop();
