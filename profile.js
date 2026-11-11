@@ -16,7 +16,7 @@ function getBookmarkForWindow(windowId) {
   return document.querySelector(`.profile-bookmark[data-window="${windowId}"]`);
 }
 
-function openOfficeWindow(win) {
+function openOfficeWindow(win, options = {}) {
   if (!win || !desktopMedia.matches) return;
 
   if (currentWindow && currentWindow !== win) {
@@ -31,9 +31,12 @@ function openOfficeWindow(win) {
   window.RoadimentaryBookmarkDock?.attach(win, getBookmarkForWindow(win.id));
 
   currentWindow = win;
-  if (win.id === "win-profile-crew") window.RoadimentaryCrew?.open();
+  if (win.id === "win-profile-crew") window.RoadimentaryCrew?.open(options);
   if (win.id === "win-profile-boards") window.RoadimentaryBoards?.open();
-  if (win.id === "win-profile-overview") window.RoadimentaryStats?.open();
+  if (win.id === "win-profile-overview") {
+    window.RoadimentaryStats?.open();
+    window.RoadimentaryCompanies?.overview();
+  }
   if (win.id === "win-profile-operations") {
     window.RoadimentaryStats?.open();
     window.RoadimentaryLedger?.open();
@@ -155,9 +158,12 @@ function openMobileProfileSheet(panelId, options = {}) {
   profileMobileSheet.classList.add("open");
   profileMobileSheet.setAttribute("aria-hidden", "false");
   document.body.classList.add("mobile-sheet-open");
-  if (panelId === "mobile-office-crew") window.RoadimentaryCrew?.open();
+  if (panelId === "mobile-office-crew") window.RoadimentaryCrew?.open(options);
   if (panelId === "mobile-office-boards") window.RoadimentaryBoards?.open();
-  if (panelId === "mobile-office-overview") window.RoadimentaryStats?.open();
+  if (panelId === "mobile-office-overview") {
+    window.RoadimentaryStats?.open();
+    window.RoadimentaryCompanies?.overview();
+  }
   if (panelId === "mobile-office-operations") {
     window.RoadimentaryStats?.open();
     window.RoadimentaryLedger?.open();
@@ -217,6 +223,18 @@ document.querySelectorAll("[data-open-profile-panel]").forEach(button => {
     openMobileProfileSheet(panelId);
     if (currentMobileProfilePanel === panelId) document.getElementById(panelId)?.focus({ preventScroll: true });
   });
+});
+
+// Company shortcuts are rendered from live memberships, in both Overview layouts.
+document.addEventListener("click", event => {
+  const button = event.target.closest("button[data-overview-companies]");
+  if (!button || button.disabled) return;
+  const options = { pane: "companies", companyId: button.dataset.overviewCompanies || null };
+  if (desktopMedia.matches) {
+    openOfficeWindow(document.getElementById("win-profile-crew"), options);
+  } else {
+    openMobileProfileSheet("mobile-office-crew", { ...options, trigger: button });
+  }
 });
 
 profileMobileSheetClose?.addEventListener("click", () => closeMobileProfileSheet());
@@ -518,6 +536,9 @@ function loadProfile() {
     }
 
     const accountInfo = result.data?.AccountInfo || {};
+    const email = accountInfo.PrivateInfo?.Email || savedEmail || "—";
+    setText("mobile-profile-email", email);
+    setText("desktop-profile-email", email);
     const fallbackUsername = savedEmail ? savedEmail.split("@")[0] : "—";
     const username = accountInfo.Username || fallbackUsername;
     const displayName = accountInfo.TitleInfo?.DisplayName || username || "Road Operator";

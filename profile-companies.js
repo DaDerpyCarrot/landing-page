@@ -18,6 +18,79 @@
   const initial = message => ({ directory: null, selected: null, roster: null, file: null, confirm: null,
     draftName: "", draftLookup: "", found: null, busy: "", message, kind: "info", blocked: false });
   let roots = [], auth = null, state = initial("Sign in to use Companies.");
+  const overviewRoots = Array.from(document.querySelectorAll("[data-company-overview]"));
+  const emptyOverview = () => ({ rows: null, next: null, checkedAt: 0, error: "" });
+  let overviewState = emptyOverview(), overviewFlight = null, overviewVersion = 0;
+
+  function overviewVisible() {
+    return overviewRoots.some(root => !root.closest('[aria-hidden="true"]') && root.getClientRects().length);
+  }
+  function invalidateOverview() {
+    overviewVersion++;
+    overviewFlight = null;
+    overviewState = emptyOverview();
+  }
+  function rememberOverview(result) {
+    if (new Set(result.rows.map(row => row.id)).size !== result.rows.length) throw malformed();
+    overviewVersion++;
+    overviewFlight = null;
+    overviewState = { ...result, checkedAt: Date.now(), error: "" };
+    renderOverview();
+  }
+  function renderOverview() {
+    const signedIn = active(auth), waiting = Boolean(overviewFlight);
+    for (const root of overviewRoots) {
+      root.setAttribute("aria-busy", String(waiting));
+      const list = q(root, "[data-company-overview-list]");
+      list.replaceChildren();
+      if (signedIn) for (const item of overviewState.rows?.slice(0, 3) || []) {
+        const row = node("li", "overview-company-entry");
+        const role = node("span", "overview-company-role" + (item.role === "moderator" ? " is-moderator" : ""), item.role === "moderator" ? "Moderator" : "Member");
+        const open = node("button", "paper-link", "Open Company →");
+        open.type = "button";
+        open.dataset.overviewCompanies = item.id;
+        open.setAttribute("aria-label", "Open " + item.name);
+        row.append(node("h3", "", item.name), role, open);
+        list.append(row);
+      }
+      const note = q(root, "[data-company-overview-note]");
+      note.dataset.kind = overviewState.error ? "error" : "info";
+      note.textContent = !signedIn ? "Sign in to check your Companies."
+        : overviewState.error || (waiting && !overviewState.rows ? "Checking your Companies…"
+        : !overviewState.rows ? "Open the Company Desk to check your memberships."
+        : !overviewState.rows.length ? "No Company yet. Start your own or accept an invitation at the Company Desk."
+        : overviewState.rows.length > 3 || overviewState.next ? "See all your Companies at the Company Desk." : "");
+      note.hidden = !note.textContent;
+      const refresh = q(root, "[data-company-overview-refresh]");
+      refresh.disabled = !signedIn || waiting || Boolean(state.busy);
+      refresh.textContent = waiting ? "Checking…" : "Refresh";
+      root.querySelectorAll("[data-overview-companies]").forEach(button => {
+        button.disabled = !signedIn || Boolean(state.busy);
+      });
+    }
+  }
+  async function overview(force = false) {
+    if (!active(auth)) { if (auth) stop(); else renderOverview(); return; }
+    if (overviewFlight || state.busy || (!force && overviewState.checkedAt && Date.now() - overviewState.checkedAt < 60000)) return;
+    const context = auth, version = overviewVersion;
+    const flight = overviewFlight = {};
+    overviewState.error = "";
+    renderOverview();
+    try {
+      const result = await request(context, "");
+      ensure(context);
+      if (version !== overviewVersion || overviewFlight !== flight) return;
+      rememberOverview(page(result, "companies", raw => company(raw, context)));
+    } catch (error) {
+      if (context !== auth || version !== overviewVersion || overviewFlight !== flight) return;
+      if (!active(context) || error.expired) { stop("Sign in again to check your Companies."); return; }
+      overviewState = { ...emptyOverview(), error: "Couldn’t load your Companies. Try Refresh or open the Company Desk." };
+    } finally {
+      if (overviewFlight === flight) overviewFlight = null;
+      renderOverview();
+    }
+  }
+  overviewRoots.forEach(root => q(root, "[data-company-overview-refresh]")?.addEventListener("click", () => { void overview(true); }));
 
   function ensure(context) {
     if (!active(context)) throw Object.assign(new Error("Player session changed."), { stale: true });
@@ -95,7 +168,7 @@
     const controller = new AbortController();
     controllers.add(controller);
     const timer = setTimeout(() => controller.abort(), TIMEOUT);
-    if (method !== "GET") operation.sent = true;
+    if (method !== "GET") { operation.sent = true; invalidateOverview(); }
     try {
       let response, result;
       try {
@@ -154,6 +227,7 @@
       companies: page(list, "companies", raw => company(raw, context)),
       invites: page(invites, "invites", raw => inbox(raw, context))
     };
+    rememberOverview(state.directory.companies);
     state.blocked = false;
   }
   async function roster(context) {
@@ -185,9 +259,16 @@
     state.roster = state.file = state.found = state.confirm = null;
     state.draftLookup = "";
   }
-  function open() {
+  function open(companyId) {
     if (!active(auth)) { if (auth) stop(); else render(); return; }
-    void run("Opening Company records…", context => state.selected ? roster(context) : directory(context));
+    if (state.busy) return;
+    if (companyId !== undefined) {
+      const selected = companyId === null ? null : id(companyId);
+      if (companyId !== null && !selected) return;
+      resetView(selected);
+    }
+    const root = roots.find(root => !root.hidden && root.getClientRects().length);
+    void run("Opening Company records…", context => state.selected ? roster(context) : directory(context), root, ".company-page-title");
   }
   function focusAt(root, selector) {
     const target = root && !root.hidden && root.getClientRects().length ? q(root, selector) : null;
@@ -357,6 +438,7 @@
     columns.append(rosterStack, side); target.append(columns);
   }
   function render() {
+    renderOverview();
     roots.forEach(root => {
       const status = q(root, "[data-company-status]");
       status.textContent = state.busy || state.message;
@@ -533,6 +615,7 @@
   }
   function stop(message = "Sign in to use Companies.") {
     auth = null;
+    invalidateOverview();
     for (const controller of controllers) controller.abort();
     controllers.clear();
     state = initial(message);
@@ -542,8 +625,9 @@
     if ((event.key === "pfSessionTicket" || event.key === null) && auth && !active(auth)) stop();
   });
   window.addEventListener("pageshow", () => { if (auth && !active(auth)) stop(); });
+  document.addEventListener("visibilitychange", () => { if (auth && !active(auth)) stop(); });
   window.RoadimentaryCompanies = Object.freeze({
-    mount, open, stop,
+    mount, open, stop, overview,
     init(options) {
       stop();
       const currentId = player(options?.currentId);
@@ -552,6 +636,8 @@
       auth = { ...options, currentId };
       state.message = "";
       render();
+      if (overviewVisible()) void overview();
     }
   });
+  renderOverview();
 })();

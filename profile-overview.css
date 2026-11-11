@@ -1,0 +1,64 @@
+/* Overview additions only; the existing window and bookmark rules stay in charge. */
+.profile-office-page .operator-id-folder { align-self: start; }
+.profile-office-page .overview-lower-grid .operator-note-paper { align-self: start; }
+.profile-office-page .operator-identity-list { margin-top: 22px; }
+.profile-office-page .dispatch-desk,
+.profile-office-page .overview-companies,
+.profile-office-page .account-email-paper { min-width: 0; padding: 20px; }
+
+.dispatch-links { display: grid; gap: 8px; margin-top: 16px; }
+.profile-office-page .dispatch-links button {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 64px;
+  padding: 9px 10px;
+  color: #42301f;
+  font-family: "Lexend", sans-serif;
+  text-align: left;
+  background: #fff8e5;
+  border: 1px solid #c9b98b;
+  border-left: 4px solid #d49a24;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease;
+}
+.dispatch-links img { width: 36px; height: 36px; object-fit: contain; }
+.dispatch-links strong { display: block; color: #275e60; font-size: .78rem; line-height: 1.4; }
+.dispatch-links small { display: block; margin-top: 2px; color: #685039; font-size: .66rem; line-height: 1.5; }
+.dispatch-links button > span:last-child { color: #276365; font-size: 1.05rem; }
+.profile-office-page .dispatch-links button:hover { background: #eef1db; border-color: #387778; }
+.profile-office-page .dispatch-links button:focus-visible,
+.overview-companies button:focus-visible { outline: 3px solid #2b686a; outline-offset: 3px; }
+
+.overview-company-heading { display: flex; align-items: start; justify-content: space-between; gap: 12px; }
+.overview-company-heading h2 { margin: 0; }
+.overview-company-heading > button { min-height: 38px; }
+.overview-company-note { margin: 14px 0; color: #664c34; font-size: .78rem; line-height: 1.6; }
+.overview-company-note[data-kind="error"] { color: #813b28; }
+.overview-companies [hidden] { display: none !important; }
+.overview-company-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 185px), 1fr)); gap: 10px; margin: 14px 0; padding: 0; list-style: none; }
+.overview-company-list:empty { display: none; }
+.overview-company-entry { display: flex; flex-direction: column; align-items: start; gap: 9px; min-width: 0; padding: 14px; color: #49321f; background: #fff8e5; border: 1px solid #c2c6a1; border-radius: 5px; }
+.overview-company-entry h3 { margin: 0; color: #2b6263; font: 800 .86rem/1.45 "Lexend", sans-serif; overflow-wrap: anywhere; }
+.overview-company-role { display: inline-block; padding: 4px 8px; color: #2f5b4e; background: #e6edd5; border: 1px solid #a1b390; border-radius: 4px; font-size: .65rem; font-weight: 800; }
+.overview-company-role.is-moderator { color: #fff8e5; background: #2a6263; border-color: #2a6263; }
+.overview-company-entry .paper-link { margin-top: auto; min-height: 34px; text-align: left; }
+.overview-companies > .paper-link { min-height: 40px; }
+.overview-companies button:disabled { cursor: default; color: #76644b; text-decoration: none; }
+.overview-companies[aria-busy="true"] [data-company-overview-refresh] { cursor: wait; }
+.account-email-paper .identity-list { margin-bottom: 0; }
+
+@media (max-width: 1023px) {
+  .profile-office-page .dispatch-desk,
+  .profile-office-page .overview-companies,
+  .profile-office-page .account-email-paper { padding: 16px; }
+}
+@media (max-width: 560px) {
+  .overview-company-list { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .profile-office-page .dispatch-links button { transition: none; }
+}

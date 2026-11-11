@@ -8,6 +8,7 @@
   <link rel="icon" type="image/png" href="/assets/fav_logo.png" />
   <link rel="stylesheet" href="style.css?v=bookmark-dock-1" />
   <link rel="stylesheet" href="profile-office.css?v=bookmark-dock-1" />
+  <link rel="stylesheet" href="profile-overview.css?v=overview-dispatch-1" />
   <link rel="stylesheet" href="profile-crew.css?v=crew-friends-1" />
   <link rel="stylesheet" href="profile-companies.css?v=companies-1" />
   <link rel="stylesheet" href="profile-messages.css?v=messages-1" />
@@ -40,7 +41,7 @@
         <div class="operator-ticket-copy">
           <p class="office-eyebrow">Roadimentary operations</p>
           <h1 id="mobile-profile-displayname">Loading...</h1>
-          <p>Road Crew Operator <span class="operator-online-dot">Active</span></p>
+          <p>Road Crew Operator</p>
         </div>
         <button class="mobile-open-file-button" type="button" data-profile-tab="mobile-office-overview">
           Open operator file
@@ -83,12 +84,10 @@
                 <h2 id="mobile-overview-displayname">Loading...</h2>
               </div>
             </div>
-            <span class="office-stamp">Verified file</span>
           </div>
 
           <dl class="identity-list">
             <div><dt>Username</dt><dd id="mobile-profile-username">—</dd></div>
-            <div><dt>Email</dt><dd id="mobile-profile-email">—</dd></div>
             <div><dt>Member since</dt><dd id="mobile-profile-created">—</dd></div>
           </dl>
         </article>
@@ -116,15 +115,22 @@
           <button type="button" class="paper-link" data-open-profile-panel="mobile-office-account">Edit operator file →</button>
         </article>
 
-        <article class="office-paper field-log-paper">
-          <p class="office-kicker">Records desk</p>
-          <h2>Field Log</h2>
-          <p class="overview-log-note">Individual contract reports aren’t available here yet. Browse your saved performance and purchase records, or see where you rank.</p>
-          <div class="overview-log-links">
-            <button type="button" class="office-button" data-open-profile-panel="mobile-office-operations">Open Operations →</button>
-            <button type="button" class="office-button" data-open-profile-panel="mobile-office-boards">View rankings →</button>
+        <article class="office-paper dispatch-desk">
+          <p class="office-kicker">Next stop</p>
+          <h2>Dispatch Desk</h2>
+          <div class="dispatch-links">
+            <button type="button" data-open-profile-panel="mobile-office-operations"><img src="assets/icon_bulldozer.png" alt="" /><span><strong>Review performance</strong><small>Construction results &amp; purchases</small></span><span aria-hidden="true">→</span></button>
+            <button type="button" data-open-profile-panel="mobile-office-boards"><img src="assets/icon_gameplay.png" alt="" /><span><strong>Check the boards</strong><small>All Operators &amp; Company rankings</small></span><span aria-hidden="true">→</span></button>
+            <button type="button" data-open-profile-panel="mobile-office-crew"><img src="assets/icon_three_beaver.png" alt="" /><span><strong>Visit your crew</strong><small>Friends, messages &amp; Companies</small></span><span aria-hidden="true">→</span></button>
           </div>
         </article>
+
+        <section class="office-paper overview-companies" data-company-overview aria-labelledby="mobile-company-summary-title">
+          <div class="overview-company-heading"><div><p class="office-kicker">Company affiliations</p><h2 id="mobile-company-summary-title">Your Companies</h2></div><button class="paper-link" type="button" data-company-overview-refresh disabled>Refresh</button></div>
+          <p class="overview-company-note" data-company-overview-note role="status">Open Overview to check your Companies.</p>
+          <ul class="overview-company-list" data-company-overview-list aria-label="Your Company memberships"></ul>
+          <button class="paper-link" type="button" data-overview-companies="" disabled>Company Desk →</button>
+        </section>
       </section>
 
       <section class="mobile-office-panel" id="mobile-office-operations" tabindex="-1">
@@ -155,6 +161,10 @@
       </section>
 
       <section class="mobile-office-panel" id="mobile-office-account" tabindex="-1">
+        <article class="office-paper account-email-paper">
+          <p class="office-kicker">Account details</p>
+          <dl class="identity-list"><div><dt>Sign-in email</dt><dd id="mobile-profile-email">—</dd></div></dl>
+        </article>
         <article class="office-paper account-paper">
           <div class="paper-heading-row">
             <div><p class="office-kicker">Personnel desk</p><h2>Edit Operator File</h2></div>
@@ -257,11 +267,9 @@
               <p class="office-eyebrow">Roadimentary operations</p>
               <h1 id="desktop-profile-displayname">Loading...</h1>
               <p class="operator-role">Road Crew Operator</p>
-              <span class="operator-status-badge"><i></i> Active operator</span>
 
               <dl class="identity-list operator-identity-list">
                 <div><dt>Username</dt><dd id="desktop-profile-username">—</dd></div>
-                <div><dt>Email</dt><dd id="desktop-profile-email">—</dd></div>
                 <div><dt>Member since</dt><dd id="desktop-profile-created">—</dd></div>
               </dl>
             </aside>
@@ -291,16 +299,23 @@
                   <button type="button" class="paper-link" data-open-window="win-profile-account">Edit operator file →</button>
                 </article>
 
-                <article class="office-paper field-log-paper">
-                  <p class="office-kicker">Records desk</p>
-                  <h2>Field Log</h2>
-                  <p class="overview-log-note">Individual contract reports aren’t available here yet. Browse your saved performance and purchase records, or see where you rank.</p>
-                  <div class="overview-log-links">
-                    <button type="button" class="office-button" data-open-window="win-profile-operations">Open Operations →</button>
-                    <button type="button" class="office-button" data-open-window="win-profile-boards">View rankings →</button>
+                <article class="office-paper dispatch-desk">
+                  <p class="office-kicker">Next stop</p>
+                  <h2>Dispatch Desk</h2>
+                  <div class="dispatch-links">
+                    <button type="button" data-open-window="win-profile-operations"><img src="assets/icon_bulldozer.png" alt="" /><span><strong>Review performance</strong><small>Construction results &amp; purchases</small></span><span aria-hidden="true">→</span></button>
+                    <button type="button" data-open-window="win-profile-boards"><img src="assets/icon_gameplay.png" alt="" /><span><strong>Check the boards</strong><small>All Operators &amp; Company rankings</small></span><span aria-hidden="true">→</span></button>
+                    <button type="button" data-open-window="win-profile-crew"><img src="assets/icon_three_beaver.png" alt="" /><span><strong>Visit your crew</strong><small>Friends, messages &amp; Companies</small></span><span aria-hidden="true">→</span></button>
                   </div>
                 </article>
               </div>
+
+              <section class="office-paper overview-companies" data-company-overview aria-labelledby="company-summary-title">
+                <div class="overview-company-heading"><div><p class="office-kicker">Company affiliations</p><h2 id="company-summary-title">Your Companies</h2></div><button class="paper-link" type="button" data-company-overview-refresh disabled>Refresh</button></div>
+                <p class="overview-company-note" data-company-overview-note role="status">Open Overview to check your Companies.</p>
+                <ul class="overview-company-list" data-company-overview-list aria-label="Your Company memberships"></ul>
+                <button class="paper-link" type="button" data-overview-companies="" disabled>Company Desk →</button>
+              </section>
             </div>
           </div>
         </div>
@@ -391,6 +406,10 @@
             </section>
 
             <aside class="account-side-column">
+              <article class="office-paper account-email-paper">
+                <p class="office-kicker">Account details</p>
+                <dl class="identity-list"><div><dt>Sign-in email</dt><dd id="desktop-profile-email">—</dd></div></dl>
+              </article>
               <article class="office-paper account-actions-paper">
                 <p class="office-kicker">Account actions</p>
                 <button type="button" class="office-button office-button-primary" id="desktop-send-reset-btn">Send password reset</button>
@@ -407,11 +426,11 @@
 
   <script src="profile-stats.js?v=profile-polish-1"></script>
   <script src="profile-messages.js?v=profile-polish-1"></script>
-  <script src="profile-companies.js?v=companies-1"></script>
-  <script src="profile-crew.js?v=profile-polish-1"></script>
+  <script src="profile-companies.js?v=overview-dispatch-1"></script>
+  <script src="profile-crew.js?v=overview-dispatch-1"></script>
   <script src="profile-ledger.js?v=profile-polish-1"></script>
   <script src="profile-boards.js?v=profile-polish-1"></script>
   <script src="bookmark-dock.js?v=bookmark-dock-3"></script>
-  <script src="profile.js?v=profile-polish-1"></script>
+  <script src="profile.js?v=overview-dispatch-1"></script>
 </body>
 </html>

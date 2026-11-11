@@ -686,7 +686,13 @@
       });
       refreshHub();
     },
-    open() {
+    open(options = {}) {
+      if (options.pane === "companies" && window.RoadimentaryCompanies) {
+        pane = "companies";
+        paintPane();
+        window.RoadimentaryCompanies.open(options.companyId ?? null);
+        return;
+      }
       if (pane === "companies") { window.RoadimentaryCompanies?.open(); return; }
       if (sameSession(epoch) && !busy && Date.now() - lastSync > CACHE_MS) refreshHub();
     },
