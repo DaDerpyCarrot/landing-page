@@ -1,8 +1,7 @@
 /* ================================================================
    LNJK STUDIO PROJECT BOARD
 
-   Replace the placeholder details in STUDIO_MEMBERS when your team
-   profiles are ready. Both desktop and mobile About windows use this
+   Both desktop and mobile About windows use this
    same list, so each member only needs to be updated once.
    ================================================================ */
 
@@ -34,12 +33,10 @@ const STUDIO_MEMBERS = [
   {
     id: "crew-member-04",
     file: "04",
-    name: "Crew Member 04",
-    role: "Role / Discipline",
-    summary: "Add a short description of this member's main contribution to Roadimentary.",
-    bio: "Replace this placeholder with a brief introduction, background, and what this member enjoys about working on the project.",
-    specialties: ["Primary specialty", "Project responsibility", "Team contribution"],
-    portrait: ""
+    name: "Kiel Benj Francois D. Rivera",
+    role: "Technical Writer",
+    bio: "I specialized in hardware and hands on building, I love turning my creative ideas into real world creation.",
+    portrait: "assets/studio-crew/crew-04.jpg"
   }
 ];
 
