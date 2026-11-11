@@ -31,6 +31,7 @@ function openOfficeWindow(win, options = {}) {
   window.RoadimentaryBookmarkDock?.attach(win, getBookmarkForWindow(win.id));
 
   currentWindow = win;
+  if (win.id === "win-profile-account") showSupport(Boolean(options.support));
   if (win.id === "win-profile-crew") window.RoadimentaryCrew?.open(options);
   if (win.id === "win-profile-boards") window.RoadimentaryBoards?.open();
   if (win.id === "win-profile-overview") {
@@ -158,6 +159,7 @@ function openMobileProfileSheet(panelId, options = {}) {
   profileMobileSheet.classList.add("open");
   profileMobileSheet.setAttribute("aria-hidden", "false");
   document.body.classList.add("mobile-sheet-open");
+  if (panelId === "mobile-office-account") showSupport(Boolean(options.support));
   if (panelId === "mobile-office-crew") window.RoadimentaryCrew?.open(options);
   if (panelId === "mobile-office-boards") window.RoadimentaryBoards?.open();
   if (panelId === "mobile-office-overview") {
@@ -235,6 +237,33 @@ document.addEventListener("click", event => {
   } else {
     openMobileProfileSheet("mobile-office-crew", { ...options, trigger: button });
   }
+});
+
+function showSupport(visible) {
+  if (visible && !window.RoadimentarySupport?.show) {
+    setStatus("Support tools didn’t load. Please refresh the page."); return;
+  }
+  window.RoadimentarySupport?.show(visible);
+  setText("account-window-title", visible ? "Support Desk" : "Personnel Desk");
+  document.querySelector("#win-profile-account .win-close")?.setAttribute("aria-label", visible ? "Close Support Desk" : "Close Personnel Desk");
+  if (currentMobileProfilePanel === "mobile-office-account") {
+    profileMobileSheetTitle.textContent = visible ? "Support Desk" : "Personnel Desk";
+  }
+}
+document.addEventListener("click", event => {
+  const button = event.target.closest("button[data-open-support]");
+  if (!button || button.disabled) return;
+  if (desktopMedia.matches) openOfficeWindow(document.getElementById("win-profile-account"), { support: true });
+  else openMobileProfileSheet("mobile-office-account", { support: true, trigger: button });
+  const desk = document.querySelector(`[data-support-desk="${desktopMedia.matches ? "desktop" : "mobile"}"]`);
+  desk?.querySelector("[data-support-heading]")?.focus({ preventScroll: true });
+  const scroller = desktopMedia.matches ? document.querySelector("#win-profile-account .win-content") : profileMobileSheetContent;
+  if (scroller) scroller.scrollTop = 0;
+});
+document.addEventListener("roadimentary:support-back", () => {
+  showSupport(false);
+  const account = document.getElementById(desktopMedia.matches ? "win-profile-account" : "mobile-office-account");
+  account?.querySelector("[data-account-settings] [data-open-support]")?.focus({ preventScroll: true });
 });
 
 profileMobileSheetClose?.addEventListener("click", () => closeMobileProfileSheet());
@@ -587,6 +616,7 @@ function loadProfile() {
       window.RoadimentaryLedger?.unavailable("Your player session could not be verified. Sign in again.");
       window.RoadimentaryStats?.unavailable("Your player session could not be verified. Sign in again.");
       window.RoadimentaryBoards?.stop("Your player session could not be verified. Sign in again.");
+      window.RoadimentarySupport?.unavailable("Sign in again to open Support Desk.");
       return;
     }
 
@@ -623,6 +653,7 @@ function loadProfile() {
           window.RoadimentaryLedger?.unavailable(message);
           window.RoadimentaryCrew?.unavailable(message);
           window.RoadimentaryBoards?.stop(message);
+          window.RoadimentarySupport?.unavailable(message);
         }
       });
       window.RoadimentaryLedger?.init({
@@ -633,6 +664,7 @@ function loadProfile() {
           window.RoadimentaryCrew?.unavailable(message);
           window.RoadimentaryStats?.unavailable(message);
           window.RoadimentaryBoards?.stop(message);
+          window.RoadimentarySupport?.unavailable(message);
         }
       });
       window.RoadimentaryCrew?.init({
@@ -643,18 +675,27 @@ function loadProfile() {
       window.RoadimentaryBoards?.init({
         sdk: PlayFabClientSDK, currentId: accountInfo.PlayFabId, sessionTicket
       });
+      window.RoadimentarySupport?.init({ currentId: accountInfo.PlayFabId, sessionTicket,
+        onExpired: message => {
+          setStatus(message); clearProfileAvatar(); window.RoadimentaryNotices?.stop();
+          window.RoadimentaryStats?.unavailable(message); window.RoadimentaryLedger?.unavailable(message);
+          window.RoadimentaryCrew?.unavailable(message); window.RoadimentaryBoards?.stop(message);
+        }
+      });
       loadBio();
     } else {
       window.RoadimentaryCrew?.unavailable("Your player ID could not be verified. Sign in again from the landing page.");
       window.RoadimentaryLedger?.unavailable("Your player ID could not be verified. Sign in again.");
       window.RoadimentaryStats?.unavailable("Your player ID could not be verified. Sign in again.");
       window.RoadimentaryBoards?.stop("Your player ID could not be verified. Sign in again.");
+      window.RoadimentarySupport?.unavailable("Sign in again to open Support Desk.");
     }
   });
 }
 
 function startProfileSession() {
   if (!sessionTicket) {
+    window.RoadimentarySupport?.stop();
     window.RoadimentaryStats?.stop();
     window.location.replace("index.html");
     return;
@@ -666,6 +707,7 @@ function startProfileSession() {
     window.RoadimentaryLedger?.unavailable("Couldn’t load purchase history. Refresh the page to try again.");
     window.RoadimentaryStats?.unavailable("Couldn’t load your stats. Refresh the page to try again.");
     window.RoadimentaryBoards?.stop("Couldn’t load the rankings. Refresh the page to try again.");
+    window.RoadimentarySupport?.unavailable("Couldn’t load your account. Refresh the page to try again.");
     return;
   }
 
@@ -748,6 +790,7 @@ function handleSendReset(button) {
 });
 
 function handleLogout() {
+  window.RoadimentarySupport?.stop();
   clearAccountFeedback();
   window.RoadimentaryNotices?.stop();
   clearProfileAvatar();

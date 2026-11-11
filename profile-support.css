@@ -1,0 +1,84 @@
+/* Player Support Desk: paper slips inside the existing Account window/sheet. */
+.profile-office-page [data-account-settings][hidden],
+.profile-office-page .support-desk[hidden],
+.profile-office-page .support-desk [hidden] { display: none !important; }
+.support-account-settings { display: grid; gap: 18px; }
+.profile-office-page .support-entry-paper { padding: 20px; min-width: 0; }
+.support-entry-paper p:not(.office-kicker) { color: #654a33; font-size: .8rem; line-height: 1.65; }
+.support-desk { min-width: 0; max-width: 1100px; margin: 0 auto; padding: clamp(16px, 3vw, 36px); color: #47321f; font-family: "Lexend", sans-serif; }
+.support-heading { display: flex; align-items: start; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
+.support-heading h2 { margin: 0 0 8px; font: 850 1.65rem/1.2 "Montserrat", sans-serif; text-transform: uppercase; color: #4b2e1b; }
+.support-heading p:not(.office-kicker) { margin: 0; max-width: 600px; font-size: .82rem; line-height: 1.65; }
+.support-heading > button { flex-shrink: 0; }
+.support-view-switch { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+.support-view-switch button[aria-pressed="true"] { background: #2e6869; border-color: #255858; color: #fff6df; box-shadow: 0 3px 0 #204c4c; }
+.profile-office-page .support-paper { padding: clamp(16px, 2vw, 26px); min-width: 0; margin: 0 0 18px; }
+.support-paper h3 { margin: 0; color: #4d321e; font: 850 1.08rem/1.5 "Montserrat", sans-serif; }
+.support-section-heading, .support-thread-tools { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; }
+.support-filter { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin: 0 0 16px; color: #2c6262; font-size: .75rem; font-weight: 800; }
+.support-filter select { max-width: 100%; min-height: 42px; padding: 8px 12px; background: #fffbed; color: #4d3521; border: 1px solid #9cab90; border-radius: 4px; font: 500 .8rem "Lexend", sans-serif; }
+.support-form { display: grid; gap: 16px; min-width: 0; margin-top: 18px; }
+.support-form-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.support-form label { display: grid; gap: 7px; min-width: 0; color: #2a5e5f; font-size: .77rem; font-weight: 800; }
+.profile-office-page .support-form :is(input, textarea, select) { display: block; box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%; margin: 0; padding: 11px 12px; color: #46321f; background: #fffbed; border: 1px solid #99a991; border-radius: 4px; font: 450 .85rem/1.65 "Lexend", sans-serif; }
+.support-form textarea { resize: vertical; min-height: 90px; }
+.support-form input, .support-form select { min-height: 44px; }
+.support-form :is(input, textarea)::placeholder { color: #7a6750; opacity: 1; }
+.support-form > button[type="submit"] { justify-self: start; min-width: 155px; }
+.support-privacy { margin: 0; max-width: 780px; font-size: .72rem; line-height: 1.7; color: #6b5239; font-weight: 450; }
+.support-bug-details { padding: 12px 14px; border: 1px dashed #b7ae84; border-radius: 5px; background: #fbf0d0; }
+.support-bug-details summary { cursor: pointer; color: #2a6061; font-size: .78rem; font-weight: 800; line-height: 1.6; }
+.support-bug-details .support-form { margin: 16px 0 0; }
+.support-notice { margin: 0 0 18px; padding: 12px 14px; color: #285b57; background: #edf2dd; border-left: 4px solid #638271; font-size: .8rem; line-height: 1.65; overflow-wrap: anywhere; }
+.support-notice[data-kind="error"] { color: #7d3026; background: #fff0e0; border-color: #b36741; }
+.support-notice[data-kind="success"] { color: #35572c; background: #e9f0d4; border-color: #7b975a; }
+.support-pending { margin-bottom: 18px; padding: 14px 16px; color: #6b481e; background: #fff0c4; border: 1px solid #c6a056; border-left: 4px solid #be861c; border-radius: 4px; }
+.support-pending p { margin: 0 0 10px; font-size: .78rem; line-height: 1.7; }
+.support-actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.support-discard { border-top: 1px dashed #bc9d5d; margin-top: 16px; padding-top: 14px; }
+.support-discard button { margin: 0 8px 8px 0; }
+.support-report-list, .support-messages { list-style: none; padding: 0; margin: 0 0 18px; display: grid; gap: 10px; min-width: 0; }
+.profile-office-page .support-report-button { display: flex; align-items: center; gap: 16px; width: 100%; min-width: 0; padding: 16px; color: #4b321e; background: #fff9e6; border: 1px solid #c3bd97; border-left: 4px solid #d19b2b; border-radius: 5px; text-align: left; font-family: "Lexend", sans-serif; cursor: pointer; }
+.profile-office-page .support-report-button:hover { background: #eef0da; border-color: #54807a; }
+.support-report-copy { display: grid; gap: 6px; min-width: 0; flex: 1; }
+.support-report-copy strong { font-size: .94rem; color: #2d6263; line-height: 1.5; overflow-wrap: anywhere; }
+.support-reference { font-size: .65rem; font-weight: 850; letter-spacing: .07em; text-transform: uppercase; color: #2c6666; }
+.support-report-copy time, .support-original-text ~ time, .support-paper > time { color: #715b40; font-size: .7rem; line-height: 1.6; }
+.support-open-arrow { color: #2b696a; }
+.support-status-badge { display: inline-block; flex-shrink: 0; color: #2a5f5c; background: #e7efdb; padding: 6px 9px; border: 1px solid #9cb39b; border-radius: 4px; font-size: .65rem; font-weight: 850; line-height: 1.5; text-align: center; }
+.support-status-badge[data-status="needs_reply"] { color: #6b4815; background: #fff0bc; border-color: #c49a4c; }
+.support-status-badge[data-status="in_review"] { color: #315b6b; background: #e6f0ed; border-color: #9aafb1; }
+.support-status-badge[data-status="resolved"] { color: #44613d; background: #edf2df; border-color: #a7b991; }
+.support-empty { padding: 20px 14px; color: #6a523a; border: 1px dashed #b4ac86; border-radius: 4px; background: #fff7e0; font-size: .8rem; line-height: 1.7; }
+.support-ticket-meta { display: flex; gap: 12px; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+.support-paper .support-ticket-title { font-size: 1.22rem; overflow-wrap: anywhere; }
+.support-ticket-context { font-size: .75rem; color: #665139; line-height: 1.6; margin: 8px 0; }
+.support-original-text { margin: 18px 0 0; color: #4e3a26; font-size: .85rem; line-height: 1.8; white-space: pre-wrap; overflow-wrap: anywhere; }
+.support-repro-block { margin-top: 18px; padding-top: 14px; border-top: 1px dashed #bdb18a; }
+.support-repro-block h4 { margin: 0 0 8px; color: #2e6564; font-size: .77rem; }
+.support-repro-block p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .8rem; line-height: 1.8; }
+.support-messages { margin-top: 18px; }
+.support-message { padding: 14px 16px; color: #4d3824; background: #fff9e6; border: 1px solid #c8bd99; border-radius: 5px; border-left: 4px solid #d0a04e; }
+.support-message.is-support { background: #edf0dc; border-color: #a3b297; border-left-color: #427875; }
+.support-message header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 6px 14px; }
+.support-message strong { color: #2d6563; font-size: .75rem; }
+.support-message time { font-size: .66rem; color: #6d5941; }
+.support-message p { margin: 10px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .84rem; line-height: 1.8; }
+.support-reply-form { padding-top: 18px; border-top: 1px dashed #b7ad86; }
+.support-desk :is(button, input, textarea, select, summary):focus-visible { outline: 3px solid #2c7475; outline-offset: 3px; }
+.support-desk button:disabled { cursor: not-allowed; opacity: .65; }
+.support-desk :is(input, select, textarea):disabled { opacity: .75; }
+@media (max-width: 1023px) {
+  .support-desk { padding: 0; }
+  .support-heading h2 { font-size: 1.3rem; }
+  .profile-office-page .support-entry-paper { padding: 16px; }
+  .profile-office-page .support-form :is(input, textarea, select), .support-filter select { font-size: 16px; }
+}
+@media (max-width: 560px) {
+  .support-form-row { grid-template-columns: minmax(0, 1fr); }
+  .support-report-button { flex-wrap: wrap; gap: 10px !important; }
+  .support-report-copy { flex-basis: 100%; }
+  .support-open-arrow { margin-left: auto; }
+  .support-form > button[type="submit"] { width: 100%; }
+  .support-thread-tools > .office-button { width: 100%; }
+}

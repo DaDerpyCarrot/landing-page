@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="profile-boards.css?v=operator-boards-4" />
   <link rel="stylesheet" href="bookmark-dock.css?v=bookmark-dock-3" />
   <link rel="stylesheet" href="profile-interactions.css?v=profile-polish-2" />
+  <link rel="stylesheet" href="profile-support.css?v=support-player-1" />
   <script src="https://download.playfab.com/PlayFabClientApi.js"></script>
 </head>
 <body class="beaver-office-content-theme profile-office-page">
@@ -123,6 +124,7 @@
             <button type="button" data-open-profile-panel="mobile-office-operations"><img src="assets/icon_bulldozer.png" alt="" /><span><strong>Review performance</strong><small>Construction results &amp; purchases</small></span><span aria-hidden="true">→</span></button>
             <button type="button" data-open-profile-panel="mobile-office-boards"><img src="assets/icon_gameplay.png" alt="" /><span><strong>Check the boards</strong><small>All Operators &amp; Company rankings</small></span><span aria-hidden="true">→</span></button>
             <button type="button" data-open-profile-panel="mobile-office-crew"><img src="assets/icon_three_beaver.png" alt="" /><span><strong>Visit your crew</strong><small>Friends, messages &amp; Companies</small></span><span aria-hidden="true">→</span></button>
+            <button type="button" data-open-support><img src="assets/icon_content.png" alt="" /><span><strong>Contact Support</strong><small>Report a bug or share feedback</small></span><span aria-hidden="true">→</span></button>
           </div>
         </article>
 
@@ -162,6 +164,12 @@
       </section>
 
       <section class="mobile-office-panel" id="mobile-office-account" tabindex="-1">
+        <div class="support-account-settings" data-account-settings>
+        <article class="office-paper support-entry-paper">
+          <p class="office-kicker">Need a hand?</p><h2>Support Desk</h2>
+          <p>Report an issue, share feedback, or follow up with the Roadimentary team.</p>
+          <button type="button" class="office-button office-button-primary" data-open-support>Open Support Desk →</button>
+        </article>
         <article class="office-paper account-email-paper">
           <p class="office-kicker">Account details</p>
           <dl class="identity-list"><div><dt>Sign-in email</dt><dd id="mobile-profile-email">—</dd></div></dl>
@@ -196,6 +204,8 @@
             <button type="button" class="office-button office-button-danger" id="mobile-logout-btn">Log out</button>
           </div>
         </article>
+        </div>
+        <section class="support-desk" data-support-desk="mobile" hidden aria-label="Private Support Desk"><noscript>Enable JavaScript to contact Support.</noscript></section>
       </section>
       </main>
     </section>
@@ -310,6 +320,7 @@
                     <button type="button" data-open-window="win-profile-operations"><img src="assets/icon_bulldozer.png" alt="" /><span><strong>Review performance</strong><small>Construction results &amp; purchases</small></span><span aria-hidden="true">→</span></button>
                     <button type="button" data-open-window="win-profile-boards"><img src="assets/icon_gameplay.png" alt="" /><span><strong>Check the boards</strong><small>All Operators &amp; Company rankings</small></span><span aria-hidden="true">→</span></button>
                     <button type="button" data-open-window="win-profile-crew"><img src="assets/icon_three_beaver.png" alt="" /><span><strong>Visit your crew</strong><small>Friends, messages &amp; Companies</small></span><span aria-hidden="true">→</span></button>
+                    <button type="button" data-open-support><img src="assets/icon_content.png" alt="" /><span><strong>Contact Support</strong><small>Report a bug or share feedback</small></span><span aria-hidden="true">→</span></button>
                   </div>
                 </article>
               </div>
@@ -387,7 +398,7 @@
           <button class="win-close" type="button" aria-label="Close Personnel Desk">×</button>
         </header>
         <div class="win-content office-window-content">
-          <div class="account-office-layout">
+          <div class="account-office-layout" data-account-settings>
             <section class="office-paper account-paper">
               <div class="section-heading">
                 <div><p class="office-kicker">Operator customization</p><h2>Edit Operator File</h2></div>
@@ -412,6 +423,11 @@
             </section>
 
             <aside class="account-side-column">
+              <article class="office-paper support-entry-paper">
+                <p class="office-kicker">Need a hand?</p><h2>Support Desk</h2>
+                <p>Report an issue, share feedback, or follow up with the Roadimentary team.</p>
+                <button type="button" class="office-button office-button-primary" data-open-support>Open Support Desk →</button>
+              </article>
               <article class="office-paper account-email-paper">
                 <p class="office-kicker">Account details</p>
                 <dl class="identity-list"><div><dt>Sign-in email</dt><dd id="desktop-profile-email">—</dd></div></dl>
@@ -423,6 +439,7 @@
               </article>
             </aside>
           </div>
+          <section class="support-desk" data-support-desk="desktop" hidden aria-label="Private Support Desk"><noscript>Enable JavaScript to contact Support.</noscript></section>
         </div>
       </section>
     </div>
@@ -438,6 +455,7 @@
   <script src="profile-ledger.js?v=profile-polish-2"></script>
   <script src="profile-boards.js?v=profile-polish-1"></script>
   <script src="bookmark-dock.js?v=bookmark-dock-3"></script>
-  <script src="profile.js?v=profile-polish-2"></script>
+  <script src="profile-support.js?v=support-player-1"></script>
+  <script src="profile.js?v=support-player-1"></script>
 </body>
 </html>
